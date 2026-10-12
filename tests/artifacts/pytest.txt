@@ -1,0 +1,11 @@
+Execution date: 2026-10-12 (Asia/Tokyo)
+Working directory: D:\agent 项目
+Command: .\.venv\Scripts\python.exe -m pytest -q
+Environment: Python 3.14.5; pydantic 2.14.1; jsonschema 4.26.0; pytest 9.1.1
+
+.................................................................        [100%]
+65 passed in 4.52s
+
+Recorded from the actual successful terminal run. No final test failures or warnings.
+Earlier run: 64 passed, 1 fixture setup error (sandbox temp permissions),
+1 parameterization deprecation warning. Both corrected before the run above.

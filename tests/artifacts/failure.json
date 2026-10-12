@@ -1,0 +1,118 @@
+{
+  "plan_id": "order-not-found",
+  "task_id": "f8349501-a4d0-4119-99df-9d9fc80e09ad",
+  "trace_id": "f0daabd2-0b5d-4498-a8c0-5d848509cc0b",
+  "status": "failed",
+  "steps": {
+    "order": {
+      "step_id": "order",
+      "capability_id": "m2.order_tracking",
+      "depends_on": [],
+      "status": "failed",
+      "inputs": {
+        "order_id": "MISSING"
+      },
+      "result": {
+        "request_id": "c01218b5-0c05-4d30-8071-1aed1db51467",
+        "task_id": "f8349501-a4d0-4119-99df-9d9fc80e09ad",
+        "trace_id": "f0daabd2-0b5d-4498-a8c0-5d848509cc0b",
+        "capability_id": "m2.order_tracking",
+        "status": "failed",
+        "data": {},
+        "error": {
+          "code": "NOT_FOUND",
+          "message": "订单不存在：MISSING",
+          "trace_id": "f0daabd2-0b5d-4498-a8c0-5d848509cc0b",
+          "task_id": "f8349501-a4d0-4119-99df-9d9fc80e09ad",
+          "step_id": null
+        },
+        "waiting_reason": null,
+        "continuation_token": null
+      },
+      "error": {
+        "code": "NOT_FOUND",
+        "message": "订单不存在：MISSING",
+        "trace_id": "f0daabd2-0b5d-4498-a8c0-5d848509cc0b",
+        "task_id": "f8349501-a4d0-4119-99df-9d9fc80e09ad",
+        "step_id": "order"
+      },
+      "reason": "订单不存在：MISSING"
+    },
+    "refund": {
+      "step_id": "refund",
+      "capability_id": "m7.refund_approval",
+      "depends_on": [
+        "order"
+      ],
+      "status": "skipped",
+      "inputs": {},
+      "result": null,
+      "error": {
+        "code": "DEPENDENCY_FAILED",
+        "message": "依赖失败：order",
+        "trace_id": "f0daabd2-0b5d-4498-a8c0-5d848509cc0b",
+        "task_id": "f8349501-a4d0-4119-99df-9d9fc80e09ad",
+        "step_id": "refund"
+      },
+      "reason": "依赖失败：order"
+    }
+  },
+  "events": [
+    {
+      "sequence": 1,
+      "timestamp": "2026-10-12T07:53:48.808191+00:00",
+      "trace_id": "f0daabd2-0b5d-4498-a8c0-5d848509cc0b",
+      "task_id": "f8349501-a4d0-4119-99df-9d9fc80e09ad",
+      "step_id": "order",
+      "capability_id": "m2.order_tracking",
+      "status": "pending",
+      "message": "已加入执行计划",
+      "error_code": null
+    },
+    {
+      "sequence": 2,
+      "timestamp": "2026-10-12T07:53:48.808209+00:00",
+      "trace_id": "f0daabd2-0b5d-4498-a8c0-5d848509cc0b",
+      "task_id": "f8349501-a4d0-4119-99df-9d9fc80e09ad",
+      "step_id": "refund",
+      "capability_id": "m7.refund_approval",
+      "status": "pending",
+      "message": "已加入执行计划",
+      "error_code": null
+    },
+    {
+      "sequence": 3,
+      "timestamp": "2026-10-12T07:53:48.808219+00:00",
+      "trace_id": "f0daabd2-0b5d-4498-a8c0-5d848509cc0b",
+      "task_id": "f8349501-a4d0-4119-99df-9d9fc80e09ad",
+      "step_id": "order",
+      "capability_id": "m2.order_tracking",
+      "status": "running",
+      "message": "解析输入并调用能力",
+      "error_code": null
+    },
+    {
+      "sequence": 4,
+      "timestamp": "2026-10-12T07:53:48.808364+00:00",
+      "trace_id": "f0daabd2-0b5d-4498-a8c0-5d848509cc0b",
+      "task_id": "f8349501-a4d0-4119-99df-9d9fc80e09ad",
+      "step_id": "order",
+      "capability_id": "m2.order_tracking",
+      "status": "failed",
+      "message": "订单不存在：MISSING",
+      "error_code": "NOT_FOUND"
+    },
+    {
+      "sequence": 5,
+      "timestamp": "2026-10-12T07:53:48.808380+00:00",
+      "trace_id": "f0daabd2-0b5d-4498-a8c0-5d848509cc0b",
+      "task_id": "f8349501-a4d0-4119-99df-9d9fc80e09ad",
+      "step_id": "refund",
+      "capability_id": "m7.refund_approval",
+      "status": "skipped",
+      "message": "依赖失败：order",
+      "error_code": "DEPENDENCY_FAILED"
+    }
+  ],
+  "final_results": {}
+}

@@ -1,0 +1,5 @@
+{
+  "plan_id": "unknown-capability",
+  "goal": "展示计划在调用前被拒绝",
+  "steps": [{"step_id": "unknown", "capability_id": "unregistered.business", "inputs": {}}]
+}

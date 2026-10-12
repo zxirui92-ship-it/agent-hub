@@ -1,0 +1,8 @@
+{
+  "plan_id": "order-not-found",
+  "goal": "展示订单失败和下游跳过",
+  "steps": [
+    {"step_id": "order", "capability_id": "m2.order_tracking", "inputs": {"order_id": {"literal": "MISSING"}}},
+    {"step_id": "refund", "capability_id": "m7.refund_approval", "depends_on": ["order"], "inputs": {"order_id": {"ref": "order.data.order_id"}, "amount": {"ref": "order.data.amount"}, "reason": {"literal": "退货"}}}
+  ]
+}

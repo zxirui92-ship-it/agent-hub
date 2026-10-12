@@ -1,0 +1,135 @@
+{
+  "plan_id": "order-refund-waiting",
+  "task_id": "e85d1ab2-5413-481a-a508-46b8c69715a4",
+  "trace_id": "8fcd3f4e-ba52-4ae0-be7a-8fc34c977fec",
+  "status": "waiting_approval",
+  "steps": {
+    "order": {
+      "step_id": "order",
+      "capability_id": "m2.order_tracking",
+      "depends_on": [],
+      "status": "completed",
+      "inputs": {
+        "order_id": "2025101234"
+      },
+      "result": {
+        "request_id": "b1b001c8-2702-452c-9f76-42c3e862819f",
+        "task_id": "e85d1ab2-5413-481a-a508-46b8c69715a4",
+        "trace_id": "8fcd3f4e-ba52-4ae0-be7a-8fc34c977fec",
+        "capability_id": "m2.order_tracking",
+        "status": "completed",
+        "data": {
+          "order_id": "2025101234",
+          "amount": 699.0,
+          "order_status": "paid",
+          "logistics_status": "in_transit"
+        },
+        "error": null,
+        "waiting_reason": null,
+        "continuation_token": null
+      },
+      "error": null,
+      "reason": null
+    },
+    "refund": {
+      "step_id": "refund",
+      "capability_id": "m7.refund_approval",
+      "depends_on": [
+        "order"
+      ],
+      "status": "waiting_approval",
+      "inputs": {
+        "order_id": "2025101234",
+        "amount": 699.0,
+        "reason": "未使用商品申请退款"
+      },
+      "result": {
+        "request_id": "63f60c51-e26d-4762-b432-e9519b22e1f0",
+        "task_id": "e85d1ab2-5413-481a-a508-46b8c69715a4",
+        "trace_id": "8fcd3f4e-ba52-4ae0-be7a-8fc34c977fec",
+        "capability_id": "m7.refund_approval",
+        "status": "waiting_approval",
+        "data": {
+          "application_id": "REFUND-2025101234",
+          "order_id": "2025101234",
+          "amount": 699.0,
+          "decision": "pending_review"
+        },
+        "error": null,
+        "waiting_reason": "金额超过 500，等待人工审核；本阶段不支持恢复。",
+        "continuation_token": null
+      },
+      "error": null,
+      "reason": "金额超过 500，等待人工审核；本阶段不支持恢复。"
+    }
+  },
+  "events": [
+    {
+      "sequence": 1,
+      "timestamp": "2026-10-12T07:53:48.416275+00:00",
+      "trace_id": "8fcd3f4e-ba52-4ae0-be7a-8fc34c977fec",
+      "task_id": "e85d1ab2-5413-481a-a508-46b8c69715a4",
+      "step_id": "order",
+      "capability_id": "m2.order_tracking",
+      "status": "pending",
+      "message": "已加入执行计划",
+      "error_code": null
+    },
+    {
+      "sequence": 2,
+      "timestamp": "2026-10-12T07:53:48.416295+00:00",
+      "trace_id": "8fcd3f4e-ba52-4ae0-be7a-8fc34c977fec",
+      "task_id": "e85d1ab2-5413-481a-a508-46b8c69715a4",
+      "step_id": "refund",
+      "capability_id": "m7.refund_approval",
+      "status": "pending",
+      "message": "已加入执行计划",
+      "error_code": null
+    },
+    {
+      "sequence": 3,
+      "timestamp": "2026-10-12T07:53:48.416305+00:00",
+      "trace_id": "8fcd3f4e-ba52-4ae0-be7a-8fc34c977fec",
+      "task_id": "e85d1ab2-5413-481a-a508-46b8c69715a4",
+      "step_id": "order",
+      "capability_id": "m2.order_tracking",
+      "status": "running",
+      "message": "解析输入并调用能力",
+      "error_code": null
+    },
+    {
+      "sequence": 4,
+      "timestamp": "2026-10-12T07:53:48.416469+00:00",
+      "trace_id": "8fcd3f4e-ba52-4ae0-be7a-8fc34c977fec",
+      "task_id": "e85d1ab2-5413-481a-a508-46b8c69715a4",
+      "step_id": "order",
+      "capability_id": "m2.order_tracking",
+      "status": "completed",
+      "message": "能力执行完成",
+      "error_code": null
+    },
+    {
+      "sequence": 5,
+      "timestamp": "2026-10-12T07:53:48.416480+00:00",
+      "trace_id": "8fcd3f4e-ba52-4ae0-be7a-8fc34c977fec",
+      "task_id": "e85d1ab2-5413-481a-a508-46b8c69715a4",
+      "step_id": "refund",
+      "capability_id": "m7.refund_approval",
+      "status": "running",
+      "message": "解析输入并调用能力",
+      "error_code": null
+    },
+    {
+      "sequence": 6,
+      "timestamp": "2026-10-12T07:53:48.416618+00:00",
+      "trace_id": "8fcd3f4e-ba52-4ae0-be7a-8fc34c977fec",
+      "task_id": "e85d1ab2-5413-481a-a508-46b8c69715a4",
+      "step_id": "refund",
+      "capability_id": "m7.refund_approval",
+      "status": "waiting_approval",
+      "message": "金额超过 500，等待人工审核；本阶段不支持恢复。",
+      "error_code": null
+    }
+  ],
+  "final_results": {}
+}

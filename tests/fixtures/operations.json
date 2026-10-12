@@ -1,0 +1,9 @@
+{
+  "plan_id": "operations-week-41",
+  "goal": "融合经营数据，生成周报，并制定大促方案",
+  "steps": [
+    {"step_id": "promotion", "capability_id": "m5.promotion_plan", "depends_on": ["report"], "inputs": {"report": {"ref": "report.data.report_markdown"}}},
+    {"step_id": "fusion", "capability_id": "m6.data_fusion", "inputs": {"week": {"literal": "2026-W41"}}},
+    {"step_id": "report", "capability_id": "m3.weekly_report", "depends_on": ["fusion"], "inputs": {"fused_data": {"ref": "fusion.data.fused_data"}}}
+  ]
+}

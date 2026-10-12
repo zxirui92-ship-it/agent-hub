@@ -1,0 +1,8 @@
+{
+  "plan_id": "order-refund-waiting",
+  "goal": "查询订单后申请退款，保留等待人工审核状态",
+  "steps": [
+    {"step_id": "order", "capability_id": "m2.order_tracking", "inputs": {"order_id": {"literal": "2025101234"}}},
+    {"step_id": "refund", "capability_id": "m7.refund_approval", "depends_on": ["order"], "inputs": {"order_id": {"ref": "order.data.order_id"}, "amount": {"ref": "order.data.amount"}, "reason": {"literal": "未使用商品申请退款"}}}
+  ]
+}
