@@ -128,3 +128,11 @@ Executor 只在适配器 `invoke` 边界捕获未知 Exception，其余错误按
 - Registry 不硬编码七能力名单，允许新增测试能力及后续经评审的能力；七模块自身必须采用规定 ID。
 
 公共契约和业务 Schema 同步更新，未经团队正式冻结；没有旧字段适配层。
+
+## M4 真实实现接入
+
+实现位于 agents/router，内部 Skill.run(payload: dict) -> str，与对外 invoke 分层。
+M4 继续使用相同 common/gateway_contract.py Manifest。默认 live 使用 LLM 根据动态 Skill 描述路由；mock 使用明确前缀作离线演示，不能视为语义路由质量验证。
+result 字符串内的 JSON 包含 mode=live/mock/local；服务未配置时 AgentResult.status=failed、error.code=TOOL_UNAVAILABLE，消息明确 not_configured，不降级伪造成功。
+read_only 在此指不修改平台或订单业务状态；外部生成服务仍可能产生资源与费用，不代表免费、无远程调用或自动重试许可。
+新增 Skill 只修改注册组装入口，不修改 Router 分发代码；平台 CLI 的 --real-m4 同样是组装选项，Executor 不包含 M4 特例。

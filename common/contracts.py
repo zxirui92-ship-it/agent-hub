@@ -1,4 +1,4 @@
-"""ICD 0.1 candidate, pending team review. All cross-module data is JSON."""
+"""ICD 1.0 candidate, pending team review. All cross-module data is JSON."""
 from enum import Enum
 from typing import Annotated, Literal, Protocol, runtime_checkable
 

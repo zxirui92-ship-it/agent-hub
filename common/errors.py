@@ -24,3 +24,11 @@ class ErrorCode(str, Enum):
 
 def default_retryable(code: ErrorCode) -> bool:
     return code in (ErrorCode.TOOL_UNAVAILABLE, ErrorCode.INTERNAL_ERROR)
+
+
+class ServiceError(Exception):
+    """Public diagnostic raised by model/tool adapters; never includes raw HTTP bodies."""
+    def __init__(self, code: ErrorCode, message: str, *, retryable: bool | None = None):
+        super().__init__(message)
+        self.code = code
+        self.retryable = default_retryable(code) if retryable is None else retryable

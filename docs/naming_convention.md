@@ -3,7 +3,7 @@
 | 文档属性 | 内容                                                      |
 | ---- | ------------------------------------------------------- |
 | 文档名称 | 模块接口命名规范（Interface Naming Convention）                   |
-| 版本   | v1.0（草案，待小组评审）                                          |
+| 版本   | v1.1（迁移修订草案，待小组评审）                                          |
 | 编写日期 | 2026-10-12                                              |
 | 适用项目 | Agent Hub / 企业级「智能运营中枢」Agent 平台                         |
 | 适用对象 | M1–M7 模块负责人、数据库负责人、平台编排负责人、集成测试负责人                      |
@@ -399,9 +399,11 @@ M2 补充 order_amount（整数分）；M7 本阶段仅模拟整单退款，refu
 | --- | --- | --- |
 | 模块、包、函数、变量、参数 | `snake_case` | `query_order`、`max_iterations` |
 | 类、异常类、Pydantic 模型、Protocol | `PascalCase` | `ReactAgent`、`AgentResult`、`OrderQueryTool` |
-| 常量、枚举成员、注册表键 | `UPPER_SNAKE_CASE` | `MAX_RETRY`、`ErrorCode.NOT_FOUND` |
+| 常量、枚举成员 | `UPPER_SNAKE_CASE` | `MAX_RETRY`、`ErrorCode.NOT_FOUND` |
 | 私有成员 | 前导单下划线 | `_blackboard`、`_internal_step()` |
 | 不使用 | 前导双下划线、`l`/`O`/`I` 单字符名 | — |
+
+注册表键按其业务层规则保持小写：capability_id 见 §4，Skill 注册名见 §6。
 
 **模块级统一入口**：每个 M 模块**必须**暴露 `invoke(request: AgentRequest) -> AgentResult`，供平台调用；模块内部函数命名自由，但**禁止**跨模块导入其他 M 模块的内部函数。
 

@@ -1,5 +1,4 @@
 """Deterministic business fixtures, not real implementations of seven architectures."""
-from copy import deepcopy
 from hashlib import sha256
 import json
 from pathlib import Path

@@ -1,0 +1,6 @@
+........................................................................ [ 83%]
+......ssssssss                                                           [100%]
+=========================== short test summary info ===========================
+SKIPPED [5] tests\live\test_m4_live.py:19: Live API tests require --run-live and M4_RUN_LIVE_TESTS=1
+SKIPPED [3] tests\live\test_m4_live.py:35: Live API tests require --run-live and M4_RUN_LIVE_TESTS=1
+78 passed, 8 skipped in 3.73s

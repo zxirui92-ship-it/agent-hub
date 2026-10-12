@@ -42,6 +42,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--max-steps", type=int, default=32)
     parser.add_argument("--json", action="store_true", help="完整结构化报告")
     parser.add_argument("--list-capabilities", action="store_true")
+    parser.add_argument("--real-m4", action="store_true", help="Replace Mock M4 with RouterAgent; configuration via environment")
     args = parser.parse_args(argv)
     if args.max_steps < 1:
         parser.error("--max-steps 必须为正整数")
@@ -51,6 +52,18 @@ def main(argv: list[str] | None = None) -> int:
     from tests.mocks.agents import create_mock_registry
 
     registry = create_mock_registry()
+    if args.real_m4:
+        from agents.router.factory import create_agent
+        from hub_platform.registry import CapabilityRegistry
+        replacement = CapabilityRegistry()
+        try:
+            m4 = create_agent()
+        except ValueError as exc:
+            parser.error(str(exc))
+        for manifest in registry.list_capabilities():
+            module = m4 if manifest.capability_id == m4.manifest.capability_id else registry.get(manifest.capability_id)
+            replacement.register(module.manifest if module is m4 else manifest, module)
+        registry = replacement
     if args.list_capabilities:
         print(json.dumps([m.model_dump() for m in registry.list_capabilities()], ensure_ascii=False, indent=2))
         return 0

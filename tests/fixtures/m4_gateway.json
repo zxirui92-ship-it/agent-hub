@@ -1,0 +1,8 @@
+{
+  "plan_id": "plan-20261012-104",
+  "goal": "通过真实 M4 查询优惠政策，再把结果交给 FAQ Mock",
+  "steps": [
+    {"step_id": "s2", "capability_id": "m1.faq_chat", "depends_on": ["s1"], "inputs": {"question": {"ref": "s1.data.result"}}},
+    {"step_id": "s1", "capability_id": "m4.capability_gateway", "depends_on": [], "inputs": {"query": {"literal": "kb_qa: 优惠政策"}}}
+  ]
+}
