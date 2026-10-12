@@ -3,8 +3,13 @@ from enum import Enum
 from typing import Annotated, Literal, Protocol, runtime_checkable
 
 from pydantic import BaseModel, ConfigDict, Field, JsonValue, model_validator
+from common.errors import ErrorCode, default_retryable
 
-Identifier = Annotated[str, Field(min_length=1, pattern=r"^[A-Za-z0-9_-]+$")]
+Identifier = Annotated[str, Field(pattern=r"^s[1-9][0-9]*$")]
+TaskId = Annotated[str, Field(pattern=r"^task-[0-9a-f]{12}$")]
+RequestId = Annotated[str, Field(pattern=r"^req-[0-9a-f]{12}$")]
+TraceId = Annotated[str, Field(pattern=r"^trace-[0-9a-f]{16}$")]
+PlanId = Annotated[str, Field(pattern=r"^plan-[0-9]{8}-[0-9]{3}$")]
 NonEmpty = Annotated[str, Field(min_length=1)]
 
 
@@ -13,32 +18,34 @@ class Contract(BaseModel):
 
 
 class ErrorDetail(Contract):
-    code: NonEmpty
+    code: ErrorCode
     message: NonEmpty
-    trace_id: NonEmpty
-    task_id: NonEmpty
-    step_id: str | None = None
+    retryable: bool = Field(default_factory=lambda data: default_retryable(data["code"]))
+    trace_id: TraceId
+    task_id: TaskId
+    request_id: RequestId | None = None
+    step_id: Identifier | None = None
 
 
 class AgentRequest(Contract):
-    request_id: NonEmpty
-    task_id: NonEmpty
-    trace_id: NonEmpty
+    request_id: RequestId
+    task_id: TaskId
+    trace_id: TraceId
     capability_id: NonEmpty
     payload: dict[str, JsonValue]
     context: dict[str, JsonValue] = Field(default_factory=dict)
 
 
 class AgentResult(Contract):
-    request_id: NonEmpty
-    task_id: NonEmpty
-    trace_id: NonEmpty
+    request_id: RequestId
+    task_id: TaskId
+    trace_id: TraceId
     capability_id: NonEmpty
     status: Literal["completed", "failed", "waiting_approval"]
     data: dict[str, JsonValue] = Field(default_factory=dict)
     error: ErrorDetail | None = None
     waiting_reason: str | None = None
-    continuation_token: str | None = None
+    continuation_token: Annotated[str, Field(pattern=r"^cont-[0-9a-f]{16}$")] | None = None
 
     @model_validator(mode="after")
     def validate_status(self) -> "AgentResult":
@@ -52,6 +59,7 @@ class AgentResult(Contract):
             raise ValueError("Waiting metadata is only valid for waiting_approval")
         if self.error and (
             self.error.trace_id != self.trace_id or self.error.task_id != self.task_id
+            or self.error.request_id != self.request_id
         ):
             raise ValueError("Error correlation must match the result")
         return self
@@ -66,13 +74,13 @@ class AgentModule(Protocol):
 
 class CapabilityManifest(Contract):
     capability_id: NonEmpty
-    version: NonEmpty
+    version: Annotated[str, Field(pattern=r"^[0-9]+\.[0-9]+$")]
     name: NonEmpty
     description: NonEmpty
     input_schema: dict[str, JsonValue]
     output_schema: dict[str, JsonValue]
     preconditions: list[str]
-    side_effects: Literal["read_only", "simulated_write", "requires_approval"]
+    side_effects: Literal["read_only", "writes_mock_state", "requires_approval"]
     execution_mode: Literal["immediate", "may_wait"]
     supports_resume: bool = False
     owner: NonEmpty
@@ -83,7 +91,7 @@ class LiteralBinding(Contract):
 
 
 class ReferenceBinding(Contract):
-    ref: Annotated[str, Field(pattern=r"^[A-Za-z0-9_-]+\.data(?:\.[A-Za-z0-9_-]+)*$")]
+    ref: Annotated[str, Field(pattern=r"^s[1-9][0-9]*\.data(?:\.[A-Za-z0-9_-]+)*$")]
 
 
 class ExecutionStep(Contract):
@@ -94,12 +102,12 @@ class ExecutionStep(Contract):
 
 
 class ExecutionPlan(Contract):
-    plan_id: NonEmpty
+    plan_id: PlanId
     goal: NonEmpty
     steps: list[ExecutionStep] = Field(min_length=1)
 
 
-class StepStatus(str, Enum):
+class StepState(str, Enum):
     PENDING = "pending"
     RUNNING = "running"
     COMPLETED = "completed"
@@ -109,10 +117,11 @@ class StepStatus(str, Enum):
 
 
 class StepRecord(Contract):
-    step_id: str
+    step_id: Identifier
     capability_id: str
-    depends_on: list[str]
-    status: StepStatus = StepStatus.PENDING
+    depends_on: list[Identifier]
+    request_id: RequestId | None = None
+    status: StepState = StepState.PENDING
     inputs: dict[str, JsonValue] = Field(default_factory=dict)
     result: AgentResult | None = None
     error: ErrorDetail | None = None
@@ -121,20 +130,22 @@ class StepRecord(Contract):
 
 class TraceEvent(Contract):
     sequence: int
-    timestamp: str
-    trace_id: str
-    task_id: str
-    step_id: str
+    ts: str
+    level: Literal["info", "error"]
+    trace_id: TraceId
+    task_id: TaskId
+    request_id: RequestId | None = None
+    step_id: Identifier
     capability_id: str
-    status: StepStatus
-    message: str
-    error_code: str | None = None
+    status: StepState
+    reason: str
+    error_code: ErrorCode | None = None
 
 
 class ExecutionReport(Contract):
-    plan_id: str
-    task_id: str
-    trace_id: str
+    plan_id: PlanId
+    task_id: TaskId
+    trace_id: TraceId
     status: Literal["completed", "failed", "waiting_approval"]
     steps: dict[str, StepRecord]
     events: list[TraceEvent]

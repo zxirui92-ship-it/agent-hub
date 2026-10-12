@@ -1,29 +1,30 @@
 {
-  "plan_id": "operations-week-41",
-  "task_id": "b5397a6b-03e1-4e7c-94de-fd0ae69445ec",
-  "trace_id": "a0757b77-adf4-48ab-83ce-b9cf66a39572",
+  "plan_id": "plan-20261012-003",
+  "task_id": "task-000000000001",
+  "trace_id": "trace-0000000000000001",
   "status": "completed",
   "steps": {
-    "promotion": {
-      "step_id": "promotion",
+    "s3": {
+      "step_id": "s3",
       "capability_id": "m5.promotion_plan",
       "depends_on": [
-        "report"
+        "s2"
       ],
+      "request_id": "req-fb31365d2250",
       "status": "completed",
       "inputs": {
-        "report": "# 2026-W41 运营周报（Mock）\n销售额：120000.0；订单：800；转化率：0.032。\n异常：转化率环比下降 0.5 个百分点。"
+        "report": "# 2026-W41 运营周报（Mock）\n销售额：12000000 分；订单：800；转化率：0.032。\n异常：转化率环比下降 0.5 个百分点。"
       },
       "result": {
-        "request_id": "dde5a667-f9db-40fb-b68c-81f29da54ba2",
-        "task_id": "b5397a6b-03e1-4e7c-94de-fd0ae69445ec",
-        "trace_id": "a0757b77-adf4-48ab-83ce-b9cf66a39572",
+        "request_id": "req-fb31365d2250",
+        "task_id": "task-000000000001",
+        "trace_id": "trace-0000000000000001",
         "capability_id": "m5.promotion_plan",
         "status": "completed",
         "data": {
-          "proposal": "Mock 方案：针对转化下降，进行老客优惠券小规模试投。",
-          "source_report": "# 2026-W41 运营周报（Mock）\n销售额：120000.0；订单：800；转化率：0.032。\n异常：转化率环比下降 0.5 个百分点。",
-          "responsibilities": {
+          "plan_markdown": "Mock 方案：针对转化下降，进行老客优惠券小规模试投。",
+          "source_report": "# 2026-W41 运营周报（Mock）\n销售额：12000000 分；订单：800；转化率：0.032。\n异常：转化率环比下降 0.5 个百分点。",
+          "roles": {
             "product": "选品",
             "operations": "配置优惠券",
             "data": "观察转化率",
@@ -37,32 +38,37 @@
       "error": null,
       "reason": null
     },
-    "fusion": {
-      "step_id": "fusion",
+    "s1": {
+      "step_id": "s1",
       "capability_id": "m6.data_fusion",
       "depends_on": [],
+      "request_id": "req-d1a2a6306192",
       "status": "completed",
       "inputs": {
         "week": "2026-W41"
       },
       "result": {
-        "request_id": "97ae6853-f5a3-4dcd-86ad-106a8853e33e",
-        "task_id": "b5397a6b-03e1-4e7c-94de-fd0ae69445ec",
-        "trace_id": "a0757b77-adf4-48ab-83ce-b9cf66a39572",
+        "request_id": "req-d1a2a6306192",
+        "task_id": "task-000000000001",
+        "trace_id": "trace-0000000000000001",
         "capability_id": "m6.data_fusion",
         "status": "completed",
         "data": {
           "fused_data": {
             "week": "2026-W41",
-            "revenue": 120000.0,
-            "orders": 800,
+            "revenue_amount": 12000000,
+            "order_count": 800,
             "conversion_rate": 0.032,
             "anomaly": "转化率环比下降 0.5 个百分点"
           },
-          "sources": [
-            "orders_fixture",
-            "behavior_fixture",
-            "marketing_fixture"
+          "field_definitions": [
+            "revenue_amount：销售额，整数分",
+            "order_count：订单数量",
+            "conversion_rate：转化率"
+          ],
+          "update_events": [
+            "Mock 订单读取",
+            "Mock 行为与营销数据融合"
           ]
         },
         "error": null,
@@ -72,30 +78,36 @@
       "error": null,
       "reason": null
     },
-    "report": {
-      "step_id": "report",
+    "s2": {
+      "step_id": "s2",
       "capability_id": "m3.weekly_report",
       "depends_on": [
-        "fusion"
+        "s1"
       ],
+      "request_id": "req-17232883e17d",
       "status": "completed",
       "inputs": {
         "fused_data": {
           "week": "2026-W41",
-          "revenue": 120000.0,
-          "orders": 800,
+          "revenue_amount": 12000000,
+          "order_count": 800,
           "conversion_rate": 0.032,
           "anomaly": "转化率环比下降 0.5 个百分点"
         }
       },
       "result": {
-        "request_id": "5cb016ef-1be6-4fc0-a676-f1f143765759",
-        "task_id": "b5397a6b-03e1-4e7c-94de-fd0ae69445ec",
-        "trace_id": "a0757b77-adf4-48ab-83ce-b9cf66a39572",
+        "request_id": "req-17232883e17d",
+        "task_id": "task-000000000001",
+        "trace_id": "trace-0000000000000001",
         "capability_id": "m3.weekly_report",
         "status": "completed",
         "data": {
-          "report_markdown": "# 2026-W41 运营周报（Mock）\n销售额：120000.0；订单：800；转化率：0.032。\n异常：转化率环比下降 0.5 个百分点。"
+          "week": "2026-W41",
+          "report_markdown": "# 2026-W41 运营周报（Mock）\n销售额：12000000 分；订单：800；转化率：0.032。\n异常：转化率环比下降 0.5 个百分点。",
+          "steps": [
+            "读取经营视图（Mock）",
+            "生成固定格式报告（Mock）"
+          ]
         },
         "error": null,
         "waiting_reason": null,
@@ -108,109 +120,127 @@
   "events": [
     {
       "sequence": 1,
-      "timestamp": "2026-10-12T07:53:47.863094+00:00",
-      "trace_id": "a0757b77-adf4-48ab-83ce-b9cf66a39572",
-      "task_id": "b5397a6b-03e1-4e7c-94de-fd0ae69445ec",
-      "step_id": "promotion",
+      "ts": "2026-10-12T09:04:26.239550+00:00",
+      "level": "info",
+      "trace_id": "trace-0000000000000001",
+      "task_id": "task-000000000001",
+      "request_id": null,
+      "step_id": "s3",
       "capability_id": "m5.promotion_plan",
       "status": "pending",
-      "message": "已加入执行计划",
+      "reason": "已加入执行计划",
       "error_code": null
     },
     {
       "sequence": 2,
-      "timestamp": "2026-10-12T07:53:47.863114+00:00",
-      "trace_id": "a0757b77-adf4-48ab-83ce-b9cf66a39572",
-      "task_id": "b5397a6b-03e1-4e7c-94de-fd0ae69445ec",
-      "step_id": "fusion",
+      "ts": "2026-10-12T09:04:26.239589+00:00",
+      "level": "info",
+      "trace_id": "trace-0000000000000001",
+      "task_id": "task-000000000001",
+      "request_id": null,
+      "step_id": "s1",
       "capability_id": "m6.data_fusion",
       "status": "pending",
-      "message": "已加入执行计划",
+      "reason": "已加入执行计划",
       "error_code": null
     },
     {
       "sequence": 3,
-      "timestamp": "2026-10-12T07:53:47.863120+00:00",
-      "trace_id": "a0757b77-adf4-48ab-83ce-b9cf66a39572",
-      "task_id": "b5397a6b-03e1-4e7c-94de-fd0ae69445ec",
-      "step_id": "report",
+      "ts": "2026-10-12T09:04:26.239596+00:00",
+      "level": "info",
+      "trace_id": "trace-0000000000000001",
+      "task_id": "task-000000000001",
+      "request_id": null,
+      "step_id": "s2",
       "capability_id": "m3.weekly_report",
       "status": "pending",
-      "message": "已加入执行计划",
+      "reason": "已加入执行计划",
       "error_code": null
     },
     {
       "sequence": 4,
-      "timestamp": "2026-10-12T07:53:47.863132+00:00",
-      "trace_id": "a0757b77-adf4-48ab-83ce-b9cf66a39572",
-      "task_id": "b5397a6b-03e1-4e7c-94de-fd0ae69445ec",
-      "step_id": "fusion",
+      "ts": "2026-10-12T09:04:26.239630+00:00",
+      "level": "info",
+      "trace_id": "trace-0000000000000001",
+      "task_id": "task-000000000001",
+      "request_id": "req-d1a2a6306192",
+      "step_id": "s1",
       "capability_id": "m6.data_fusion",
       "status": "running",
-      "message": "解析输入并调用能力",
+      "reason": "解析输入并调用能力",
       "error_code": null
     },
     {
       "sequence": 5,
-      "timestamp": "2026-10-12T07:53:47.863335+00:00",
-      "trace_id": "a0757b77-adf4-48ab-83ce-b9cf66a39572",
-      "task_id": "b5397a6b-03e1-4e7c-94de-fd0ae69445ec",
-      "step_id": "fusion",
+      "ts": "2026-10-12T09:04:26.240080+00:00",
+      "level": "info",
+      "trace_id": "trace-0000000000000001",
+      "task_id": "task-000000000001",
+      "request_id": "req-d1a2a6306192",
+      "step_id": "s1",
       "capability_id": "m6.data_fusion",
       "status": "completed",
-      "message": "能力执行完成",
+      "reason": "能力执行完成",
       "error_code": null
     },
     {
       "sequence": 6,
-      "timestamp": "2026-10-12T07:53:47.863346+00:00",
-      "trace_id": "a0757b77-adf4-48ab-83ce-b9cf66a39572",
-      "task_id": "b5397a6b-03e1-4e7c-94de-fd0ae69445ec",
-      "step_id": "report",
+      "ts": "2026-10-12T09:04:26.240108+00:00",
+      "level": "info",
+      "trace_id": "trace-0000000000000001",
+      "task_id": "task-000000000001",
+      "request_id": "req-17232883e17d",
+      "step_id": "s2",
       "capability_id": "m3.weekly_report",
       "status": "running",
-      "message": "解析输入并调用能力",
+      "reason": "解析输入并调用能力",
       "error_code": null
     },
     {
       "sequence": 7,
-      "timestamp": "2026-10-12T07:53:47.863476+00:00",
-      "trace_id": "a0757b77-adf4-48ab-83ce-b9cf66a39572",
-      "task_id": "b5397a6b-03e1-4e7c-94de-fd0ae69445ec",
-      "step_id": "report",
+      "ts": "2026-10-12T09:04:26.240325+00:00",
+      "level": "info",
+      "trace_id": "trace-0000000000000001",
+      "task_id": "task-000000000001",
+      "request_id": "req-17232883e17d",
+      "step_id": "s2",
       "capability_id": "m3.weekly_report",
       "status": "completed",
-      "message": "能力执行完成",
+      "reason": "能力执行完成",
       "error_code": null
     },
     {
       "sequence": 8,
-      "timestamp": "2026-10-12T07:53:47.863483+00:00",
-      "trace_id": "a0757b77-adf4-48ab-83ce-b9cf66a39572",
-      "task_id": "b5397a6b-03e1-4e7c-94de-fd0ae69445ec",
-      "step_id": "promotion",
+      "ts": "2026-10-12T09:04:26.240338+00:00",
+      "level": "info",
+      "trace_id": "trace-0000000000000001",
+      "task_id": "task-000000000001",
+      "request_id": "req-fb31365d2250",
+      "step_id": "s3",
       "capability_id": "m5.promotion_plan",
       "status": "running",
-      "message": "解析输入并调用能力",
+      "reason": "解析输入并调用能力",
       "error_code": null
     },
     {
       "sequence": 9,
-      "timestamp": "2026-10-12T07:53:47.863601+00:00",
-      "trace_id": "a0757b77-adf4-48ab-83ce-b9cf66a39572",
-      "task_id": "b5397a6b-03e1-4e7c-94de-fd0ae69445ec",
-      "step_id": "promotion",
+      "ts": "2026-10-12T09:04:26.240483+00:00",
+      "level": "info",
+      "trace_id": "trace-0000000000000001",
+      "task_id": "task-000000000001",
+      "request_id": "req-fb31365d2250",
+      "step_id": "s3",
       "capability_id": "m5.promotion_plan",
       "status": "completed",
-      "message": "能力执行完成",
+      "reason": "能力执行完成",
       "error_code": null
     }
   ],
   "final_results": {
-    "promotion": {
-      "proposal": "Mock 方案：针对转化下降，进行老客优惠券小规模试投。",
-      "source_report": "# 2026-W41 运营周报（Mock）\n销售额：120000.0；订单：800；转化率：0.032。\n异常：转化率环比下降 0.5 个百分点。",
-      "responsibilities": {
+    "s3": {
+      "plan_markdown": "Mock 方案：针对转化下降，进行老客优惠券小规模试投。",
+      "source_report": "# 2026-W41 运营周报（Mock）\n销售额：12000000 分；订单：800；转化率：0.032。\n异常：转化率环比下降 0.5 个百分点。",
+      "roles": {
         "product": "选品",
         "operations": "配置优惠券",
         "data": "观察转化率",

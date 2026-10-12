@@ -9,17 +9,17 @@ from tests.mocks.agents import MOCK_TYPES, DataFusionMock, OrderTrackingMock, re
 SAMPLES = [
     {"question": "如何退货？"},
     {"order_id": "2025101234"},
-    {"fused_data": {"week": "2026-W41", "revenue": 120000.0, "orders": 800,
+    {"fused_data": {"week": "2026-W41", "revenue_amount": 12000000, "order_count": 800,
                     "conversion_rate": 0.032, "anomaly": "转化下降"}},
     {"query": "优惠政策"},
     {"report": "第 41 周转化下降，建议试投"},
     {"week": "2026-W41"},
-    {"order_id": "ORDER-LOW", "amount": 199, "reason": "退货"},
+    {"order_id": "order-low", "refund_amount": 19900, "reason": "退货"},
 ]
 
 
 def request_for(capability, payload):
-    return AgentRequest(request_id="req", task_id="task", trace_id="trace",
+    return AgentRequest(request_id="req-000000000001", task_id="task-000000000001", trace_id="trace-0000000000000001",
                         capability_id=capability, payload=payload)
 
 
@@ -30,14 +30,14 @@ def test_seven_mocks_registered_independently_callable_and_deterministic(registr
     assert isinstance(module, AgentModule)
     assert len(registry.list_capabilities()) == 7
     manifest = registry.get_manifest(capability)
-    validate_data(payload, manifest.input_schema, "TEST")
+    validate_data(payload, manifest.input_schema, "INVALID_INPUT")
     request = request_for(capability, payload)
     first = module.invoke(request)
     assert first == mock_type().invoke(request)
     assert first.status == "completed"
     assert first.data
-    assert first.trace_id == "trace" and first.task_id == "task"
-    validate_data(first.data, manifest.output_schema, "TEST")
+    assert first.trace_id == "trace-0000000000000001" and first.task_id == "task-000000000001"
+    validate_data(first.data, manifest.output_schema, "CONTRACT_MISMATCH")
 
 
 def test_duplicate_and_unknown_capabilities(registry):

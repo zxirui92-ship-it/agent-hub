@@ -1,3 +1,4 @@
+from common.errors import ErrorCode
 """Mock demo composition root. Core registry/validator/executor never import mocks."""
 import argparse
 import json
@@ -30,7 +31,7 @@ def render_report(report: ExecutionReport) -> str:
             lines.append(f"  错误码: {step.error.code}")
     lines.append("\n执行轨迹:")
     for event in report.events:
-        lines.append(f"  {event.sequence}. {event.step_id}: {event.status.value} — {event.message}")
+        lines.append(f"  {event.sequence}. {event.step_id}: {event.status.value} — {event.reason}")
     lines.append(f"\n最终结果（已完成叶子步骤）: {summary(report.final_results, 2000)}")
     return "\n".join(lines)
 
@@ -53,12 +54,12 @@ def main(argv: list[str] | None = None) -> int:
     if args.list_capabilities:
         print(json.dumps([m.model_dump() for m in registry.list_capabilities()], ensure_ascii=False, indent=2))
         return 0
-    task_id, trace_id = str(uuid4()), str(uuid4())
+    task_id, trace_id = f"task-{uuid4().hex[:12]}", f"trace-{uuid4().hex[:16]}"
     try:
         plan = json.loads(args.plan.read_text(encoding="utf-8-sig"))
         report = Executor(registry, args.max_steps).execute(plan, task_id=task_id, trace_id=trace_id)
     except (OSError, UnicodeError, json.JSONDecodeError) as exc:
-        error = HubError("INVALID_PLAN_FILE", str(exc)).detail(trace_id, task_id)
+        error = HubError(ErrorCode.INVALID_PLAN_FILE, str(exc)).detail(trace_id, task_id)
         print(error.model_dump_json(indent=2))
         return 2
     except HubError as exc:

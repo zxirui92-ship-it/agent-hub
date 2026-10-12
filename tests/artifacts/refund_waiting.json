@@ -1,28 +1,38 @@
 {
-  "plan_id": "order-refund-waiting",
-  "task_id": "e85d1ab2-5413-481a-a508-46b8c69715a4",
-  "trace_id": "8fcd3f4e-ba52-4ae0-be7a-8fc34c977fec",
+  "plan_id": "plan-20261012-004",
+  "task_id": "task-000000000001",
+  "trace_id": "trace-0000000000000001",
   "status": "waiting_approval",
   "steps": {
-    "order": {
-      "step_id": "order",
+    "s1": {
+      "step_id": "s1",
       "capability_id": "m2.order_tracking",
       "depends_on": [],
+      "request_id": "req-5d2045b50186",
       "status": "completed",
       "inputs": {
         "order_id": "2025101234"
       },
       "result": {
-        "request_id": "b1b001c8-2702-452c-9f76-42c3e862819f",
-        "task_id": "e85d1ab2-5413-481a-a508-46b8c69715a4",
-        "trace_id": "8fcd3f4e-ba52-4ae0-be7a-8fc34c977fec",
+        "request_id": "req-5d2045b50186",
+        "task_id": "task-000000000001",
+        "trace_id": "trace-0000000000000001",
         "capability_id": "m2.order_tracking",
         "status": "completed",
         "data": {
           "order_id": "2025101234",
-          "amount": 699.0,
+          "order_amount": 69900,
           "order_status": "paid",
-          "logistics_status": "in_transit"
+          "tracking_number": "mock-track-001",
+          "actions": [
+            "query_order",
+            "query_logistics"
+          ],
+          "observations": [
+            "Mock 订单金额 69900 分",
+            "Mock 物流运输中"
+          ],
+          "stop_reason": "查询完成"
         },
         "error": null,
         "waiting_reason": null,
@@ -31,103 +41,127 @@
       "error": null,
       "reason": null
     },
-    "refund": {
-      "step_id": "refund",
+    "s2": {
+      "step_id": "s2",
       "capability_id": "m7.refund_approval",
       "depends_on": [
-        "order"
+        "s1"
       ],
+      "request_id": "req-81161882d34a",
       "status": "waiting_approval",
       "inputs": {
         "order_id": "2025101234",
-        "amount": 699.0,
-        "reason": "未使用商品申请退款"
+        "reason": "未使用商品申请退款",
+        "refund_amount": 69900
       },
       "result": {
-        "request_id": "63f60c51-e26d-4762-b432-e9519b22e1f0",
-        "task_id": "e85d1ab2-5413-481a-a508-46b8c69715a4",
-        "trace_id": "8fcd3f4e-ba52-4ae0-be7a-8fc34c977fec",
+        "request_id": "req-81161882d34a",
+        "task_id": "task-000000000001",
+        "trace_id": "trace-0000000000000001",
         "capability_id": "m7.refund_approval",
         "status": "waiting_approval",
         "data": {
-          "application_id": "REFUND-2025101234",
-          "order_id": "2025101234",
-          "amount": 699.0,
-          "decision": "pending_review"
+          "request_id": "refund-3853b72dceb5",
+          "approval_status": "waiting_approval",
+          "node_trace": [
+            {
+              "node_name": "accept"
+            },
+            {
+              "node_name": "manual_review"
+            }
+          ],
+          "state_view": {
+            "order_id": "2025101234",
+            "order_amount": 69900,
+            "refund_amount": 69900
+          }
         },
         "error": null,
-        "waiting_reason": "金额超过 500，等待人工审核；本阶段不支持恢复。",
+        "waiting_reason": "金额超过 50000 分，等待人工审核；本阶段不支持恢复。",
         "continuation_token": null
       },
       "error": null,
-      "reason": "金额超过 500，等待人工审核；本阶段不支持恢复。"
+      "reason": "金额超过 50000 分，等待人工审核；本阶段不支持恢复。"
     }
   },
   "events": [
     {
       "sequence": 1,
-      "timestamp": "2026-10-12T07:53:48.416275+00:00",
-      "trace_id": "8fcd3f4e-ba52-4ae0-be7a-8fc34c977fec",
-      "task_id": "e85d1ab2-5413-481a-a508-46b8c69715a4",
-      "step_id": "order",
+      "ts": "2026-10-12T09:04:26.275190+00:00",
+      "level": "info",
+      "trace_id": "trace-0000000000000001",
+      "task_id": "task-000000000001",
+      "request_id": null,
+      "step_id": "s1",
       "capability_id": "m2.order_tracking",
       "status": "pending",
-      "message": "已加入执行计划",
+      "reason": "已加入执行计划",
       "error_code": null
     },
     {
       "sequence": 2,
-      "timestamp": "2026-10-12T07:53:48.416295+00:00",
-      "trace_id": "8fcd3f4e-ba52-4ae0-be7a-8fc34c977fec",
-      "task_id": "e85d1ab2-5413-481a-a508-46b8c69715a4",
-      "step_id": "refund",
+      "ts": "2026-10-12T09:04:26.275207+00:00",
+      "level": "info",
+      "trace_id": "trace-0000000000000001",
+      "task_id": "task-000000000001",
+      "request_id": null,
+      "step_id": "s2",
       "capability_id": "m7.refund_approval",
       "status": "pending",
-      "message": "已加入执行计划",
+      "reason": "已加入执行计划",
       "error_code": null
     },
     {
       "sequence": 3,
-      "timestamp": "2026-10-12T07:53:48.416305+00:00",
-      "trace_id": "8fcd3f4e-ba52-4ae0-be7a-8fc34c977fec",
-      "task_id": "e85d1ab2-5413-481a-a508-46b8c69715a4",
-      "step_id": "order",
+      "ts": "2026-10-12T09:04:26.275225+00:00",
+      "level": "info",
+      "trace_id": "trace-0000000000000001",
+      "task_id": "task-000000000001",
+      "request_id": "req-5d2045b50186",
+      "step_id": "s1",
       "capability_id": "m2.order_tracking",
       "status": "running",
-      "message": "解析输入并调用能力",
+      "reason": "解析输入并调用能力",
       "error_code": null
     },
     {
       "sequence": 4,
-      "timestamp": "2026-10-12T07:53:48.416469+00:00",
-      "trace_id": "8fcd3f4e-ba52-4ae0-be7a-8fc34c977fec",
-      "task_id": "e85d1ab2-5413-481a-a508-46b8c69715a4",
-      "step_id": "order",
+      "ts": "2026-10-12T09:04:26.275896+00:00",
+      "level": "info",
+      "trace_id": "trace-0000000000000001",
+      "task_id": "task-000000000001",
+      "request_id": "req-5d2045b50186",
+      "step_id": "s1",
       "capability_id": "m2.order_tracking",
       "status": "completed",
-      "message": "能力执行完成",
+      "reason": "能力执行完成",
       "error_code": null
     },
     {
       "sequence": 5,
-      "timestamp": "2026-10-12T07:53:48.416480+00:00",
-      "trace_id": "8fcd3f4e-ba52-4ae0-be7a-8fc34c977fec",
-      "task_id": "e85d1ab2-5413-481a-a508-46b8c69715a4",
-      "step_id": "refund",
+      "ts": "2026-10-12T09:04:26.275925+00:00",
+      "level": "info",
+      "trace_id": "trace-0000000000000001",
+      "task_id": "task-000000000001",
+      "request_id": "req-81161882d34a",
+      "step_id": "s2",
       "capability_id": "m7.refund_approval",
       "status": "running",
-      "message": "解析输入并调用能力",
+      "reason": "解析输入并调用能力",
       "error_code": null
     },
     {
       "sequence": 6,
-      "timestamp": "2026-10-12T07:53:48.416618+00:00",
-      "trace_id": "8fcd3f4e-ba52-4ae0-be7a-8fc34c977fec",
-      "task_id": "e85d1ab2-5413-481a-a508-46b8c69715a4",
-      "step_id": "refund",
+      "ts": "2026-10-12T09:04:26.276594+00:00",
+      "level": "info",
+      "trace_id": "trace-0000000000000001",
+      "task_id": "task-000000000001",
+      "request_id": "req-81161882d34a",
+      "step_id": "s2",
       "capability_id": "m7.refund_approval",
       "status": "waiting_approval",
-      "message": "金额超过 500，等待人工审核；本阶段不支持恢复。",
+      "reason": "金额超过 50000 分，等待人工审核；本阶段不支持恢复。",
       "error_code": null
     }
   ],

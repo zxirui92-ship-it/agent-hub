@@ -1,3 +1,4 @@
+from common.errors import ErrorCode
 from common.contracts import AgentModule, CapabilityManifest
 from hub_platform.errors import HubError
 from hub_platform.schema import check_schema
@@ -10,9 +11,9 @@ class CapabilityRegistry:
     def register(self, manifest: CapabilityManifest, module: AgentModule) -> None:
         manifest = CapabilityManifest.model_validate(manifest.model_dump())
         if manifest.capability_id in self._entries:
-            raise HubError("DUPLICATE_CAPABILITY", f"Already registered: {manifest.capability_id}")
+            raise HubError(ErrorCode.DUPLICATE_CAPABILITY, f"Already registered: {manifest.capability_id}")
         if not callable(getattr(module, "invoke", None)):
-            raise HubError("CONTRACT_MISMATCH", "Module must expose invoke(request)")
+            raise HubError(ErrorCode.CONTRACT_MISMATCH, "Module must expose invoke(request)")
         check_schema(manifest.input_schema)
         check_schema(manifest.output_schema)
         self._entries[manifest.capability_id] = (manifest.model_copy(deep=True), module)
@@ -28,5 +29,5 @@ class CapabilityRegistry:
 
     def _entry(self, capability_id: str) -> tuple[CapabilityManifest, AgentModule]:
         if capability_id not in self._entries:
-            raise HubError("UNKNOWN_CAPABILITY", f"Unknown capability: {capability_id}")
+            raise HubError(ErrorCode.UNKNOWN_CAPABILITY, f"Unknown capability: {capability_id}")
         return self._entries[capability_id]

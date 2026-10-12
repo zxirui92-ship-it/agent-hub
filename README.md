@@ -1,7 +1,7 @@
 # Agent Hub · 第一阶段编排底座
 
 候选契约 + Capability Registry + 七个确定性 Mock + 计划校验 + 顺序拓扑执行 + CLI。
-**当前公共契约是 v0.1 候选，尚未冻结。Mock 不是七种真实 Agent 架构的课程验收实现。**
+**当前公共契约是 v1.0 候选，尚未冻结。Mock 不是七种真实 Agent 架构的课程验收实现。**
 
 需求来源：`docs/requirement.md` 是用户重写的 PRD，`docs/original_assignment.md` 是原始课程作业，均原样保留。
 本轮范围以用户提供的第一阶段开发指令为准；本工程不调用 LLM、数据库、支付系统或联网工具。
@@ -12,7 +12,7 @@
 首次下载项目到其他环境时，使用 Python 3.10+：
 
 ```powershell
-Set-Location 'D:\agent 项目'
+Set-Location 'D:\模组\agent-hub'
 python -m venv .venv
 .\.venv\Scripts\python.exe -m pip install -r requirements.txt
 ```
@@ -57,12 +57,12 @@ CLI 退出码：`0` 完成，`1` 模块/执行失败，`2` 无效计划/输入�
 
 ```json
 {
-  "plan_id": "single-faq",
+  "plan_id": "plan-20261012-005",
   "goal": "了解退货政策",
   "steps": [
     {
-      "step_id": "faq",
-      "capability_id": "m1.faq",
+      "step_id": "s1",
+      "capability_id": "m1.faq_chat",
       "inputs": {"question": {"literal": "如何退货？"}}
     }
   ]
@@ -96,7 +96,7 @@ schema = {
     "required": ["answer"], "additionalProperties": False,
 }
 manifest = CapabilityManifest(
-    capability_id="team.answer", version="0.1.0-candidate", name="回答能力",
+    capability_id="team.answer", version="1.0", name="回答能力",
     description="返回业务回答", owner="模块负责人",
     input_schema={"type": "object", "properties": {}, "additionalProperties": False},
     output_schema=schema, preconditions=[], side_effects="read_only",
@@ -105,10 +105,10 @@ manifest = CapabilityManifest(
 registry = CapabilityRegistry()
 registry.register(manifest, MyAdapter())
 report = Executor(registry).execute({
-    "plan_id": "custom", "goal": "调用新能力",
-    "steps": [{"step_id": "answer", "capability_id": "team.answer"}],
+    "plan_id": "plan-20261012-006", "goal": "调用新能力",
+    "steps": [{"step_id": "s1", "capability_id": "team.answer"}],
 })
-assert report.final_results["answer"]["answer"] == "真实模块的业务输出"
+assert report.final_results["s1"]["answer"] == "真实模块的业务输出"
 ```
 
 替换现有能力：在新的注册表中为同一 `capability_id` 注册真实适配器和兼容 Manifest 即可。
@@ -126,7 +126,7 @@ assert report.final_results["answer"]["answer"] == "真实模块的业务输出"
 - `docs/phase1_delivery.md`：完整交付清单、验证结果、风险和下一阶段建议。
 - `tests/artifacts/`：本轮实际运行记录。
 
-本轮已验证 65 项测试通过。测试的临时目录限定为项目内 `.pytest_cache/tmp`，避免沙箱系统临时目录权限问题；pytest 会清理该专用测试临时目录。
+阶段 A 验证记录见 tests/artifacts/phase_a_pytest.txt。测试的临时目录限定为项目内 `.pytest_cache/tmp`，避免沙箱系统临时目录权限问题；pytest 会清理该专用测试临时目录。
 `requirements-tested.txt` 保存本次测试实际依赖版本；Python 3.10+ 是项目目标，本轮实际验证环境为 Windows Python 3.14.5。
 
 本轮未实现自然语言 Planner、真实 M1–M7、LangGraph 检查点、恢复、重试、超时、持久化、并发调度或前端。

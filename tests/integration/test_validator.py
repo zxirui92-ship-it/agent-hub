@@ -22,7 +22,7 @@ def test_duplicate_step(registry, load_plan):
     check_bad(registry, plan, "DUPLICATE_STEP")
 
 
-@pytest.mark.parametrize("dependency,code", [("missing", "INVALID_DEPENDENCY"), ("refund", "CYCLIC_DEPENDENCY")])
+@pytest.mark.parametrize("dependency,code", [("s99", "INVALID_DEPENDENCY"), ("s2", "CYCLIC_DEPENDENCY")])
 def test_bad_dependencies(registry, load_plan, dependency, code):
     plan = load_plan("refund_waiting")
     plan["steps"][0]["depends_on"] = [dependency]
@@ -31,22 +31,22 @@ def test_bad_dependencies(registry, load_plan, dependency, code):
 
 def test_duplicate_dependency(registry, load_plan):
     plan = load_plan("refund_waiting")
-    plan["steps"][1]["depends_on"] = ["order", "order"]
+    plan["steps"][1]["depends_on"] = ["s1", "s1"]
     check_bad(registry, plan, "INVALID_DEPENDENCY")
 
 
 @pytest.mark.parametrize("ref,code", [
-    ("order.data.missing", "INVALID_REFERENCE"),
-    ("order.data.amount.value", "INVALID_REFERENCE"),
-    ("missing.data.amount", "INVALID_REFERENCE"),
-    ("refund.data.amount", "INVALID_REFERENCE"),
-    ("order.data.order_id", "CONTRACT_MISMATCH"),
-    ("order.data.__class__", "INVALID_REFERENCE"),
+    ("s1.data.missing", "INVALID_REFERENCE"),
+    ("s1.data.order_amount.value", "INVALID_REFERENCE"),
+    ("s99.data.order_amount", "INVALID_REFERENCE"),
+    ("s2.data.order_amount", "INVALID_REFERENCE"),
+    ("s1.data.order_id", "CONTRACT_MISMATCH"),
+    ("s1.data.__class__", "INVALID_REFERENCE"),
     ("__import__('os')", "INVALID_PLAN"),
 ])
 def test_bad_output_bindings(registry, load_plan, ref, code):
     plan = load_plan("refund_waiting")
-    plan["steps"][1]["inputs"]["amount"] = {"ref": ref}
+    plan["steps"][1]["inputs"]["refund_amount"] = {"ref": ref}
     check_bad(registry, plan, code)
 
 
@@ -60,12 +60,12 @@ def test_existing_but_non_upstream_reference(registry, load_plan):
     ({"literal": "699"}, "INVALID_INPUT"),
     ({"literal": -1}, "INVALID_INPUT"),
     ({"literal": True}, "INVALID_INPUT"),
-    ({"literal": 10, "ref": "order.data.amount"}, "INVALID_PLAN"),
+    ({"literal": 10, "ref": "s1.data.order_amount"}, "INVALID_PLAN"),
     ({"expression": "1+1"}, "INVALID_PLAN"),
 ])
 def test_invalid_literal_or_binding(registry, load_plan, binding, code):
     plan = load_plan("refund_waiting")
-    plan["steps"][1]["inputs"]["amount"] = binding
+    plan["steps"][1]["inputs"]["refund_amount"] = binding
     check_bad(registry, plan, code)
 
 
@@ -80,7 +80,7 @@ def test_missing_and_extra_input(registry, load_plan):
 def test_step_limit_and_schema(registry, load_plan):
     check_bad(registry, load_plan("operations"), "EXECUTION_LIMIT", max_steps=2)
     assert PlanValidator(registry, 3).validate(load_plan("operations"))
-    for raw in ({}, {"plan_id": "empty", "goal": "empty", "steps": []}, None, []):
+    for raw in ({}, {"plan_id": "plan-20261012-001", "goal": "empty", "steps": []}, None, []):
         check_bad(registry, raw, "INVALID_PLAN")
     with pytest.raises(ValueError):
         PlanValidator(registry, 0)
@@ -88,5 +88,5 @@ def test_step_limit_and_schema(registry, load_plan):
 
 def test_self_cycle(registry, load_plan):
     plan = load_plan("refund_waiting")
-    plan["steps"][0]["depends_on"] = ["order"]
+    plan["steps"][0]["depends_on"] = ["s1"]
     check_bad(registry, plan, "CYCLIC_DEPENDENCY")

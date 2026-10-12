@@ -1,5 +1,12 @@
 {
-  "plan_id": "unknown-capability",
+  "plan_id": "plan-20261012-002",
   "goal": "展示计划在调用前被拒绝",
-  "steps": [{"step_id": "unknown", "capability_id": "unregistered.business", "inputs": {}}]
+  "steps": [
+    {
+      "step_id": "s1",
+      "capability_id": "unregistered.business",
+      "inputs": {},
+      "depends_on": []
+    }
+  ]
 }

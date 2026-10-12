@@ -1,6 +1,6 @@
-# ICD v0.1 候选接口（未冻结）
+# ICD v1.0 候选接口（未冻结）
 
-本文件描述第一阶段已实现的接口，供八人团队评审。来源为 PRD 第 5 章，未修改 PRD 业务验收标准。
+本文件描述命名迁移后已实现的接口，供八人团队评审。来源为 PRD 第 5 章，未修改 PRD 业务验收标准。
 类型真源是 `common/contracts.py`；模型可通过 `model_json_schema()` 导出。此处尚无冻结或通过评审的声明。
 
 ## 调用协议与兼容性影响
@@ -24,7 +24,7 @@ class AgentModule(Protocol):
 |error 改为 ErrorDetail|明确错误码和关联信息|旧字典需匹配结构|
 |waiting_reason 新增，等待时必填|说明挂起原因|等待结果要明确原因|
 |严格拒绝额外字段|避免接口拼写错误被忽略|扩展字段需评审后声明|
-|Step ID 限制为字母、数字、下划线、连字符|消除点路径歧义|使用其他字符的计划要重命名|
+|Step ID 限制为 s + 正整数|消除点路径歧义|迁移为 s1、s2 等，依赖关系保持不变|
 
 ## 数据模型
 
@@ -32,34 +32,34 @@ class AgentModule(Protocol):
 |---|---|
 |AgentRequest|request_id（每次调用唯一）、task_id（本次运行）、trace_id、capability_id、payload（业务 JSON 对象）、context（独立复制的关联元数据）|
 |AgentResult|同上四个关联字段；status 为 completed / failed / waiting_approval；data、error、waiting_reason、continuation_token|
-|ErrorDetail|code、message、trace_id、task_id、可选 step_id|
+|ErrorDetail|code（ErrorCode）、message、retryable、trace_id、task_id、可选 request_id/step_id|
 |CapabilityManifest|capability_id、version、name、description、input_schema、output_schema、preconditions、side_effects、execution_mode、supports_resume、owner|
 |ExecutionPlan|plan_id、goal、steps（至少一个步骤）|
 |ExecutionStep|step_id、capability_id、depends_on（默认空列表）、inputs（字段名到绑定）|
-|StepRecord|步骤 ID、能力、依赖、状态、已解析输入、原始 AgentResult、执行错误、原因|
+|StepRecord|步骤 ID、能力、依赖、request_id、状态、已解析输入、原始 AgentResult、执行错误、原因|
 |ExecutionReport|plan_id、task_id、trace_id、总体状态、所有 StepRecord、events、final_results|
 
 结果规则：仅失败必须携带 error；completed 和 waiting_approval 不得携带 error。仅等待允许 waiting_reason / continuation_token。
-错误 trace_id/task_id 必须与结果一致，Executor 还校验四个关联字段与原请求一致。
+错误 request_id/trace_id/task_id 必须与结果一致，Executor 还校验四个关联字段与原请求一致。
 失败可保留部分 data；只对 completed 和 waiting_approval 的 data 校验 Manifest 输出 Schema。
 违反输出契约时，步骤记为 failed，能合法解析的原始 AgentResult 仍保存在 StepRecord，最终结果不包含该步骤。
 
-`continuation_token` 是预留元数据，本轮所有 Mock 返回 null，`supports_resume=false`。Protocol 和 Executor 均无 resume。
+`continuation_token` 仅在 waiting_approval 且 supports_resume=true 时必填；不支持恢复时必须为空。所有 Mock supports_resume=false，不生成伪 token。此项是命名草案 §7.2 的明确修订，等待语义不变。Protocol 和 Executor 均无 resume。
 即使未来适配器声明支持恢复，当前 Executor 也不会调用恢复入口。
 
 ## Manifest 与 Schema 范围
 
-side_effects：read_only / simulated_write / requires_approval。execution_mode：immediate / may_wait。
+side_effects：read_only / writes_mock_state / requires_approval。execution_mode：immediate / may_wait。
 `preconditions` 是给开发者和未来 Planner 的业务描述，不是可执行谓词；实际字段条件用 Schema 表达。
 副作用字段是描述，不是本轮的权限系统。M7 表达审批业务语义，但 Mock 没有真实退款副作用。
-`owner` 当前为待分配的模块责任人；`version` 是候选版本，Registry 仅允许每个 capability_id 注册一次，不做多版本协商。
+`owner` 已按 naming_convention §3 填写真实负责人；`version` 为两段 1.0 候选版本，Registry 仅允许每个 capability_id 注册一次，不做多版本协商。
 
 支持 JSON Schema Draft 2020-12 的显式子集：
 
 - 每个节点必须有单一 `type`：object / array / string / number / integer / boolean / null。
 - 对象支持 properties、required，必须 additionalProperties=false；输入输出根必须 object。
 - 数组必须声明 items，可声明 minItems/maxItems。
-- 标量支持 enum、minimum/maximum、minLength/maxLength；元数据支持 title、description、$schema。
+- 标量支持 enum、minimum/maximum、minLength/maxLength/pattern；元数据支持 title、description、$schema。
 - 不支持 $ref、$defs、oneOf、anyOf、allOf、类型联合、动态属性、布尔 Schema 或远程引用。
 
 不支持的 Schema 在注册时明确拒绝，绝不静默降级。真实模块若由 Pydantic 自动生成嵌套 `$defs` Schema，需先转换为内联支持子集，或经团队评审扩展 Schema 处理器。
@@ -72,7 +72,7 @@ Pydantic 生成的 **ExecutionPlan 自身 Schema** 可用于下一阶段结构�
 ```
 
 ```json
-{"fused_data": {"ref": "fusion.data.fused_data"}}
+{"fused_data": {"ref": "s1.data.fused_data"}}
 ```
 
 字面值可以是任意符合目标业务 Schema 的 JSON 值，包括对象、数组和 null。
@@ -91,7 +91,7 @@ Pydantic 生成的 **ExecutionPlan 自身 Schema** 可用于下一阶段结构�
 等待的直接及传递下游保持 pending，有原因但不标记失败；其他无关分支继续执行。
 失败与等待同时存在时，总体状态为 failed，各步骤仍保留自己的等待状态。优先级为 failed > waiting_approval > completed。
 `final_results` 只收集已完成叶子步骤的业务 data；所有中间结果、部分失败输出及等待输出都保存在 `steps`。
-轨迹为有序事件：sequence、UTC ISO 时间、trace_id、task_id、step_id、capability_id、status、message、error_code。
+轨迹为有序事件：sequence、ts（带时区 ISO 8601）、level、trace_id、task_id、request_id、step_id、capability_id、status、reason、error_code。
 内存快照和 JSON 报告是观察数据，不是可导入恢复的检查点。
 
 ## 错误约定
@@ -112,3 +112,19 @@ Pydantic 生成的 **ExecutionPlan 自身 Schema** 可用于下一阶段结构�
 
 代码内的配置和计划异常为 HubError（code、message、可选 step_id）；CLI 转为带 task_id/trace_id 的 ErrorDetail。
 Executor 只在适配器 `invoke` 边界捕获未知 Exception，其余错误按具体类型处理；不会伪造成功或静默忽略。
+
+
+## 本次迁移与类型细则
+
+命名基线来自 PR #1 的 docs/unify-naming-convention-v1（e4c8b87），无需合并该 PR。最新命名与必要修订集中在 naming_convention.md；历史 PRD 的候选命名由其覆盖，业务职责不变。
+
+- m1.faq_chat 替代旧 ID，不保留别名；StepState 替代 StepStatus，状态字面量不变。
+- task_id=task-12hex、request_id=req-12hex、trace_id=trace-16hex；小写。plan_id=plan-YYYYMMDD-NNN，step_id=sN，输入引用同步迁移。
+- 金额全部为 JSON/Python 整数分，拒绝浮点数（包括 50000.0）与布尔值；M6 revenue_amount/order_count 替代 revenue/orders。
+- M2/M7 共用 data/fixtures/order_basic.json；Mock 仅模拟整单退款，refund_amount 与订单金额不同即 INVALID_INPUT，不能由 Planner 降低金额绕过审核。
+- M7.data.request_id 是 refund- 前缀业务申请号，外层 request_id 是模块调用号。waiting_approval 时无恢复能力、无 token；下游阻塞但独立分支继续。
+- 公共 data 保持对象；各模块核心输出字段和类型见 naming_convention §10.3。M4 result 为字符串，与 Skill.run 返回类型一致。
+- TraceEvent 的 sequence/reason 是必要扩展；旧 timestamp/message 改为 ts/reason。事件 request_id 与实际步骤调用关联。
+- Registry 不硬编码七能力名单，允许新增测试能力及后续经评审的能力；七模块自身必须采用规定 ID。
+
+公共契约和业务 Schema 同步更新，未经团队正式冻结；没有旧字段适配层。
