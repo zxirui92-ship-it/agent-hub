@@ -1,0 +1,227 @@
+{
+  "model": "deepseek-flash",
+  "live_model_calls_in_tests": 8,
+  "business_execution": "all Mock",
+  "cases": [
+    {
+      "test": "test_real_planner_semantics[single_order]",
+      "seconds": 0.919,
+      "stages": [
+        {
+          "stage": "planning_result",
+          "status": "ready",
+          "attempts": 1,
+          "plan": {
+            "plan_id": "plan-20261013-001",
+            "goal": "查询订单2025101234的物流状态。",
+            "steps": [
+              {
+                "step_id": "s1",
+                "capability_id": "m2.order_tracking",
+                "depends_on": [],
+                "inputs": {
+                  "order_id": {
+                    "literal": "2025101234"
+                  }
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "test": "test_real_planner_semantics[operations_promotion]",
+      "seconds": 4.609,
+      "stages": [
+        {
+          "stage": "planning_result",
+          "status": "ready",
+          "attempts": 1,
+          "plan": {
+            "plan_id": "plan-20261013-001",
+            "goal": "融合2026年第41周订单、行为和营销数据，先生成运营周报，再根据周报制定下周大促方案，预算10万元。",
+            "steps": [
+              {
+                "step_id": "s1",
+                "capability_id": "m6.data_fusion",
+                "depends_on": [],
+                "inputs": {
+                  "week": {
+                    "literal": "2026-W41"
+                  }
+                }
+              },
+              {
+                "step_id": "s2",
+                "capability_id": "m3.weekly_report",
+                "depends_on": [
+                  "s1"
+                ],
+                "inputs": {
+                  "fused_data": {
+                    "ref": "s1.data.fused_data"
+                  }
+                }
+              },
+              {
+                "step_id": "s3",
+                "capability_id": "m5.promotion_plan",
+                "depends_on": [
+                  "s1",
+                  "s2"
+                ],
+                "inputs": {
+                  "goal": {
+                    "literal": "基于2026年第41周运营周报，制定下周（2026年第42周）大促方案，预算10万元"
+                  },
+                  "week": {
+                    "literal": "2026-W42"
+                  },
+                  "budget_amount": {
+                    "literal": 10000000
+                  },
+                  "report_markdown": {
+                    "ref": "s2.data.report_markdown"
+                  },
+                  "fused_data": {
+                    "ref": "s1.data.fused_data"
+                  }
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "test": "test_real_planner_semantics[order_refund]",
+      "seconds": 1.542,
+      "stages": [
+        {
+          "stage": "planning_result",
+          "status": "ready",
+          "attempts": 1,
+          "plan": {
+            "plan_id": "plan-20261013-001",
+            "goal": "查询订单2025101234，然后按查询到的订单金额申请整单退款，退款原因是买错了。",
+            "steps": [
+              {
+                "step_id": "s1",
+                "capability_id": "m2.order_tracking",
+                "depends_on": [],
+                "inputs": {
+                  "order_id": {
+                    "literal": "2025101234"
+                  }
+                }
+              },
+              {
+                "step_id": "s2",
+                "capability_id": "m7.refund_approval",
+                "depends_on": [
+                  "s1"
+                ],
+                "inputs": {
+                  "order_id": {
+                    "ref": "s1.data.order_id"
+                  },
+                  "refund_amount": {
+                    "ref": "s1.data.order_amount"
+                  },
+                  "reason": {
+                    "literal": "买错了"
+                  }
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "test": "test_real_planner_semantics[gateway_code]",
+      "seconds": 1.733,
+      "stages": [
+        {
+          "stage": "planning_result",
+          "status": "ready",
+          "attempts": 1,
+          "plan": {
+            "plan_id": "plan-20261013-001",
+            "goal": "用Python写一个两个整数相加的函数，只返回代码，不要执行。",
+            "steps": [
+              {
+                "step_id": "s1",
+                "capability_id": "m4.capability_gateway",
+                "depends_on": [],
+                "inputs": {
+                  "query": {
+                    "literal": "用 Python 写一个函数，接收两个整数参数，返回它们的和；只输出代码，不要执行。"
+                  }
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "test": "test_real_planner_semantics[missing_order]",
+      "seconds": 1.468,
+      "stages": [
+        {
+          "stage": "planning_result",
+          "status": "needs_clarification",
+          "attempts": 1,
+          "plan": null
+        }
+      ]
+    },
+    {
+      "test": "test_real_planner_semantics[physical_action]",
+      "seconds": 1.699,
+      "stages": [
+        {
+          "stage": "planning_result",
+          "status": "unsupported",
+          "attempts": 1,
+          "plan": null
+        }
+      ]
+    },
+    {
+      "test": "test_real_planner_multiturn_clarification",
+      "seconds": 2.305,
+      "stages": [
+        {
+          "stage": "first_turn",
+          "status": "needs_clarification",
+          "attempts": 1,
+          "plan": null
+        },
+        {
+          "stage": "second_turn",
+          "status": "completed",
+          "attempts": 1,
+          "plan": {
+            "plan_id": "plan-20261013-002",
+            "goal": "帮我查一下订单物流，我还没有提供订单号。\n补充：订单号是2025101234。",
+            "steps": [
+              {
+                "step_id": "s1",
+                "capability_id": "m2.order_tracking",
+                "depends_on": [],
+                "inputs": {
+                  "order_id": {
+                    "literal": "2025101234"
+                  }
+                }
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

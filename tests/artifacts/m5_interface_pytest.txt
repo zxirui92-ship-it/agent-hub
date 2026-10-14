@@ -1,0 +1,7 @@
+Date: 2026-10-13 (Asia/Tokyo)
+Working directory: D:\模组\agent-hub
+Command: .\.venv\Scripts\python.exe -m pytest -q --basetemp=.pytest_cache/m5-full-regression-tmp
+Result: 206 passed, 8 skipped in 10.86s
+SKIPPED [5] tests/live/test_m4_live.py:19: Live API tests require --run-live and M4_RUN_LIVE_TESTS=1
+SKIPPED [3] tests/live/test_m4_live.py:35: Live API tests require --run-live and M4_RUN_LIVE_TESTS=1
+M5 model calls: FakeLLM/injected responses only. No external API calls made.

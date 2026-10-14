@@ -1,0 +1,15 @@
+........................................................................ [ 18%]
+........................................................................ [ 36%]
+................................................ssssssssssssssssssssss.. [ 54%]
+........................................................................ [ 73%]
+........................................................................ [ 91%]
+.................................                                        [100%]
+=========================== short test summary info ===========================
+SKIPPED [3] tests\live\test_business_live.py: Live API tests require --run-live and BUSINESS_RUN_LIVE_TESTS=1
+SKIPPED [2] tests\live\test_business_live.py:56: Live API tests require --run-live and BUSINESS_RUN_LIVE_TESTS=1
+SKIPPED [2] tests\live\test_business_live.py:85: Live API tests require --run-live and BUSINESS_RUN_LIVE_TESTS=1
+SKIPPED [5] tests\live\test_m4_live.py:19: Live API tests require --run-live and M4_RUN_LIVE_TESTS=1
+SKIPPED [3] tests\live\test_m4_live.py:35: Live API tests require --run-live and M4_RUN_LIVE_TESTS=1
+SKIPPED [6] tests\live\test_planner_live.py:14: Live API tests require --run-live and HUB_RUN_LIVE_TESTS=1
+SKIPPED [1] tests\live\test_planner_live.py: Live API tests require --run-live and HUB_RUN_LIVE_TESTS=1
+371 passed, 22 skipped in 58.88s

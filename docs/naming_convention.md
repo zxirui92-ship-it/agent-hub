@@ -117,6 +117,8 @@ Manifest 的 `version` 使用 `MAJOR.MINOR` 两段：
 
 示例：`"version": "1.0"`。
 
+2026-10-13 本地 M5 接入修订：M5 Manifest 升为 `2.0`（旧 Mock 的入参和 roles 类型发生破坏性变更），其他模块仍为 `1.0`。这不是团队远端的冻结记录，迁移说明见 `m5_interface_alignment.md`。
+
 ---
 
 ## 5. 工具（Tool）命名
@@ -323,11 +325,13 @@ ErrorDetail 还包含 trace_id、task_id、可选 request_id/step_id。模块失
 | `m6.data_fusion`        | `fused_data`、`field_definitions`、`update_events`                                   |
 | `m7.refund_approval`    | `request_id`、`approval_status`、`node_trace`、`state_view`                           |
 
-结果类型统一：M1 两字段为 str；M2 标识/状态/追踪号/终止原因为 str，actions/observations 为 list[str]；M3 week/report_markdown 为 str、steps 为 list[str]；M4 三字段均为 str（result 可为 Skill 的 JSON 文本）；M5 plan_markdown 为 str、roles 为四角色对象；M6 fused_data 为对象、field_definitions/update_events 为 list[str]；M7 request_id/approval_status 为 str、node_trace 为含 node_name 的对象数组、state_view 为对象。
+结果类型统一：M1 两字段为 str；M2 标识/状态/追踪号/终止原因为 str，actions/observations 为 list[str]；M3 week/report_markdown 为 str、steps 为对象数组，每项含 step_id/description/status/result_summary/duration_ms（业务契约 2.0）；M4 三字段均为 str（result 可为 Skill 的 JSON 文本）；M5 plan_markdown 为 str、roles 为四角色数组，每项含 role/contribution/rationale，角色值为 product/operation/data/service；M6 fused_data 为对象、field_definitions/update_events 为 list[str]；M7 request_id/approval_status 为 str、node_trace 为含 node_name 的对象数组、state_view 为对象。
 
-M2 补充 order_amount（整数分）；M7 本阶段仅模拟整单退款，refund_amount 必须等于共享订单事实的 order_amount，防止通过伪造小金额绕过 50000 分阈值；部分退款不在当前 Mock 范围。M7.data.request_id 是 refund- 前缀的退款申请 ID，AgentResult.request_id 是 req- 前缀的模块调用 ID，二者不得混用。
+M2 补充 order_amount（整数分）；M7 真实流程和 Mock 都使用本地订单样例，仅支持整单退款，refund_amount 必须等于共享订单事实的 order_amount；部分退款和真实打款不在当前范围。M7.data.request_id 是 refund- 前缀的退款申请 ID，AgentResult.request_id 是 req- 前缀的模块调用 ID，二者不得混用。M7 业务契约 2.0 的 approval_status 为 approved/rejected/waiting_approval，内部尚未审核的状态为 pending；真实模块支持同进程 token 恢复，Mock 不支持。
 
 各模块 `output_schema` **必须**覆盖上表字段，名字不得改动 —— 这是平台 Plan 中 `ref` 表达式能通过校验的前提。
+
+2026-10-14 接入补充：M1/M2 的 1.1 Manifest 分别增加可选 session_id/query，原有必填输入和输出不变。M6 保持 1.0 的平面经营视图；真实 observations（M2）和 update_events（M6）仍为 list[str]，每项允许是可解析的 JSON 文本。M6 的 revenue_amount 指样例源 gmv_amount（成交金额），不是会计收入；conversion_rate 为 0–1 比率，不能与百分数混用。缺少营销实绩/完整漏斗时须明确缺口，不能以预算计算 ROI。具体业务 Schema 集中于 common/customer_contract.py 与 common/fusion_contract.py，并由 Mock 和真实模块共享。
 
 ---
 
@@ -338,7 +342,7 @@ M2 补充 order_amount（整数分）；M7 本阶段仅模拟整单退款，refu
 | `task_id`            | `task-{12位小写hex}`        | 平台入口        | 一次用户任务    |
 | `request_id`         | `req-{12位小写hex}`         | 平台 Executor | 一次模块调用    |
 | `trace_id`           | `trace-{16位小写hex}`       | 平台入口，全链路透传  | 一次链路追踪    |
-| `session_id`         | `sess-{12位小写hex}`        | M1 会话层      | 一段多轮会话    |
+| `session_id`         | `sess-{12位小写hex}`        | 平台会话层或独立 M1 入口 | 一段多轮会话    |
 | `plan_id`            | `plan-{yyyyMMdd}-{3位序号}` | 平台 Planner  | 一份执行计划    |
 | `step_id`            | `s{序号}`                  | 平台 Planner  | 计划内唯一     |
 | `continuation_token` | 不透明字符串，`cont-{16位小写hex}` | 支持恢复的模块（M7） | 一次挂起-恢复配对 |
@@ -360,6 +364,10 @@ M2 补充 order_amount（整数分）；M7 本阶段仅模拟整单退款，refu
 `ts`、`level`、`trace_id`、`task_id`、`request_id`、`capability_id`、`step_id`、`module`、`status`、`tool_name`、`node_name`、`error_code`、`duration_ms`、`iteration`
 
 平台 TraceEvent 额外保留 sequence（事件顺序）和 reason（公开状态说明），不能删除必要诊断信息。request_id 在步骤实际开始处理前为空，随后与 StepRecord 和 AgentResult 一致。平台事件不伪装为 m1–m7 的内部 module 日志。ts 是带时区的 ISO 8601。
+
+模块诊断允许扩展 event/actions/mode，以及 M2 的 round/action/decision_summary/result、M6 黑板的 key/author。这些记录表示公开选择依据与工具事实，不输出隐藏推理。所有模块日志仍携带顶层关联 ID、ts 和 level；不据此修改平台 TraceEvent 的结构。
+
+M5 内部消息事件额外使用 role 表达四角色及 aggregator；其 step_id 是模块内部步骤（s1–s4、agg），通过 request_id 与平台步骤对应，不作为跨模块 ExecutionPlan 的步骤 ID。
 
 
 **约束**：
@@ -497,6 +505,7 @@ tests/                      # 测试
 
 | 版本 | 日期 | 变更内容 | 负责人 |
 | --- | --- | --- | --- |
+| v1.2 | 2026-10-14 | M1/M2 可选输入和会话 ID 来源、M6 数据口径及 JSON 文本事件；共享业务 Schema 和模块诊断字段说明 | 本轮接入 |
 | v1.1 | 2026-10-12 | 本轮用户授权迁移：修正 ICD 事实、关联字段、错误码、无恢复例外、Skill 特例、类型与状态边界、金额事实和日志扩展；候选契约仍待团队冻结 | 本轮开发 |
 | v1.0 | 2026-10-12 | 首版草案：确立模块代号、能力 ID 清单、状态词表、错误码表、字段与日志命名 | 待指定 |
 

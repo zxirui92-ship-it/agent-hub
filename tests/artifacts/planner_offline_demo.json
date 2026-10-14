@@ -1,0 +1,1457 @@
+{
+  "backend": "scripted planner responses + deterministic business mocks",
+  "semantic_accuracy_measured": false,
+  "external_api_calls": 0,
+  "turns": [
+    {
+      "session_id": "sess-fe65fb146ba6",
+      "task_id": "task-4a85dda7726c",
+      "trace_id": "trace-c6fff69e96f14570",
+      "status": "needs_clarification",
+      "message": "请提供订单号。",
+      "plan": null,
+      "report": null,
+      "error": null,
+      "planning_attempts": [
+        {
+          "number": 1,
+          "status": "accepted",
+          "error_code": null,
+          "message": null
+        }
+      ]
+    },
+    {
+      "session_id": "sess-fe65fb146ba6",
+      "task_id": "task-4a85dda7726c",
+      "trace_id": "trace-c6fff69e96f14570",
+      "status": "completed",
+      "message": "执行完成，结果见各步骤与最终输出。",
+      "plan": {
+        "plan_id": "plan-20261013-002",
+        "goal": "查一下我的订单物流\n补充：2025101234",
+        "steps": [
+          {
+            "step_id": "s1",
+            "capability_id": "m2.order_tracking",
+            "depends_on": [],
+            "inputs": {
+              "order_id": {
+                "literal": "2025101234"
+              }
+            }
+          }
+        ]
+      },
+      "report": {
+        "plan_id": "plan-20261013-002",
+        "task_id": "task-4a85dda7726c",
+        "trace_id": "trace-c6fff69e96f14570",
+        "status": "completed",
+        "steps": {
+          "s1": {
+            "step_id": "s1",
+            "capability_id": "m2.order_tracking",
+            "depends_on": [],
+            "request_id": "req-134a6d82e27c",
+            "status": "completed",
+            "inputs": {
+              "order_id": "2025101234"
+            },
+            "result": {
+              "request_id": "req-134a6d82e27c",
+              "task_id": "task-4a85dda7726c",
+              "trace_id": "trace-c6fff69e96f14570",
+              "capability_id": "m2.order_tracking",
+              "status": "completed",
+              "data": {
+                "order_id": "2025101234",
+                "order_amount": 69900,
+                "order_status": "paid",
+                "tracking_number": "mock-track-001",
+                "actions": [
+                  "query_order",
+                  "query_logistics"
+                ],
+                "observations": [
+                  "Mock 订单金额 69900 分",
+                  "Mock 物流运输中"
+                ],
+                "stop_reason": "查询完成"
+              },
+              "error": null,
+              "waiting_reason": null,
+              "continuation_token": null
+            },
+            "error": null,
+            "reason": null
+          }
+        },
+        "events": [
+          {
+            "sequence": 1,
+            "ts": "2026-10-13T02:03:59.671539+00:00",
+            "level": "info",
+            "trace_id": "trace-c6fff69e96f14570",
+            "task_id": "task-4a85dda7726c",
+            "request_id": null,
+            "step_id": "s1",
+            "capability_id": "m2.order_tracking",
+            "status": "pending",
+            "reason": "已加入执行计划",
+            "error_code": null
+          },
+          {
+            "sequence": 2,
+            "ts": "2026-10-13T02:03:59.671592+00:00",
+            "level": "info",
+            "trace_id": "trace-c6fff69e96f14570",
+            "task_id": "task-4a85dda7726c",
+            "request_id": "req-134a6d82e27c",
+            "step_id": "s1",
+            "capability_id": "m2.order_tracking",
+            "status": "running",
+            "reason": "解析输入并调用能力",
+            "error_code": null
+          },
+          {
+            "sequence": 3,
+            "ts": "2026-10-13T02:03:59.672380+00:00",
+            "level": "info",
+            "trace_id": "trace-c6fff69e96f14570",
+            "task_id": "task-4a85dda7726c",
+            "request_id": "req-134a6d82e27c",
+            "step_id": "s1",
+            "capability_id": "m2.order_tracking",
+            "status": "completed",
+            "reason": "能力执行完成",
+            "error_code": null
+          }
+        ],
+        "final_results": {
+          "s1": {
+            "order_id": "2025101234",
+            "order_amount": 69900,
+            "order_status": "paid",
+            "tracking_number": "mock-track-001",
+            "actions": [
+              "query_order",
+              "query_logistics"
+            ],
+            "observations": [
+              "Mock 订单金额 69900 分",
+              "Mock 物流运输中"
+            ],
+            "stop_reason": "查询完成"
+          }
+        }
+      },
+      "error": null,
+      "planning_attempts": [
+        {
+          "number": 1,
+          "status": "accepted",
+          "error_code": null,
+          "message": null
+        }
+      ]
+    },
+    {
+      "session_id": "sess-fe65fb146ba6",
+      "task_id": "task-1322785ace68",
+      "trace_id": "trace-7f3331d197b1425f",
+      "status": "completed",
+      "message": "执行完成，结果见各步骤与最终输出。",
+      "plan": {
+        "plan_id": "plan-20261013-003",
+        "goal": "分析2026年第41周经营数据，生成周报并制定大促方案",
+        "steps": [
+          {
+            "step_id": "s3",
+            "capability_id": "m5.promotion_plan",
+            "depends_on": [
+              "s2"
+            ],
+            "inputs": {
+              "report_markdown": {
+                "ref": "s2.data.report_markdown"
+              },
+              "goal": {
+                "literal": "根据第 41 周经营分析制定下周大促方案"
+              },
+              "fused_data": {
+                "ref": "s1.data.fused_data"
+              }
+            }
+          },
+          {
+            "step_id": "s1",
+            "capability_id": "m6.data_fusion",
+            "depends_on": [],
+            "inputs": {
+              "week": {
+                "literal": "2026-W41"
+              }
+            }
+          },
+          {
+            "step_id": "s2",
+            "capability_id": "m3.weekly_report",
+            "depends_on": [
+              "s1"
+            ],
+            "inputs": {
+              "fused_data": {
+                "ref": "s1.data.fused_data"
+              }
+            }
+          }
+        ]
+      },
+      "report": {
+        "plan_id": "plan-20261013-003",
+        "task_id": "task-1322785ace68",
+        "trace_id": "trace-7f3331d197b1425f",
+        "status": "completed",
+        "steps": {
+          "s3": {
+            "step_id": "s3",
+            "capability_id": "m5.promotion_plan",
+            "depends_on": [
+              "s2"
+            ],
+            "request_id": "req-f838130543f0",
+            "status": "completed",
+            "inputs": {
+              "report_markdown": "# 2026-W41 运营周报（Mock）\n销售额：12000000 分；订单：800；转化率：0.032。\n异常：转化率环比下降 0.5 个百分点。",
+              "goal": "根据第 41 周经营分析制定下周大促方案",
+              "fused_data": {
+                "week": "2026-W41",
+                "revenue_amount": 12000000,
+                "order_count": 800,
+                "conversion_rate": 0.032,
+                "anomaly": "转化率环比下降 0.5 个百分点"
+              }
+            },
+            "result": {
+              "request_id": "req-f838130543f0",
+              "task_id": "task-1322785ace68",
+              "trace_id": "trace-7f3331d197b1425f",
+              "capability_id": "m5.promotion_plan",
+              "status": "completed",
+              "data": {
+                "plan_markdown": "# Mock 大促方案：根据第 41 周经营分析制定下周大促方案\n依据：# 2026-W41 运营周报（Mock）\n销售额：12000000 分；订单：800；转化率：0.032。\n异常：转化率环比下降 0.5 个百分点。\n固定测试建议：小规模优惠券试投。",
+                "roles": [
+                  {
+                    "role": "product",
+                    "contribution": "选品",
+                    "rationale": "Mock 固定测试依据"
+                  },
+                  {
+                    "role": "operation",
+                    "contribution": "配置优惠券",
+                    "rationale": "Mock 固定测试依据"
+                  },
+                  {
+                    "role": "data",
+                    "contribution": "观察转化率",
+                    "rationale": "Mock 固定测试依据"
+                  },
+                  {
+                    "role": "service",
+                    "contribution": "发布政策 FAQ",
+                    "rationale": "Mock 固定测试依据"
+                  }
+                ]
+              },
+              "error": null,
+              "waiting_reason": null,
+              "continuation_token": null
+            },
+            "error": null,
+            "reason": null
+          },
+          "s1": {
+            "step_id": "s1",
+            "capability_id": "m6.data_fusion",
+            "depends_on": [],
+            "request_id": "req-19c82907be4a",
+            "status": "completed",
+            "inputs": {
+              "week": "2026-W41"
+            },
+            "result": {
+              "request_id": "req-19c82907be4a",
+              "task_id": "task-1322785ace68",
+              "trace_id": "trace-7f3331d197b1425f",
+              "capability_id": "m6.data_fusion",
+              "status": "completed",
+              "data": {
+                "fused_data": {
+                  "week": "2026-W41",
+                  "revenue_amount": 12000000,
+                  "order_count": 800,
+                  "conversion_rate": 0.032,
+                  "anomaly": "转化率环比下降 0.5 个百分点"
+                },
+                "field_definitions": [
+                  "revenue_amount：销售额，整数分",
+                  "order_count：订单数量",
+                  "conversion_rate：转化率"
+                ],
+                "update_events": [
+                  "Mock 订单读取",
+                  "Mock 行为与营销数据融合"
+                ]
+              },
+              "error": null,
+              "waiting_reason": null,
+              "continuation_token": null
+            },
+            "error": null,
+            "reason": null
+          },
+          "s2": {
+            "step_id": "s2",
+            "capability_id": "m3.weekly_report",
+            "depends_on": [
+              "s1"
+            ],
+            "request_id": "req-17d218389b44",
+            "status": "completed",
+            "inputs": {
+              "fused_data": {
+                "week": "2026-W41",
+                "revenue_amount": 12000000,
+                "order_count": 800,
+                "conversion_rate": 0.032,
+                "anomaly": "转化率环比下降 0.5 个百分点"
+              }
+            },
+            "result": {
+              "request_id": "req-17d218389b44",
+              "task_id": "task-1322785ace68",
+              "trace_id": "trace-7f3331d197b1425f",
+              "capability_id": "m3.weekly_report",
+              "status": "completed",
+              "data": {
+                "week": "2026-W41",
+                "report_markdown": "# 2026-W41 运营周报（Mock）\n销售额：12000000 分；订单：800；转化率：0.032。\n异常：转化率环比下降 0.5 个百分点。",
+                "steps": [
+                  "读取经营视图（Mock）",
+                  "生成固定格式报告（Mock）"
+                ]
+              },
+              "error": null,
+              "waiting_reason": null,
+              "continuation_token": null
+            },
+            "error": null,
+            "reason": null
+          }
+        },
+        "events": [
+          {
+            "sequence": 1,
+            "ts": "2026-10-13T02:03:59.674498+00:00",
+            "level": "info",
+            "trace_id": "trace-7f3331d197b1425f",
+            "task_id": "task-1322785ace68",
+            "request_id": null,
+            "step_id": "s3",
+            "capability_id": "m5.promotion_plan",
+            "status": "pending",
+            "reason": "已加入执行计划",
+            "error_code": null
+          },
+          {
+            "sequence": 2,
+            "ts": "2026-10-13T02:03:59.674511+00:00",
+            "level": "info",
+            "trace_id": "trace-7f3331d197b1425f",
+            "task_id": "task-1322785ace68",
+            "request_id": null,
+            "step_id": "s1",
+            "capability_id": "m6.data_fusion",
+            "status": "pending",
+            "reason": "已加入执行计划",
+            "error_code": null
+          },
+          {
+            "sequence": 3,
+            "ts": "2026-10-13T02:03:59.674516+00:00",
+            "level": "info",
+            "trace_id": "trace-7f3331d197b1425f",
+            "task_id": "task-1322785ace68",
+            "request_id": null,
+            "step_id": "s2",
+            "capability_id": "m3.weekly_report",
+            "status": "pending",
+            "reason": "已加入执行计划",
+            "error_code": null
+          },
+          {
+            "sequence": 4,
+            "ts": "2026-10-13T02:03:59.674532+00:00",
+            "level": "info",
+            "trace_id": "trace-7f3331d197b1425f",
+            "task_id": "task-1322785ace68",
+            "request_id": "req-19c82907be4a",
+            "step_id": "s1",
+            "capability_id": "m6.data_fusion",
+            "status": "running",
+            "reason": "解析输入并调用能力",
+            "error_code": null
+          },
+          {
+            "sequence": 5,
+            "ts": "2026-10-13T02:03:59.674732+00:00",
+            "level": "info",
+            "trace_id": "trace-7f3331d197b1425f",
+            "task_id": "task-1322785ace68",
+            "request_id": "req-19c82907be4a",
+            "step_id": "s1",
+            "capability_id": "m6.data_fusion",
+            "status": "completed",
+            "reason": "能力执行完成",
+            "error_code": null
+          },
+          {
+            "sequence": 6,
+            "ts": "2026-10-13T02:03:59.674743+00:00",
+            "level": "info",
+            "trace_id": "trace-7f3331d197b1425f",
+            "task_id": "task-1322785ace68",
+            "request_id": "req-17d218389b44",
+            "step_id": "s2",
+            "capability_id": "m3.weekly_report",
+            "status": "running",
+            "reason": "解析输入并调用能力",
+            "error_code": null
+          },
+          {
+            "sequence": 7,
+            "ts": "2026-10-13T02:03:59.675026+00:00",
+            "level": "info",
+            "trace_id": "trace-7f3331d197b1425f",
+            "task_id": "task-1322785ace68",
+            "request_id": "req-17d218389b44",
+            "step_id": "s2",
+            "capability_id": "m3.weekly_report",
+            "status": "completed",
+            "reason": "能力执行完成",
+            "error_code": null
+          },
+          {
+            "sequence": 8,
+            "ts": "2026-10-13T02:03:59.675043+00:00",
+            "level": "info",
+            "trace_id": "trace-7f3331d197b1425f",
+            "task_id": "task-1322785ace68",
+            "request_id": "req-f838130543f0",
+            "step_id": "s3",
+            "capability_id": "m5.promotion_plan",
+            "status": "running",
+            "reason": "解析输入并调用能力",
+            "error_code": null
+          },
+          {
+            "sequence": 9,
+            "ts": "2026-10-13T02:03:59.675443+00:00",
+            "level": "info",
+            "trace_id": "trace-7f3331d197b1425f",
+            "task_id": "task-1322785ace68",
+            "request_id": "req-f838130543f0",
+            "step_id": "s3",
+            "capability_id": "m5.promotion_plan",
+            "status": "completed",
+            "reason": "能力执行完成",
+            "error_code": null
+          }
+        ],
+        "final_results": {
+          "s3": {
+            "plan_markdown": "# Mock 大促方案：根据第 41 周经营分析制定下周大促方案\n依据：# 2026-W41 运营周报（Mock）\n销售额：12000000 分；订单：800；转化率：0.032。\n异常：转化率环比下降 0.5 个百分点。\n固定测试建议：小规模优惠券试投。",
+            "roles": [
+              {
+                "role": "product",
+                "contribution": "选品",
+                "rationale": "Mock 固定测试依据"
+              },
+              {
+                "role": "operation",
+                "contribution": "配置优惠券",
+                "rationale": "Mock 固定测试依据"
+              },
+              {
+                "role": "data",
+                "contribution": "观察转化率",
+                "rationale": "Mock 固定测试依据"
+              },
+              {
+                "role": "service",
+                "contribution": "发布政策 FAQ",
+                "rationale": "Mock 固定测试依据"
+              }
+            ]
+          }
+        }
+      },
+      "error": null,
+      "planning_attempts": [
+        {
+          "number": 1,
+          "status": "accepted",
+          "error_code": null,
+          "message": null
+        }
+      ]
+    },
+    {
+      "session_id": "sess-fe65fb146ba6",
+      "task_id": "task-551741122ad3",
+      "trace_id": "trace-a72ae08d6ef0447d",
+      "status": "waiting_approval",
+      "message": "任务等待人工审批，依赖步骤已挂起。",
+      "plan": {
+        "plan_id": "plan-20261013-004",
+        "goal": "查询订单2025101234并申请整单退款，原因是买错了",
+        "steps": [
+          {
+            "step_id": "s1",
+            "capability_id": "m2.order_tracking",
+            "depends_on": [],
+            "inputs": {
+              "order_id": {
+                "literal": "2025101234"
+              }
+            }
+          },
+          {
+            "step_id": "s2",
+            "capability_id": "m7.refund_approval",
+            "depends_on": [
+              "s1"
+            ],
+            "inputs": {
+              "order_id": {
+                "ref": "s1.data.order_id"
+              },
+              "reason": {
+                "literal": "未使用商品申请退款"
+              },
+              "refund_amount": {
+                "ref": "s1.data.order_amount"
+              }
+            }
+          }
+        ]
+      },
+      "report": {
+        "plan_id": "plan-20261013-004",
+        "task_id": "task-551741122ad3",
+        "trace_id": "trace-a72ae08d6ef0447d",
+        "status": "waiting_approval",
+        "steps": {
+          "s1": {
+            "step_id": "s1",
+            "capability_id": "m2.order_tracking",
+            "depends_on": [],
+            "request_id": "req-db5193d415de",
+            "status": "completed",
+            "inputs": {
+              "order_id": "2025101234"
+            },
+            "result": {
+              "request_id": "req-db5193d415de",
+              "task_id": "task-551741122ad3",
+              "trace_id": "trace-a72ae08d6ef0447d",
+              "capability_id": "m2.order_tracking",
+              "status": "completed",
+              "data": {
+                "order_id": "2025101234",
+                "order_amount": 69900,
+                "order_status": "paid",
+                "tracking_number": "mock-track-001",
+                "actions": [
+                  "query_order",
+                  "query_logistics"
+                ],
+                "observations": [
+                  "Mock 订单金额 69900 分",
+                  "Mock 物流运输中"
+                ],
+                "stop_reason": "查询完成"
+              },
+              "error": null,
+              "waiting_reason": null,
+              "continuation_token": null
+            },
+            "error": null,
+            "reason": null
+          },
+          "s2": {
+            "step_id": "s2",
+            "capability_id": "m7.refund_approval",
+            "depends_on": [
+              "s1"
+            ],
+            "request_id": "req-c4c36620e706",
+            "status": "waiting_approval",
+            "inputs": {
+              "order_id": "2025101234",
+              "reason": "未使用商品申请退款",
+              "refund_amount": 69900
+            },
+            "result": {
+              "request_id": "req-c4c36620e706",
+              "task_id": "task-551741122ad3",
+              "trace_id": "trace-a72ae08d6ef0447d",
+              "capability_id": "m7.refund_approval",
+              "status": "waiting_approval",
+              "data": {
+                "request_id": "refund-40b2fb79cf95",
+                "approval_status": "waiting_approval",
+                "node_trace": [
+                  {
+                    "node_name": "accept"
+                  },
+                  {
+                    "node_name": "manual_review"
+                  }
+                ],
+                "state_view": {
+                  "order_id": "2025101234",
+                  "order_amount": 69900,
+                  "refund_amount": 69900
+                }
+              },
+              "error": null,
+              "waiting_reason": "金额超过 50000 分，等待人工审核；本阶段不支持恢复。",
+              "continuation_token": null
+            },
+            "error": null,
+            "reason": "金额超过 50000 分，等待人工审核；本阶段不支持恢复。"
+          }
+        },
+        "events": [
+          {
+            "sequence": 1,
+            "ts": "2026-10-13T02:03:59.677400+00:00",
+            "level": "info",
+            "trace_id": "trace-a72ae08d6ef0447d",
+            "task_id": "task-551741122ad3",
+            "request_id": null,
+            "step_id": "s1",
+            "capability_id": "m2.order_tracking",
+            "status": "pending",
+            "reason": "已加入执行计划",
+            "error_code": null
+          },
+          {
+            "sequence": 2,
+            "ts": "2026-10-13T02:03:59.677413+00:00",
+            "level": "info",
+            "trace_id": "trace-a72ae08d6ef0447d",
+            "task_id": "task-551741122ad3",
+            "request_id": null,
+            "step_id": "s2",
+            "capability_id": "m7.refund_approval",
+            "status": "pending",
+            "reason": "已加入执行计划",
+            "error_code": null
+          },
+          {
+            "sequence": 3,
+            "ts": "2026-10-13T02:03:59.677426+00:00",
+            "level": "info",
+            "trace_id": "trace-a72ae08d6ef0447d",
+            "task_id": "task-551741122ad3",
+            "request_id": "req-db5193d415de",
+            "step_id": "s1",
+            "capability_id": "m2.order_tracking",
+            "status": "running",
+            "reason": "解析输入并调用能力",
+            "error_code": null
+          },
+          {
+            "sequence": 4,
+            "ts": "2026-10-13T02:03:59.678022+00:00",
+            "level": "info",
+            "trace_id": "trace-a72ae08d6ef0447d",
+            "task_id": "task-551741122ad3",
+            "request_id": "req-db5193d415de",
+            "step_id": "s1",
+            "capability_id": "m2.order_tracking",
+            "status": "completed",
+            "reason": "能力执行完成",
+            "error_code": null
+          },
+          {
+            "sequence": 5,
+            "ts": "2026-10-13T02:03:59.678042+00:00",
+            "level": "info",
+            "trace_id": "trace-a72ae08d6ef0447d",
+            "task_id": "task-551741122ad3",
+            "request_id": "req-c4c36620e706",
+            "step_id": "s2",
+            "capability_id": "m7.refund_approval",
+            "status": "running",
+            "reason": "解析输入并调用能力",
+            "error_code": null
+          },
+          {
+            "sequence": 6,
+            "ts": "2026-10-13T02:03:59.678646+00:00",
+            "level": "info",
+            "trace_id": "trace-a72ae08d6ef0447d",
+            "task_id": "task-551741122ad3",
+            "request_id": "req-c4c36620e706",
+            "step_id": "s2",
+            "capability_id": "m7.refund_approval",
+            "status": "waiting_approval",
+            "reason": "金额超过 50000 分，等待人工审核；本阶段不支持恢复。",
+            "error_code": null
+          }
+        ],
+        "final_results": {}
+      },
+      "error": null,
+      "planning_attempts": [
+        {
+          "number": 1,
+          "status": "accepted",
+          "error_code": null,
+          "message": null
+        }
+      ]
+    }
+  ],
+  "session": {
+    "session_id": "sess-fe65fb146ba6",
+    "active_task": {
+      "task_id": "task-551741122ad3",
+      "trace_id": "trace-a72ae08d6ef0447d",
+      "messages": [
+        {
+          "role": "user",
+          "content": "查询订单2025101234并申请整单退款，原因是买错了"
+        },
+        {
+          "role": "assistant",
+          "content": "按已注册能力执行任务。"
+        },
+        {
+          "role": "assistant",
+          "content": "任务等待人工审批，依赖步骤已挂起。"
+        }
+      ],
+      "plan": {
+        "plan_id": "plan-20261013-004",
+        "goal": "查询订单2025101234并申请整单退款，原因是买错了",
+        "steps": [
+          {
+            "step_id": "s1",
+            "capability_id": "m2.order_tracking",
+            "depends_on": [],
+            "inputs": {
+              "order_id": {
+                "literal": "2025101234"
+              }
+            }
+          },
+          {
+            "step_id": "s2",
+            "capability_id": "m7.refund_approval",
+            "depends_on": [
+              "s1"
+            ],
+            "inputs": {
+              "order_id": {
+                "ref": "s1.data.order_id"
+              },
+              "reason": {
+                "literal": "未使用商品申请退款"
+              },
+              "refund_amount": {
+                "ref": "s1.data.order_amount"
+              }
+            }
+          }
+        ]
+      },
+      "report": {
+        "plan_id": "plan-20261013-004",
+        "task_id": "task-551741122ad3",
+        "trace_id": "trace-a72ae08d6ef0447d",
+        "status": "waiting_approval",
+        "steps": {
+          "s1": {
+            "step_id": "s1",
+            "capability_id": "m2.order_tracking",
+            "depends_on": [],
+            "request_id": "req-db5193d415de",
+            "status": "completed",
+            "inputs": {
+              "order_id": "2025101234"
+            },
+            "result": {
+              "request_id": "req-db5193d415de",
+              "task_id": "task-551741122ad3",
+              "trace_id": "trace-a72ae08d6ef0447d",
+              "capability_id": "m2.order_tracking",
+              "status": "completed",
+              "data": {
+                "order_id": "2025101234",
+                "order_amount": 69900,
+                "order_status": "paid",
+                "tracking_number": "mock-track-001",
+                "actions": [
+                  "query_order",
+                  "query_logistics"
+                ],
+                "observations": [
+                  "Mock 订单金额 69900 分",
+                  "Mock 物流运输中"
+                ],
+                "stop_reason": "查询完成"
+              },
+              "error": null,
+              "waiting_reason": null,
+              "continuation_token": null
+            },
+            "error": null,
+            "reason": null
+          },
+          "s2": {
+            "step_id": "s2",
+            "capability_id": "m7.refund_approval",
+            "depends_on": [
+              "s1"
+            ],
+            "request_id": "req-c4c36620e706",
+            "status": "waiting_approval",
+            "inputs": {
+              "order_id": "2025101234",
+              "reason": "未使用商品申请退款",
+              "refund_amount": 69900
+            },
+            "result": {
+              "request_id": "req-c4c36620e706",
+              "task_id": "task-551741122ad3",
+              "trace_id": "trace-a72ae08d6ef0447d",
+              "capability_id": "m7.refund_approval",
+              "status": "waiting_approval",
+              "data": {
+                "request_id": "refund-40b2fb79cf95",
+                "approval_status": "waiting_approval",
+                "node_trace": [
+                  {
+                    "node_name": "accept"
+                  },
+                  {
+                    "node_name": "manual_review"
+                  }
+                ],
+                "state_view": {
+                  "order_id": "2025101234",
+                  "order_amount": 69900,
+                  "refund_amount": 69900
+                }
+              },
+              "error": null,
+              "waiting_reason": "金额超过 50000 分，等待人工审核；本阶段不支持恢复。",
+              "continuation_token": null
+            },
+            "error": null,
+            "reason": "金额超过 50000 分，等待人工审核；本阶段不支持恢复。"
+          }
+        },
+        "events": [
+          {
+            "sequence": 1,
+            "ts": "2026-10-13T02:03:59.677400+00:00",
+            "level": "info",
+            "trace_id": "trace-a72ae08d6ef0447d",
+            "task_id": "task-551741122ad3",
+            "request_id": null,
+            "step_id": "s1",
+            "capability_id": "m2.order_tracking",
+            "status": "pending",
+            "reason": "已加入执行计划",
+            "error_code": null
+          },
+          {
+            "sequence": 2,
+            "ts": "2026-10-13T02:03:59.677413+00:00",
+            "level": "info",
+            "trace_id": "trace-a72ae08d6ef0447d",
+            "task_id": "task-551741122ad3",
+            "request_id": null,
+            "step_id": "s2",
+            "capability_id": "m7.refund_approval",
+            "status": "pending",
+            "reason": "已加入执行计划",
+            "error_code": null
+          },
+          {
+            "sequence": 3,
+            "ts": "2026-10-13T02:03:59.677426+00:00",
+            "level": "info",
+            "trace_id": "trace-a72ae08d6ef0447d",
+            "task_id": "task-551741122ad3",
+            "request_id": "req-db5193d415de",
+            "step_id": "s1",
+            "capability_id": "m2.order_tracking",
+            "status": "running",
+            "reason": "解析输入并调用能力",
+            "error_code": null
+          },
+          {
+            "sequence": 4,
+            "ts": "2026-10-13T02:03:59.678022+00:00",
+            "level": "info",
+            "trace_id": "trace-a72ae08d6ef0447d",
+            "task_id": "task-551741122ad3",
+            "request_id": "req-db5193d415de",
+            "step_id": "s1",
+            "capability_id": "m2.order_tracking",
+            "status": "completed",
+            "reason": "能力执行完成",
+            "error_code": null
+          },
+          {
+            "sequence": 5,
+            "ts": "2026-10-13T02:03:59.678042+00:00",
+            "level": "info",
+            "trace_id": "trace-a72ae08d6ef0447d",
+            "task_id": "task-551741122ad3",
+            "request_id": "req-c4c36620e706",
+            "step_id": "s2",
+            "capability_id": "m7.refund_approval",
+            "status": "running",
+            "reason": "解析输入并调用能力",
+            "error_code": null
+          },
+          {
+            "sequence": 6,
+            "ts": "2026-10-13T02:03:59.678646+00:00",
+            "level": "info",
+            "trace_id": "trace-a72ae08d6ef0447d",
+            "task_id": "task-551741122ad3",
+            "request_id": "req-c4c36620e706",
+            "step_id": "s2",
+            "capability_id": "m7.refund_approval",
+            "status": "waiting_approval",
+            "reason": "金额超过 50000 分，等待人工审核；本阶段不支持恢复。",
+            "error_code": null
+          }
+        ],
+        "final_results": {}
+      },
+      "status": "waiting_approval"
+    },
+    "history": [
+      {
+        "task_id": "task-4a85dda7726c",
+        "trace_id": "trace-c6fff69e96f14570",
+        "messages": [
+          {
+            "role": "user",
+            "content": "查一下我的订单物流"
+          },
+          {
+            "role": "assistant",
+            "content": "请提供订单号。"
+          },
+          {
+            "role": "user",
+            "content": "2025101234"
+          },
+          {
+            "role": "assistant",
+            "content": "按已注册能力执行任务。"
+          },
+          {
+            "role": "assistant",
+            "content": "执行完成，结果见各步骤与最终输出。"
+          }
+        ],
+        "plan": {
+          "plan_id": "plan-20261013-002",
+          "goal": "查一下我的订单物流\n补充：2025101234",
+          "steps": [
+            {
+              "step_id": "s1",
+              "capability_id": "m2.order_tracking",
+              "depends_on": [],
+              "inputs": {
+                "order_id": {
+                  "literal": "2025101234"
+                }
+              }
+            }
+          ]
+        },
+        "report": {
+          "plan_id": "plan-20261013-002",
+          "task_id": "task-4a85dda7726c",
+          "trace_id": "trace-c6fff69e96f14570",
+          "status": "completed",
+          "steps": {
+            "s1": {
+              "step_id": "s1",
+              "capability_id": "m2.order_tracking",
+              "depends_on": [],
+              "request_id": "req-134a6d82e27c",
+              "status": "completed",
+              "inputs": {
+                "order_id": "2025101234"
+              },
+              "result": {
+                "request_id": "req-134a6d82e27c",
+                "task_id": "task-4a85dda7726c",
+                "trace_id": "trace-c6fff69e96f14570",
+                "capability_id": "m2.order_tracking",
+                "status": "completed",
+                "data": {
+                  "order_id": "2025101234",
+                  "order_amount": 69900,
+                  "order_status": "paid",
+                  "tracking_number": "mock-track-001",
+                  "actions": [
+                    "query_order",
+                    "query_logistics"
+                  ],
+                  "observations": [
+                    "Mock 订单金额 69900 分",
+                    "Mock 物流运输中"
+                  ],
+                  "stop_reason": "查询完成"
+                },
+                "error": null,
+                "waiting_reason": null,
+                "continuation_token": null
+              },
+              "error": null,
+              "reason": null
+            }
+          },
+          "events": [
+            {
+              "sequence": 1,
+              "ts": "2026-10-13T02:03:59.671539+00:00",
+              "level": "info",
+              "trace_id": "trace-c6fff69e96f14570",
+              "task_id": "task-4a85dda7726c",
+              "request_id": null,
+              "step_id": "s1",
+              "capability_id": "m2.order_tracking",
+              "status": "pending",
+              "reason": "已加入执行计划",
+              "error_code": null
+            },
+            {
+              "sequence": 2,
+              "ts": "2026-10-13T02:03:59.671592+00:00",
+              "level": "info",
+              "trace_id": "trace-c6fff69e96f14570",
+              "task_id": "task-4a85dda7726c",
+              "request_id": "req-134a6d82e27c",
+              "step_id": "s1",
+              "capability_id": "m2.order_tracking",
+              "status": "running",
+              "reason": "解析输入并调用能力",
+              "error_code": null
+            },
+            {
+              "sequence": 3,
+              "ts": "2026-10-13T02:03:59.672380+00:00",
+              "level": "info",
+              "trace_id": "trace-c6fff69e96f14570",
+              "task_id": "task-4a85dda7726c",
+              "request_id": "req-134a6d82e27c",
+              "step_id": "s1",
+              "capability_id": "m2.order_tracking",
+              "status": "completed",
+              "reason": "能力执行完成",
+              "error_code": null
+            }
+          ],
+          "final_results": {
+            "s1": {
+              "order_id": "2025101234",
+              "order_amount": 69900,
+              "order_status": "paid",
+              "tracking_number": "mock-track-001",
+              "actions": [
+                "query_order",
+                "query_logistics"
+              ],
+              "observations": [
+                "Mock 订单金额 69900 分",
+                "Mock 物流运输中"
+              ],
+              "stop_reason": "查询完成"
+            }
+          }
+        },
+        "status": "completed"
+      },
+      {
+        "task_id": "task-1322785ace68",
+        "trace_id": "trace-7f3331d197b1425f",
+        "messages": [
+          {
+            "role": "user",
+            "content": "分析2026年第41周经营数据，生成周报并制定大促方案"
+          },
+          {
+            "role": "assistant",
+            "content": "按已注册能力执行任务。"
+          },
+          {
+            "role": "assistant",
+            "content": "执行完成，结果见各步骤与最终输出。"
+          }
+        ],
+        "plan": {
+          "plan_id": "plan-20261013-003",
+          "goal": "分析2026年第41周经营数据，生成周报并制定大促方案",
+          "steps": [
+            {
+              "step_id": "s3",
+              "capability_id": "m5.promotion_plan",
+              "depends_on": [
+                "s2"
+              ],
+              "inputs": {
+                "report_markdown": {
+                  "ref": "s2.data.report_markdown"
+                },
+                "goal": {
+                  "literal": "根据第 41 周经营分析制定下周大促方案"
+                },
+                "fused_data": {
+                  "ref": "s1.data.fused_data"
+                }
+              }
+            },
+            {
+              "step_id": "s1",
+              "capability_id": "m6.data_fusion",
+              "depends_on": [],
+              "inputs": {
+                "week": {
+                  "literal": "2026-W41"
+                }
+              }
+            },
+            {
+              "step_id": "s2",
+              "capability_id": "m3.weekly_report",
+              "depends_on": [
+                "s1"
+              ],
+              "inputs": {
+                "fused_data": {
+                  "ref": "s1.data.fused_data"
+                }
+              }
+            }
+          ]
+        },
+        "report": {
+          "plan_id": "plan-20261013-003",
+          "task_id": "task-1322785ace68",
+          "trace_id": "trace-7f3331d197b1425f",
+          "status": "completed",
+          "steps": {
+            "s3": {
+              "step_id": "s3",
+              "capability_id": "m5.promotion_plan",
+              "depends_on": [
+                "s2"
+              ],
+              "request_id": "req-f838130543f0",
+              "status": "completed",
+              "inputs": {
+                "report_markdown": "# 2026-W41 运营周报（Mock）\n销售额：12000000 分；订单：800；转化率：0.032。\n异常：转化率环比下降 0.5 个百分点。",
+                "goal": "根据第 41 周经营分析制定下周大促方案",
+                "fused_data": {
+                  "week": "2026-W41",
+                  "revenue_amount": 12000000,
+                  "order_count": 800,
+                  "conversion_rate": 0.032,
+                  "anomaly": "转化率环比下降 0.5 个百分点"
+                }
+              },
+              "result": {
+                "request_id": "req-f838130543f0",
+                "task_id": "task-1322785ace68",
+                "trace_id": "trace-7f3331d197b1425f",
+                "capability_id": "m5.promotion_plan",
+                "status": "completed",
+                "data": {
+                  "plan_markdown": "# Mock 大促方案：根据第 41 周经营分析制定下周大促方案\n依据：# 2026-W41 运营周报（Mock）\n销售额：12000000 分；订单：800；转化率：0.032。\n异常：转化率环比下降 0.5 个百分点。\n固定测试建议：小规模优惠券试投。",
+                  "roles": [
+                    {
+                      "role": "product",
+                      "contribution": "选品",
+                      "rationale": "Mock 固定测试依据"
+                    },
+                    {
+                      "role": "operation",
+                      "contribution": "配置优惠券",
+                      "rationale": "Mock 固定测试依据"
+                    },
+                    {
+                      "role": "data",
+                      "contribution": "观察转化率",
+                      "rationale": "Mock 固定测试依据"
+                    },
+                    {
+                      "role": "service",
+                      "contribution": "发布政策 FAQ",
+                      "rationale": "Mock 固定测试依据"
+                    }
+                  ]
+                },
+                "error": null,
+                "waiting_reason": null,
+                "continuation_token": null
+              },
+              "error": null,
+              "reason": null
+            },
+            "s1": {
+              "step_id": "s1",
+              "capability_id": "m6.data_fusion",
+              "depends_on": [],
+              "request_id": "req-19c82907be4a",
+              "status": "completed",
+              "inputs": {
+                "week": "2026-W41"
+              },
+              "result": {
+                "request_id": "req-19c82907be4a",
+                "task_id": "task-1322785ace68",
+                "trace_id": "trace-7f3331d197b1425f",
+                "capability_id": "m6.data_fusion",
+                "status": "completed",
+                "data": {
+                  "fused_data": {
+                    "week": "2026-W41",
+                    "revenue_amount": 12000000,
+                    "order_count": 800,
+                    "conversion_rate": 0.032,
+                    "anomaly": "转化率环比下降 0.5 个百分点"
+                  },
+                  "field_definitions": [
+                    "revenue_amount：销售额，整数分",
+                    "order_count：订单数量",
+                    "conversion_rate：转化率"
+                  ],
+                  "update_events": [
+                    "Mock 订单读取",
+                    "Mock 行为与营销数据融合"
+                  ]
+                },
+                "error": null,
+                "waiting_reason": null,
+                "continuation_token": null
+              },
+              "error": null,
+              "reason": null
+            },
+            "s2": {
+              "step_id": "s2",
+              "capability_id": "m3.weekly_report",
+              "depends_on": [
+                "s1"
+              ],
+              "request_id": "req-17d218389b44",
+              "status": "completed",
+              "inputs": {
+                "fused_data": {
+                  "week": "2026-W41",
+                  "revenue_amount": 12000000,
+                  "order_count": 800,
+                  "conversion_rate": 0.032,
+                  "anomaly": "转化率环比下降 0.5 个百分点"
+                }
+              },
+              "result": {
+                "request_id": "req-17d218389b44",
+                "task_id": "task-1322785ace68",
+                "trace_id": "trace-7f3331d197b1425f",
+                "capability_id": "m3.weekly_report",
+                "status": "completed",
+                "data": {
+                  "week": "2026-W41",
+                  "report_markdown": "# 2026-W41 运营周报（Mock）\n销售额：12000000 分；订单：800；转化率：0.032。\n异常：转化率环比下降 0.5 个百分点。",
+                  "steps": [
+                    "读取经营视图（Mock）",
+                    "生成固定格式报告（Mock）"
+                  ]
+                },
+                "error": null,
+                "waiting_reason": null,
+                "continuation_token": null
+              },
+              "error": null,
+              "reason": null
+            }
+          },
+          "events": [
+            {
+              "sequence": 1,
+              "ts": "2026-10-13T02:03:59.674498+00:00",
+              "level": "info",
+              "trace_id": "trace-7f3331d197b1425f",
+              "task_id": "task-1322785ace68",
+              "request_id": null,
+              "step_id": "s3",
+              "capability_id": "m5.promotion_plan",
+              "status": "pending",
+              "reason": "已加入执行计划",
+              "error_code": null
+            },
+            {
+              "sequence": 2,
+              "ts": "2026-10-13T02:03:59.674511+00:00",
+              "level": "info",
+              "trace_id": "trace-7f3331d197b1425f",
+              "task_id": "task-1322785ace68",
+              "request_id": null,
+              "step_id": "s1",
+              "capability_id": "m6.data_fusion",
+              "status": "pending",
+              "reason": "已加入执行计划",
+              "error_code": null
+            },
+            {
+              "sequence": 3,
+              "ts": "2026-10-13T02:03:59.674516+00:00",
+              "level": "info",
+              "trace_id": "trace-7f3331d197b1425f",
+              "task_id": "task-1322785ace68",
+              "request_id": null,
+              "step_id": "s2",
+              "capability_id": "m3.weekly_report",
+              "status": "pending",
+              "reason": "已加入执行计划",
+              "error_code": null
+            },
+            {
+              "sequence": 4,
+              "ts": "2026-10-13T02:03:59.674532+00:00",
+              "level": "info",
+              "trace_id": "trace-7f3331d197b1425f",
+              "task_id": "task-1322785ace68",
+              "request_id": "req-19c82907be4a",
+              "step_id": "s1",
+              "capability_id": "m6.data_fusion",
+              "status": "running",
+              "reason": "解析输入并调用能力",
+              "error_code": null
+            },
+            {
+              "sequence": 5,
+              "ts": "2026-10-13T02:03:59.674732+00:00",
+              "level": "info",
+              "trace_id": "trace-7f3331d197b1425f",
+              "task_id": "task-1322785ace68",
+              "request_id": "req-19c82907be4a",
+              "step_id": "s1",
+              "capability_id": "m6.data_fusion",
+              "status": "completed",
+              "reason": "能力执行完成",
+              "error_code": null
+            },
+            {
+              "sequence": 6,
+              "ts": "2026-10-13T02:03:59.674743+00:00",
+              "level": "info",
+              "trace_id": "trace-7f3331d197b1425f",
+              "task_id": "task-1322785ace68",
+              "request_id": "req-17d218389b44",
+              "step_id": "s2",
+              "capability_id": "m3.weekly_report",
+              "status": "running",
+              "reason": "解析输入并调用能力",
+              "error_code": null
+            },
+            {
+              "sequence": 7,
+              "ts": "2026-10-13T02:03:59.675026+00:00",
+              "level": "info",
+              "trace_id": "trace-7f3331d197b1425f",
+              "task_id": "task-1322785ace68",
+              "request_id": "req-17d218389b44",
+              "step_id": "s2",
+              "capability_id": "m3.weekly_report",
+              "status": "completed",
+              "reason": "能力执行完成",
+              "error_code": null
+            },
+            {
+              "sequence": 8,
+              "ts": "2026-10-13T02:03:59.675043+00:00",
+              "level": "info",
+              "trace_id": "trace-7f3331d197b1425f",
+              "task_id": "task-1322785ace68",
+              "request_id": "req-f838130543f0",
+              "step_id": "s3",
+              "capability_id": "m5.promotion_plan",
+              "status": "running",
+              "reason": "解析输入并调用能力",
+              "error_code": null
+            },
+            {
+              "sequence": 9,
+              "ts": "2026-10-13T02:03:59.675443+00:00",
+              "level": "info",
+              "trace_id": "trace-7f3331d197b1425f",
+              "task_id": "task-1322785ace68",
+              "request_id": "req-f838130543f0",
+              "step_id": "s3",
+              "capability_id": "m5.promotion_plan",
+              "status": "completed",
+              "reason": "能力执行完成",
+              "error_code": null
+            }
+          ],
+          "final_results": {
+            "s3": {
+              "plan_markdown": "# Mock 大促方案：根据第 41 周经营分析制定下周大促方案\n依据：# 2026-W41 运营周报（Mock）\n销售额：12000000 分；订单：800；转化率：0.032。\n异常：转化率环比下降 0.5 个百分点。\n固定测试建议：小规模优惠券试投。",
+              "roles": [
+                {
+                  "role": "product",
+                  "contribution": "选品",
+                  "rationale": "Mock 固定测试依据"
+                },
+                {
+                  "role": "operation",
+                  "contribution": "配置优惠券",
+                  "rationale": "Mock 固定测试依据"
+                },
+                {
+                  "role": "data",
+                  "contribution": "观察转化率",
+                  "rationale": "Mock 固定测试依据"
+                },
+                {
+                  "role": "service",
+                  "contribution": "发布政策 FAQ",
+                  "rationale": "Mock 固定测试依据"
+                }
+              ]
+            }
+          }
+        },
+        "status": "completed"
+      }
+    ]
+  }
+}

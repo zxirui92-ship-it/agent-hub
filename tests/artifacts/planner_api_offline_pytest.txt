@@ -1,0 +1,4 @@
+Command: .venv/Scripts/python.exe -m pytest -q --basetemp=.pytest_cache/planner-api-offline-tmp
+Result: 302 passed, 15 skipped in 17.47s
+Skipped: 8 M4 API tests and 7 top-level Planner API tests; ordinary regression is offline.
+Separate explicitly enabled Planner live suite: 7 passed in 14.46s (planner_api_live_pytest.txt).

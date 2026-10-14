@@ -12,7 +12,7 @@ SAMPLES = [
     {"fused_data": {"week": "2026-W41", "revenue_amount": 12000000, "order_count": 800,
                     "conversion_rate": 0.032, "anomaly": "转化下降"}},
     {"query": "优惠政策"},
-    {"report": "第 41 周转化下降，建议试投"},
+    {"goal": "制定下周大促方案", "report_markdown": "第 41 周转化下降，建议试投"},
     {"week": "2026-W41"},
     {"order_id": "order-low", "refund_amount": 19900, "reason": "退货"},
 ]

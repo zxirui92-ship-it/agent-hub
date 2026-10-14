@@ -37,36 +37,95 @@ def render_report(report: ExecutionReport) -> str:
 
 
 def main(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(description="Agent Hub 第一阶段 Mock 执行器（不支持恢复）")
+    parser = argparse.ArgumentParser(description="Agent Hub：自然语言规划、会话或 JSON 计划执行")
     parser.add_argument("plan", type=Path, nargs="?", help="ExecutionPlan JSON 文件")
+    parser.add_argument("--goal", help="自然语言任务；使用已配置的 LLM 生成计划")
+    parser.add_argument("--chat", action="store_true", help="内存多轮会话，支持补充参数")
+    parser.add_argument("--plan-only", action="store_true", help="只生成并校验计划，不调用业务模块")
     parser.add_argument("--max-steps", type=int, default=32)
     parser.add_argument("--json", action="store_true", help="完整结构化报告")
     parser.add_argument("--list-capabilities", action="store_true")
     parser.add_argument("--real-m4", action="store_true", help="Replace Mock M4 with RouterAgent; configuration via environment")
+    parser.add_argument("--real-m3", action="store_true", help="Replace Mock M3 with Plan/Execute; M3_MODE=local (default) or live")
+    parser.add_argument("--real-m7", action="store_true", help="Replace Mock M7 with the local LangGraph workflow")
+    parser.add_argument("--real-m5", action="store_true", help="Replace Mock M5 with PromotionAgent; configured LLM required")
+    parser.add_argument("--real-m1", action="store_true", help="Use SingleAgent; M1_MODE=live (default) or mock")
+    parser.add_argument("--real-m2", action="store_true", help="Use ReActAgent; M2_MODE=live (default) or local; fixture order data")
+    parser.add_argument("--real-m6", action="store_true", help="Use private Blackboard with weekly sample data")
     args = parser.parse_args(argv)
     if args.max_steps < 1:
         parser.error("--max-steps 必须为正整数")
-    if not args.plan and not args.list_capabilities:
-        parser.error("需要计划文件或 --list-capabilities")
+    if sum((args.plan is not None, args.goal is not None, args.chat, args.list_capabilities)) != 1:
+        parser.error("请选择计划文件、--goal、--chat 或 --list-capabilities 中的一项")
+    if args.plan_only and not (args.goal is not None or args.chat):
+        parser.error("--plan-only 需要 --goal 或 --chat")
     # Test fixtures are intentionally not production package dependencies.
     from tests.mocks.agents import create_mock_registry
 
     registry = create_mock_registry()
-    if args.real_m4:
-        from agents.router.factory import create_agent
+    if any((args.real_m1, args.real_m2, args.real_m3, args.real_m4, args.real_m5, args.real_m6, args.real_m7)):
         from hub_platform.registry import CapabilityRegistry
+        modules = {}
+        if args.real_m1:
+            from agents.single_agent import SingleAgent
+            try:
+                m1 = SingleAgent()
+            except ValueError as exc:
+                parser.error(str(exc))
+            modules[m1.manifest.capability_id] = m1
+        if args.real_m2:
+            from agents.react_agent import ReActAgent
+            try:
+                m2 = ReActAgent()
+            except ValueError as exc:
+                parser.error(str(exc))
+            modules[m2.manifest.capability_id] = m2
+        if args.real_m6:
+            from agents.blackboard import DataFusionModule
+            m6 = DataFusionModule()
+            modules[m6.manifest.capability_id] = m6
+        if args.real_m3:
+            from agents.plan_execute import WeeklyReportAgent
+            try:
+                m3 = WeeklyReportAgent()
+            except ValueError as exc:
+                parser.error(str(exc))
+            modules[m3.manifest.capability_id] = m3
+        if args.real_m7:
+            from agents.workflow.refund_graph import RefundWorkflow
+            m7 = RefundWorkflow()
+            modules[m7.manifest.capability_id] = m7
+        if args.real_m4:
+            from agents.router.factory import create_agent
+            try:
+                m4 = create_agent()
+            except ValueError as exc:
+                parser.error(str(exc))
+            modules[m4.manifest.capability_id] = m4
+        if args.real_m5:
+            from agents.multi_agent import PromotionAgent
+            m5 = PromotionAgent()
+            modules[m5.manifest.capability_id] = m5
         replacement = CapabilityRegistry()
-        try:
-            m4 = create_agent()
-        except ValueError as exc:
-            parser.error(str(exc))
         for manifest in registry.list_capabilities():
-            module = m4 if manifest.capability_id == m4.manifest.capability_id else registry.get(manifest.capability_id)
-            replacement.register(module.manifest if module is m4 else manifest, module)
+            module = modules.get(manifest.capability_id) or registry.get(manifest.capability_id)
+            replacement.register(module.manifest, module)
         registry = replacement
     if args.list_capabilities:
         print(json.dumps([m.model_dump() for m in registry.list_capabilities()], ensure_ascii=False, indent=2))
         return 0
+    if args.goal is not None or args.chat:
+        from hub_platform.conversation import Conversation
+        from hub_platform.planner import DynamicPlanner, configured_model
+        try:
+            session = Conversation(DynamicPlanner(registry, configured_model(), max_steps=args.max_steps))
+        except ValueError as exc:
+            parser.error(str(exc))
+        if args.chat:
+            return chat_loop(session, as_json=args.json, execute=not args.plan_only)
+        turn = session.submit(args.goal, execute=not args.plan_only)
+        print(turn.model_dump_json(indent=2) if args.json else render_turn(turn))
+        return turn_exit_code(turn.status)
     task_id, trace_id = f"task-{uuid4().hex[:12]}", f"trace-{uuid4().hex[:16]}"
     try:
         plan = json.loads(args.plan.read_text(encoding="utf-8-sig"))
@@ -80,6 +139,51 @@ def main(argv: list[str] | None = None) -> int:
         return 2
     print(report.model_dump_json(indent=2) if args.json else render_report(report))
     return {"completed": 0, "failed": 1, "waiting_approval": 3}[report.status]
+
+
+def turn_exit_code(status: str) -> int:
+    return {'ready': 0, 'completed': 0, 'failed': 1, 'unsupported': 2,
+            'waiting_approval': 3, 'needs_clarification': 4}[status]
+
+
+def render_turn(turn) -> str:
+    lines = [f"会话: {turn.session_id}", f"状态: {turn.status}", turn.message]
+    if turn.plan:
+        lines.extend(['\n生成的计划:', turn.plan.model_dump_json(indent=2)])
+    if turn.report:
+        lines.extend(['\n实际执行:', render_report(turn.report)])
+    if turn.error:
+        lines.append(f"错误码: {turn.error.code.value}")
+    if len(turn.planning_attempts) > 1:
+        lines.append(f"规划调用次数: {len(turn.planning_attempts)}（含非法计划修正）")
+    return '\n'.join(lines)
+
+
+def chat_loop(session, *, as_json=False, execute=True) -> int:
+    print('输入任务或补充回答。/new 新任务；/reset 清空会话；/context 查看上下文；/exit 退出。', file=sys.stderr)
+    while True:
+        try:
+            print('你 > ', end='', file=sys.stderr, flush=True)
+            text = input().strip()
+        except (EOFError, KeyboardInterrupt):
+            return 0
+        if text == '/exit':
+            return 0
+        if not text:
+            continue
+        if text == '/new':
+            session.new_task()
+            print('已结束当前任务，上下文历史保留。', file=sys.stderr)
+            continue
+        if text == '/reset':
+            session.reset()
+            print('已清空会话。', file=sys.stderr)
+            continue
+        if text == '/context':
+            print(session.context.model_dump_json(indent=None if as_json else 2))
+            continue
+        turn = session.submit(text, execute=execute)
+        print(turn.model_dump_json() if as_json else render_turn(turn))
 
 
 if __name__ == "__main__":

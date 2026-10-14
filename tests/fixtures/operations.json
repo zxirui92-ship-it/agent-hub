@@ -9,8 +9,14 @@
         "s2"
       ],
       "inputs": {
-        "report": {
+        "report_markdown": {
           "ref": "s2.data.report_markdown"
+        },
+        "goal": {
+          "literal": "根据第 41 周经营分析制定下周大促方案"
+        },
+        "fused_data": {
+          "ref": "s1.data.fused_data"
         }
       }
     },

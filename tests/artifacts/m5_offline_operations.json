@@ -1,0 +1,294 @@
+{
+  "verification": "real M5 architecture with injected FakeLLM; M6/M3 are mocks",
+  "external_api_calls": 0,
+  "simulated_model_calls": 5,
+  "report": {
+    "plan_id": "plan-20261012-003",
+    "task_id": "task-45ab0bec8922",
+    "trace_id": "trace-eda553cfa2b54270",
+    "status": "completed",
+    "steps": {
+      "s3": {
+        "step_id": "s3",
+        "capability_id": "m5.promotion_plan",
+        "depends_on": [
+          "s2"
+        ],
+        "request_id": "req-dc188c18c220",
+        "status": "completed",
+        "inputs": {
+          "report_markdown": "# 2026-W41 运营周报（Mock）\n销售额：12000000 分；订单：800；转化率：0.032。\n异常：转化率环比下降 0.5 个百分点。",
+          "goal": "根据第 41 周经营分析制定下周大促方案",
+          "fused_data": {
+            "week": "2026-W41",
+            "revenue_amount": 12000000,
+            "order_count": 800,
+            "conversion_rate": 0.032,
+            "anomaly": "转化率环比下降 0.5 个百分点"
+          }
+        },
+        "result": {
+          "request_id": "req-dc188c18c220",
+          "task_id": "task-45ab0bec8922",
+          "trace_id": "trace-eda553cfa2b54270",
+          "capability_id": "m5.promotion_plan",
+          "status": "completed",
+          "data": {
+            "plan_markdown": "## 一、四方主张与冲突消解\n\n| 角色 | 核心主张 |\n| --- | --- |\n| 产品 | 产品侧围绕本次大促给出专属动作，聚焦产品维度的落地安排。 |\n| 运营 | 运营侧围绕本次大促给出专属动作，聚焦运营维度的落地安排。 |\n| 数据 | 数据侧围绕本次大促给出专属动作，聚焦数据维度的落地安排。 |\n| 客服 | 客服侧围绕本次大促给出专属动作，聚焦客服维度的落地安排。 |\n\n## 二、统一执行方案\n\n四方共识：以恢复转化率为核心约束，预算优先投向转化洼地。\n\n冲突消解：运营侧希望 30% 折扣，数据侧测算仅支持 20%，最终按数据侧口径执行 20% 折扣并保留 5% 弹性额度。\n\n统一时间线：预热（D-7）→ 爆发（D1）→ 返场（D2-D3）。\n",
+            "roles": [
+              {
+                "role": "product",
+                "contribution": "产品侧围绕本次大促给出专属动作，聚焦产品维度的落地安排。",
+                "rationale": "基于上周环比数据与产品侧现有资源测算。"
+              },
+              {
+                "role": "operation",
+                "contribution": "运营侧围绕本次大促给出专属动作，聚焦运营维度的落地安排。",
+                "rationale": "基于上周环比数据与运营侧现有资源测算。"
+              },
+              {
+                "role": "data",
+                "contribution": "数据侧围绕本次大促给出专属动作，聚焦数据维度的落地安排。",
+                "rationale": "基于上周环比数据与数据侧现有资源测算。"
+              },
+              {
+                "role": "service",
+                "contribution": "客服侧围绕本次大促给出专属动作，聚焦客服维度的落地安排。",
+                "rationale": "基于上周环比数据与客服侧现有资源测算。"
+              }
+            ]
+          },
+          "error": null,
+          "waiting_reason": null,
+          "continuation_token": null
+        },
+        "error": null,
+        "reason": null
+      },
+      "s1": {
+        "step_id": "s1",
+        "capability_id": "m6.data_fusion",
+        "depends_on": [],
+        "request_id": "req-d52f5eef9ecf",
+        "status": "completed",
+        "inputs": {
+          "week": "2026-W41"
+        },
+        "result": {
+          "request_id": "req-d52f5eef9ecf",
+          "task_id": "task-45ab0bec8922",
+          "trace_id": "trace-eda553cfa2b54270",
+          "capability_id": "m6.data_fusion",
+          "status": "completed",
+          "data": {
+            "fused_data": {
+              "week": "2026-W41",
+              "revenue_amount": 12000000,
+              "order_count": 800,
+              "conversion_rate": 0.032,
+              "anomaly": "转化率环比下降 0.5 个百分点"
+            },
+            "field_definitions": [
+              "revenue_amount：销售额，整数分",
+              "order_count：订单数量",
+              "conversion_rate：转化率"
+            ],
+            "update_events": [
+              "Mock 订单读取",
+              "Mock 行为与营销数据融合"
+            ]
+          },
+          "error": null,
+          "waiting_reason": null,
+          "continuation_token": null
+        },
+        "error": null,
+        "reason": null
+      },
+      "s2": {
+        "step_id": "s2",
+        "capability_id": "m3.weekly_report",
+        "depends_on": [
+          "s1"
+        ],
+        "request_id": "req-2ada0b3d45aa",
+        "status": "completed",
+        "inputs": {
+          "fused_data": {
+            "week": "2026-W41",
+            "revenue_amount": 12000000,
+            "order_count": 800,
+            "conversion_rate": 0.032,
+            "anomaly": "转化率环比下降 0.5 个百分点"
+          }
+        },
+        "result": {
+          "request_id": "req-2ada0b3d45aa",
+          "task_id": "task-45ab0bec8922",
+          "trace_id": "trace-eda553cfa2b54270",
+          "capability_id": "m3.weekly_report",
+          "status": "completed",
+          "data": {
+            "week": "2026-W41",
+            "report_markdown": "# 2026-W41 运营周报（Mock）\n销售额：12000000 分；订单：800；转化率：0.032。\n异常：转化率环比下降 0.5 个百分点。",
+            "steps": [
+              "读取经营视图（Mock）",
+              "生成固定格式报告（Mock）"
+            ]
+          },
+          "error": null,
+          "waiting_reason": null,
+          "continuation_token": null
+        },
+        "error": null,
+        "reason": null
+      }
+    },
+    "events": [
+      {
+        "sequence": 1,
+        "ts": "2026-10-13T01:45:08.760064+00:00",
+        "level": "info",
+        "trace_id": "trace-eda553cfa2b54270",
+        "task_id": "task-45ab0bec8922",
+        "request_id": null,
+        "step_id": "s3",
+        "capability_id": "m5.promotion_plan",
+        "status": "pending",
+        "reason": "已加入执行计划",
+        "error_code": null
+      },
+      {
+        "sequence": 2,
+        "ts": "2026-10-13T01:45:08.760100+00:00",
+        "level": "info",
+        "trace_id": "trace-eda553cfa2b54270",
+        "task_id": "task-45ab0bec8922",
+        "request_id": null,
+        "step_id": "s1",
+        "capability_id": "m6.data_fusion",
+        "status": "pending",
+        "reason": "已加入执行计划",
+        "error_code": null
+      },
+      {
+        "sequence": 3,
+        "ts": "2026-10-13T01:45:08.760107+00:00",
+        "level": "info",
+        "trace_id": "trace-eda553cfa2b54270",
+        "task_id": "task-45ab0bec8922",
+        "request_id": null,
+        "step_id": "s2",
+        "capability_id": "m3.weekly_report",
+        "status": "pending",
+        "reason": "已加入执行计划",
+        "error_code": null
+      },
+      {
+        "sequence": 4,
+        "ts": "2026-10-13T01:45:08.760129+00:00",
+        "level": "info",
+        "trace_id": "trace-eda553cfa2b54270",
+        "task_id": "task-45ab0bec8922",
+        "request_id": "req-d52f5eef9ecf",
+        "step_id": "s1",
+        "capability_id": "m6.data_fusion",
+        "status": "running",
+        "reason": "解析输入并调用能力",
+        "error_code": null
+      },
+      {
+        "sequence": 5,
+        "ts": "2026-10-13T01:45:08.760404+00:00",
+        "level": "info",
+        "trace_id": "trace-eda553cfa2b54270",
+        "task_id": "task-45ab0bec8922",
+        "request_id": "req-d52f5eef9ecf",
+        "step_id": "s1",
+        "capability_id": "m6.data_fusion",
+        "status": "completed",
+        "reason": "能力执行完成",
+        "error_code": null
+      },
+      {
+        "sequence": 6,
+        "ts": "2026-10-13T01:45:08.760418+00:00",
+        "level": "info",
+        "trace_id": "trace-eda553cfa2b54270",
+        "task_id": "task-45ab0bec8922",
+        "request_id": "req-2ada0b3d45aa",
+        "step_id": "s2",
+        "capability_id": "m3.weekly_report",
+        "status": "running",
+        "reason": "解析输入并调用能力",
+        "error_code": null
+      },
+      {
+        "sequence": 7,
+        "ts": "2026-10-13T01:45:08.760613+00:00",
+        "level": "info",
+        "trace_id": "trace-eda553cfa2b54270",
+        "task_id": "task-45ab0bec8922",
+        "request_id": "req-2ada0b3d45aa",
+        "step_id": "s2",
+        "capability_id": "m3.weekly_report",
+        "status": "completed",
+        "reason": "能力执行完成",
+        "error_code": null
+      },
+      {
+        "sequence": 8,
+        "ts": "2026-10-13T01:45:08.760625+00:00",
+        "level": "info",
+        "trace_id": "trace-eda553cfa2b54270",
+        "task_id": "task-45ab0bec8922",
+        "request_id": "req-dc188c18c220",
+        "step_id": "s3",
+        "capability_id": "m5.promotion_plan",
+        "status": "running",
+        "reason": "解析输入并调用能力",
+        "error_code": null
+      },
+      {
+        "sequence": 9,
+        "ts": "2026-10-13T01:45:08.761358+00:00",
+        "level": "info",
+        "trace_id": "trace-eda553cfa2b54270",
+        "task_id": "task-45ab0bec8922",
+        "request_id": "req-dc188c18c220",
+        "step_id": "s3",
+        "capability_id": "m5.promotion_plan",
+        "status": "completed",
+        "reason": "能力执行完成",
+        "error_code": null
+      }
+    ],
+    "final_results": {
+      "s3": {
+        "plan_markdown": "## 一、四方主张与冲突消解\n\n| 角色 | 核心主张 |\n| --- | --- |\n| 产品 | 产品侧围绕本次大促给出专属动作，聚焦产品维度的落地安排。 |\n| 运营 | 运营侧围绕本次大促给出专属动作，聚焦运营维度的落地安排。 |\n| 数据 | 数据侧围绕本次大促给出专属动作，聚焦数据维度的落地安排。 |\n| 客服 | 客服侧围绕本次大促给出专属动作，聚焦客服维度的落地安排。 |\n\n## 二、统一执行方案\n\n四方共识：以恢复转化率为核心约束，预算优先投向转化洼地。\n\n冲突消解：运营侧希望 30% 折扣，数据侧测算仅支持 20%，最终按数据侧口径执行 20% 折扣并保留 5% 弹性额度。\n\n统一时间线：预热（D-7）→ 爆发（D1）→ 返场（D2-D3）。\n",
+        "roles": [
+          {
+            "role": "product",
+            "contribution": "产品侧围绕本次大促给出专属动作，聚焦产品维度的落地安排。",
+            "rationale": "基于上周环比数据与产品侧现有资源测算。"
+          },
+          {
+            "role": "operation",
+            "contribution": "运营侧围绕本次大促给出专属动作，聚焦运营维度的落地安排。",
+            "rationale": "基于上周环比数据与运营侧现有资源测算。"
+          },
+          {
+            "role": "data",
+            "contribution": "数据侧围绕本次大促给出专属动作，聚焦数据维度的落地安排。",
+            "rationale": "基于上周环比数据与数据侧现有资源测算。"
+          },
+          {
+            "role": "service",
+            "contribution": "客服侧围绕本次大促给出专属动作，聚焦客服维度的落地安排。",
+            "rationale": "基于上周环比数据与客服侧现有资源测算。"
+          }
+        ]
+      }
+    }
+  }
+}

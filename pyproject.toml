@@ -7,7 +7,7 @@ name = "agent-hub-foundation"
 version = "0.1.0"
 description = "Candidate contracts and deterministic orchestration foundation"
 requires-python = ">=3.10"
-dependencies = ["pydantic>=2.10,<3", "jsonschema>=4.23,<5", "python-dotenv>=1,<2"]
+dependencies = ["pydantic>=2.10,<3", "jsonschema>=4.23,<5", "python-dotenv>=1,<2", "langgraph==1.2.15"]
 
 [project.optional-dependencies]
 test = ["pytest>=8.3,<10"]
@@ -22,4 +22,4 @@ include = ["common*", "hub_platform*", "agents*"]
 testpaths = ["tests"]
 pythonpath = ["."]
 addopts = "-ra --basetemp=.pytest_cache/tmp"
-markers = ["live: explicit opt-in external API tests; may incur charges"]
+markers = ["live: explicit opt-in external API tests; may incur charges", "planner_live: real top-level planner model behavior", "business_live: real business model and end-to-end tests"]

@@ -1,0 +1,135 @@
+{
+  "session_id": "sess-30a39bf13f4d",
+  "task_id": "task-d15532268d38",
+  "trace_id": "trace-c50942e123e54e50",
+  "status": "completed",
+  "message": "执行完成，结果见各步骤与最终输出。",
+  "plan": {
+    "plan_id": "plan-20261013-001",
+    "goal": "查询订单2025101234的物流状态",
+    "steps": [
+      {
+        "step_id": "s1",
+        "capability_id": "m2.order_tracking",
+        "depends_on": [],
+        "inputs": {
+          "order_id": {
+            "literal": "2025101234"
+          }
+        }
+      }
+    ]
+  },
+  "report": {
+    "plan_id": "plan-20261013-001",
+    "task_id": "task-d15532268d38",
+    "trace_id": "trace-c50942e123e54e50",
+    "status": "completed",
+    "steps": {
+      "s1": {
+        "step_id": "s1",
+        "capability_id": "m2.order_tracking",
+        "depends_on": [],
+        "request_id": "req-98a9f1c145f7",
+        "status": "completed",
+        "inputs": {
+          "order_id": "2025101234"
+        },
+        "result": {
+          "request_id": "req-98a9f1c145f7",
+          "task_id": "task-d15532268d38",
+          "trace_id": "trace-c50942e123e54e50",
+          "capability_id": "m2.order_tracking",
+          "status": "completed",
+          "data": {
+            "order_id": "2025101234",
+            "order_amount": 69900,
+            "order_status": "paid",
+            "tracking_number": "mock-track-001",
+            "actions": [
+              "query_order",
+              "query_logistics"
+            ],
+            "observations": [
+              "Mock 订单金额 69900 分",
+              "Mock 物流运输中"
+            ],
+            "stop_reason": "查询完成"
+          },
+          "error": null,
+          "waiting_reason": null,
+          "continuation_token": null
+        },
+        "error": null,
+        "reason": null
+      }
+    },
+    "events": [
+      {
+        "sequence": 1,
+        "ts": "2026-10-13T08:34:15.116295+00:00",
+        "level": "info",
+        "trace_id": "trace-c50942e123e54e50",
+        "task_id": "task-d15532268d38",
+        "request_id": null,
+        "step_id": "s1",
+        "capability_id": "m2.order_tracking",
+        "status": "pending",
+        "reason": "已加入执行计划",
+        "error_code": null
+      },
+      {
+        "sequence": 2,
+        "ts": "2026-10-13T08:34:15.116358+00:00",
+        "level": "info",
+        "trace_id": "trace-c50942e123e54e50",
+        "task_id": "task-d15532268d38",
+        "request_id": "req-98a9f1c145f7",
+        "step_id": "s1",
+        "capability_id": "m2.order_tracking",
+        "status": "running",
+        "reason": "解析输入并调用能力",
+        "error_code": null
+      },
+      {
+        "sequence": 3,
+        "ts": "2026-10-13T08:34:15.116914+00:00",
+        "level": "info",
+        "trace_id": "trace-c50942e123e54e50",
+        "task_id": "task-d15532268d38",
+        "request_id": "req-98a9f1c145f7",
+        "step_id": "s1",
+        "capability_id": "m2.order_tracking",
+        "status": "completed",
+        "reason": "能力执行完成",
+        "error_code": null
+      }
+    ],
+    "final_results": {
+      "s1": {
+        "order_id": "2025101234",
+        "order_amount": 69900,
+        "order_status": "paid",
+        "tracking_number": "mock-track-001",
+        "actions": [
+          "query_order",
+          "query_logistics"
+        ],
+        "observations": [
+          "Mock 订单金额 69900 分",
+          "Mock 物流运输中"
+        ],
+        "stop_reason": "查询完成"
+      }
+    }
+  },
+  "error": null,
+  "planning_attempts": [
+    {
+      "number": 1,
+      "status": "accepted",
+      "error_code": null,
+      "message": null
+    }
+  ]
+}

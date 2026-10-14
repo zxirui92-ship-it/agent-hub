@@ -1,0 +1,18 @@
+============================= test session starts =============================
+platform win32 -- Python 3.14.5, pytest-9.1.1, pluggy-1.6.0 -- D:\模组\agent-hub\.venv\Scripts\python.exe
+cachedir: .pytest_cache
+rootdir: D:\模组\agent-hub
+configfile: pyproject.toml
+plugins: anyio-4.15.1, langsmith-0.14.8
+collecting ... collected 7 items
+
+tests/live/test_planner_live.py::test_real_planner_semantics[single_order] PASSED [ 14%]
+tests/live/test_planner_live.py::test_real_planner_semantics[operations_promotion] PASSED [ 28%]
+tests/live/test_planner_live.py::test_real_planner_semantics[order_refund] PASSED [ 42%]
+tests/live/test_planner_live.py::test_real_planner_semantics[gateway_code] PASSED [ 57%]
+tests/live/test_planner_live.py::test_real_planner_semantics[missing_order] PASSED [ 71%]
+tests/live/test_planner_live.py::test_real_planner_semantics[physical_action] PASSED [ 85%]
+tests/live/test_planner_live.py::test_real_planner_multiturn_clarification PASSED [100%]
+
+-- generated xml file: D:\模组\agent-hub\tests\artifacts\planner_api_live.xml ---
+============================= 7 passed in 14.46s ==============================

@@ -1,0 +1,108 @@
+{
+  "source_root": "D:\\agent 项目",
+  "excluded": [
+    ".venv/",
+    ".idea/",
+    "__pycache__/",
+    ".pytest_cache/",
+    ".git/",
+    ".env"
+  ],
+  "files": [
+    {
+      "source": "M3/.env.example",
+      "bytes": 231,
+      "sha256": "4475593228eaa0be701a6690a295cfdf1f53a11c711fb8bbd4ce07369ffe2e77"
+    },
+    {
+      "source": "M3/agents/__init__.py",
+      "bytes": 21,
+      "sha256": "202f43d7f8e56e53624ca490e8af6d66e7381decb279e84b1b1d016a2d3e2884"
+    },
+    {
+      "source": "M3/agents/plan_execute.py",
+      "bytes": 27576,
+      "sha256": "81d5369db11089626e98be50fa1ff172263174c813d8a82a52333569095f8eb0"
+    },
+    {
+      "source": "M3/common/__init__.py",
+      "bytes": 95,
+      "sha256": "5632acd72efa8edf466e7a1786547e9f3e683a9134f372059d0c461158249381"
+    },
+    {
+      "source": "M3/common/contract.py",
+      "bytes": 3026,
+      "sha256": "668cf1f0a40fae8a6e8e8631ca9c31424be93e92fcc9b51962a65f3351280a55"
+    },
+    {
+      "source": "M3/common/errors.py",
+      "bytes": 1205,
+      "sha256": "7e36fd71c61eb09f9463f12565b44748e5cbde317a2bb13ab6811a2f47ddab97"
+    },
+    {
+      "source": "M3/common/llm.py",
+      "bytes": 5494,
+      "sha256": "2bac31b953cdaa64ee8cab1032b8b4985a6a21859c01d444f580c656ca9fe539"
+    },
+    {
+      "source": "M3/common/logger.py",
+      "bytes": 2486,
+      "sha256": "a9794913eaa8c6f101ceab936558fd5ffa3406020c75b9782acf76165aafdd1b"
+    },
+    {
+      "source": "M3/data/fixtures/marketing_campaign.json",
+      "bytes": 696,
+      "sha256": "9b9c86b7b2ae966140eaae4da896290026fb97f3ea2316548cd9c6b5063ba958"
+    },
+    {
+      "source": "M3/data/fixtures/order_basic.json",
+      "bytes": 2166,
+      "sha256": "2465ade53bfe5c27fc4bac0f79b2e7b18ec3e2560c79f9b4a416f7c6199e7b87"
+    },
+    {
+      "source": "M3/data/fixtures/user_behavior.json",
+      "bytes": 754,
+      "sha256": "71c05ec96cad8c435e2d5a60408aee059bc5dfa01942048847636421e7135e2e"
+    },
+    {
+      "source": "M3/docs/architecture.md",
+      "bytes": 3801,
+      "sha256": "a0f23fc9cddb3a7060c30393296d1508e6ac8f700c6316e6694148c8f05306d0"
+    },
+    {
+      "source": "M3/README.md",
+      "bytes": 2311,
+      "sha256": "cf2bda0b5f0bcaace8d424e15572cdb7d193169c25cc31c577b86131ec63a906"
+    },
+    {
+      "source": "M3/requirements.txt",
+      "bytes": 236,
+      "sha256": "61ea74ae6a99bc2873d57052b129fb1e94889eef7e495b3f8b8519141c159115"
+    },
+    {
+      "source": "M3/tests/test_m3_weekly_report.py",
+      "bytes": 12887,
+      "sha256": "a134d5f82c049328c8dd7142c0a791023c0c458d6d0bc7f0450182a6d3b6136c"
+    },
+    {
+      "source": "M7/__init__.py",
+      "bytes": 1262,
+      "sha256": "2af1db459e2c85abf0f137475d3b74517c6b1b9deae0af164bfe025434b52157"
+    },
+    {
+      "source": "M7/nodes.py",
+      "bytes": 23009,
+      "sha256": "3ceb8239414047a9ba4d631062f4a0b3879bf808cdd934e7cd1506c882818e0f"
+    },
+    {
+      "source": "M7/refund_graph.py",
+      "bytes": 32771,
+      "sha256": "faf32b0d94d239c742e449d6dfb409f48b2341358d4c085bddc02f0397ca83e8"
+    },
+    {
+      "source": "M7/state.py",
+      "bytes": 7169,
+      "sha256": "d28a8d8400f8dedcf3de8d1aae99fce5e667ce7e61fbbad4d0555357e90f5a5b"
+    }
+  ]
+}

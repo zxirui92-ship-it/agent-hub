@@ -1,0 +1,8 @@
+Date: 2026-10-13 (Asia/Tokyo)
+Working directory: D:\模组\agent-hub
+Command: .\.venv\Scripts\python.exe -m pytest -q --basetemp=.pytest_cache/planner-full-regression-tmp
+Result: 247 passed, 14 skipped in 35.48s
+Skipped: 8 existing M4 live API cases and 6 top-level planner model behavior cases.
+New offline planner/conversation/CLI tests: 41 passed.
+LLM configuration availability: LLM_BASE_URL=false, LLM_API_KEY=false, LLM_MODEL=false.
+No live calls; semantic accuracy is unmeasured.

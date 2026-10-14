@@ -1,0 +1,512 @@
+{
+  "mode": "offline",
+  "external_api_calls": 0,
+  "adapters": {
+    "m1": "explicit mock model",
+    "m2": "local decisions/shared fixture orders",
+    "m3": "local",
+    "m4": "mock adapters",
+    "m5": "injected FakeLLM",
+    "m6": "real fusion of weekly sample files",
+    "m7": "local LangGraph workflow"
+  },
+  "reports": {
+    "operations": {
+      "plan_id": "plan-20261012-003",
+      "task_id": "task-000000000014",
+      "trace_id": "trace-0000000000000014",
+      "status": "completed",
+      "steps": {
+        "s3": {
+          "step_id": "s3",
+          "capability_id": "m5.promotion_plan",
+          "depends_on": [
+            "s2"
+          ],
+          "request_id": "req-c65c9c477eea",
+          "status": "completed",
+          "inputs": {
+            "report_markdown": "# 2026-W41 运营周报\n\n运行方式：本地标准计划与计算；数据来自调用方提供的经营视图。\n\n## 核心指标\n| 指标 | 数值 |\n|---|---:|\n| 销售额 | 1268430000 分（12684300.00 元） |\n| 订单量 | 84562 |\n| 转化率 | 2.42% |\n\n## 环比\n未提供上一周同口径原始指标，无法重新计算环比。\n\n## 异常与待核查项\n输入数据记录：秋日焕新限时秒杀活动，10 点场流量集中；秒杀服装类商品尺码偏差集中退货；行为源转化率 2.42%；未提供完整漏斗，无法判断加购瓶颈。；退款率 3.30%。；同期活动：秋日焕新季；仅为同期记录，不证明因果关系。；未提供活动实际支出及归因成交额，无法计算 ROI；活动预算不作为支出。。归因仅供核查，当前未接入额外归因证据。\n",
+            "goal": "根据第 41 周经营分析制定下周大促方案",
+            "fused_data": {
+              "week": "2026-W41",
+              "revenue_amount": 1268430000,
+              "order_count": 84562,
+              "conversion_rate": 0.0242,
+              "anomaly": "秋日焕新限时秒杀活动，10 点场流量集中；秒杀服装类商品尺码偏差集中退货；行为源转化率 2.42%；未提供完整漏斗，无法判断加购瓶颈。；退款率 3.30%。；同期活动：秋日焕新季；仅为同期记录，不证明因果关系。；未提供活动实际支出及归因成交额，无法计算 ROI；活动预算不作为支出。"
+            }
+          },
+          "result": {
+            "request_id": "req-c65c9c477eea",
+            "task_id": "task-000000000014",
+            "trace_id": "trace-0000000000000014",
+            "capability_id": "m5.promotion_plan",
+            "status": "completed",
+            "data": {
+              "plan_markdown": "## 一、四方主张与冲突消解\n\n| 角色 | 核心主张 |\n| --- | --- |\n| 产品 | 产品侧围绕本次大促给出专属动作，聚焦产品维度的落地安排。 |\n| 运营 | 运营侧围绕本次大促给出专属动作，聚焦运营维度的落地安排。 |\n| 数据 | 数据侧围绕本次大促给出专属动作，聚焦数据维度的落地安排。 |\n| 客服 | 客服侧围绕本次大促给出专属动作，聚焦客服维度的落地安排。 |\n\n## 二、统一执行方案\n\n四方共识：以恢复转化率为核心约束，预算优先投向转化洼地。\n\n冲突消解：运营侧希望 30% 折扣，数据侧测算仅支持 20%，最终按数据侧口径执行 20% 折扣并保留 5% 弹性额度。\n\n统一时间线：预热（D-7）→ 爆发（D1）→ 返场（D2-D3）。\n",
+              "roles": [
+                {
+                  "role": "product",
+                  "contribution": "产品侧围绕本次大促给出专属动作，聚焦产品维度的落地安排。",
+                  "rationale": "基于上周环比数据与产品侧现有资源测算。"
+                },
+                {
+                  "role": "operation",
+                  "contribution": "运营侧围绕本次大促给出专属动作，聚焦运营维度的落地安排。",
+                  "rationale": "基于上周环比数据与运营侧现有资源测算。"
+                },
+                {
+                  "role": "data",
+                  "contribution": "数据侧围绕本次大促给出专属动作，聚焦数据维度的落地安排。",
+                  "rationale": "基于上周环比数据与数据侧现有资源测算。"
+                },
+                {
+                  "role": "service",
+                  "contribution": "客服侧围绕本次大促给出专属动作，聚焦客服维度的落地安排。",
+                  "rationale": "基于上周环比数据与客服侧现有资源测算。"
+                }
+              ]
+            },
+            "error": null,
+            "waiting_reason": null,
+            "continuation_token": null
+          },
+          "error": null,
+          "reason": null
+        },
+        "s1": {
+          "step_id": "s1",
+          "capability_id": "m6.data_fusion",
+          "depends_on": [],
+          "request_id": "req-19f48dfe85cf",
+          "status": "completed",
+          "inputs": {
+            "week": "2026-W41"
+          },
+          "result": {
+            "request_id": "req-19f48dfe85cf",
+            "task_id": "task-000000000014",
+            "trace_id": "trace-0000000000000014",
+            "capability_id": "m6.data_fusion",
+            "status": "completed",
+            "data": {
+              "fused_data": {
+                "week": "2026-W41",
+                "revenue_amount": 1268430000,
+                "order_count": 84562,
+                "conversion_rate": 0.0242,
+                "anomaly": "秋日焕新限时秒杀活动，10 点场流量集中；秒杀服装类商品尺码偏差集中退货；行为源转化率 2.42%；未提供完整漏斗，无法判断加购瓶颈。；退款率 3.30%。；同期活动：秋日焕新季；仅为同期记录，不证明因果关系。；未提供活动实际支出及归因成交额，无法计算 ROI；活动预算不作为支出。"
+              },
+              "field_definitions": [
+                "week：ISO 周；输入必须显式指定。本地周汇总样例，非生产实时数据。",
+                "revenue_amount：订单周汇总 gmv_amount，整数分；本视图沿用成交金额口径，不表示会计确认收入。",
+                "order_count：订单周汇总订单量，整数单。",
+                "conversion_rate：行为源已提供的 0–1 比率；缺少购买 UV，不能用订单量/UV 替代。",
+                "anomaly：源记录异常与融合洞察、数据缺口；营销预算不是实际支出，不能据此计算 ROI。"
+              ],
+              "update_events": [
+                "{\"ts\": \"2026-10-14T01:33:35.649289+00:00\", \"event\": \"process\", \"key\": \"orders\", \"author\": \"order_agent\"}",
+                "{\"ts\": \"2026-10-14T01:33:35.649309+00:00\", \"event\": \"write\", \"key\": \"orders\", \"author\": \"order_agent\"}",
+                "{\"ts\": \"2026-10-14T01:33:35.649341+00:00\", \"event\": \"react\", \"key\": \"orders\", \"author\": \"marketing_agent\"}",
+                "{\"ts\": \"2026-10-14T01:33:35.649363+00:00\", \"event\": \"react\", \"key\": \"orders\", \"author\": \"insight_agent\"}",
+                "{\"ts\": \"2026-10-14T01:33:35.649367+00:00\", \"event\": \"process\", \"key\": \"behavior\", \"author\": \"behavior_agent\"}",
+                "{\"ts\": \"2026-10-14T01:33:35.649374+00:00\", \"event\": \"write\", \"key\": \"behavior\", \"author\": \"behavior_agent\"}",
+                "{\"ts\": \"2026-10-14T01:33:35.649386+00:00\", \"event\": \"react\", \"key\": \"behavior\", \"author\": \"insight_agent\"}",
+                "{\"ts\": \"2026-10-14T01:33:35.649391+00:00\", \"event\": \"read\", \"key\": \"orders\", \"author\": \"marketing_agent\"}",
+                "{\"ts\": \"2026-10-14T01:33:35.649405+00:00\", \"event\": \"process\", \"key\": \"marketing\", \"author\": \"marketing_agent\"}",
+                "{\"ts\": \"2026-10-14T01:33:35.649411+00:00\", \"event\": \"write\", \"key\": \"marketing\", \"author\": \"marketing_agent\"}",
+                "{\"ts\": \"2026-10-14T01:33:35.649420+00:00\", \"event\": \"react\", \"key\": \"marketing\", \"author\": \"insight_agent\"}",
+                "{\"ts\": \"2026-10-14T01:33:35.649424+00:00\", \"event\": \"read\", \"key\": \"orders\", \"author\": \"insight_agent\"}",
+                "{\"ts\": \"2026-10-14T01:33:35.649438+00:00\", \"event\": \"read\", \"key\": \"behavior\", \"author\": \"insight_agent\"}",
+                "{\"ts\": \"2026-10-14T01:33:35.649443+00:00\", \"event\": \"read\", \"key\": \"marketing\", \"author\": \"insight_agent\"}",
+                "{\"ts\": \"2026-10-14T01:33:35.649448+00:00\", \"event\": \"process\", \"key\": \"insight\", \"author\": \"insight_agent\"}",
+                "{\"ts\": \"2026-10-14T01:33:35.649465+00:00\", \"event\": \"write\", \"key\": \"insight\", \"author\": \"insight_agent\"}"
+              ]
+            },
+            "error": null,
+            "waiting_reason": null,
+            "continuation_token": null
+          },
+          "error": null,
+          "reason": null
+        },
+        "s2": {
+          "step_id": "s2",
+          "capability_id": "m3.weekly_report",
+          "depends_on": [
+            "s1"
+          ],
+          "request_id": "req-f3f6637b33d8",
+          "status": "completed",
+          "inputs": {
+            "fused_data": {
+              "week": "2026-W41",
+              "revenue_amount": 1268430000,
+              "order_count": 84562,
+              "conversion_rate": 0.0242,
+              "anomaly": "秋日焕新限时秒杀活动，10 点场流量集中；秒杀服装类商品尺码偏差集中退货；行为源转化率 2.42%；未提供完整漏斗，无法判断加购瓶颈。；退款率 3.30%。；同期活动：秋日焕新季；仅为同期记录，不证明因果关系。；未提供活动实际支出及归因成交额，无法计算 ROI；活动预算不作为支出。"
+            }
+          },
+          "result": {
+            "request_id": "req-f3f6637b33d8",
+            "task_id": "task-000000000014",
+            "trace_id": "trace-0000000000000014",
+            "capability_id": "m3.weekly_report",
+            "status": "completed",
+            "data": {
+              "week": "2026-W41",
+              "report_markdown": "# 2026-W41 运营周报\n\n运行方式：本地标准计划与计算；数据来自调用方提供的经营视图。\n\n## 核心指标\n| 指标 | 数值 |\n|---|---:|\n| 销售额 | 1268430000 分（12684300.00 元） |\n| 订单量 | 84562 |\n| 转化率 | 2.42% |\n\n## 环比\n未提供上一周同口径原始指标，无法重新计算环比。\n\n## 异常与待核查项\n输入数据记录：秋日焕新限时秒杀活动，10 点场流量集中；秒杀服装类商品尺码偏差集中退货；行为源转化率 2.42%；未提供完整漏斗，无法判断加购瓶颈。；退款率 3.30%。；同期活动：秋日焕新季；仅为同期记录，不证明因果关系。；未提供活动实际支出及归因成交额，无法计算 ROI；活动预算不作为支出。。归因仅供核查，当前未接入额外归因证据。\n",
+              "steps": [
+                {
+                  "step_id": "s1",
+                  "description": "读取融合经营数据",
+                  "status": "completed",
+                  "result_summary": "已读取 2026-W41 融合数据；订单 84562，销售额 1268430000 分",
+                  "duration_ms": 0
+                },
+                {
+                  "step_id": "s2",
+                  "description": "计算同口径环比",
+                  "status": "completed",
+                  "result_summary": "未提供上一周同口径原始指标，无法重新计算环比。",
+                  "duration_ms": 0
+                },
+                {
+                  "step_id": "s3",
+                  "description": "分析输入异常",
+                  "status": "completed",
+                  "result_summary": "输入数据记录：秋日焕新限时秒杀活动，10 点场流量集中；秒杀服装类商品尺码偏差集中退货；行为源转化率 2.42%；未提供完整漏斗，无法判断加购瓶颈。；退款率 3.30%。；同期活动：秋日焕新季；仅为同期记录，不证明因果关系。；未提供活动实际支出及归因成交额，无法计算 ROI；活动预算不作为支出。。归因仅供核查，当前未接入额外归因证据。",
+                  "duration_ms": 0
+                },
+                {
+                  "step_id": "s4",
+                  "description": "汇总 Markdown 周报",
+                  "status": "completed",
+                  "result_summary": "已生成周报，保留数据缺口和统计口径说明",
+                  "duration_ms": 0
+                }
+              ]
+            },
+            "error": null,
+            "waiting_reason": null,
+            "continuation_token": null
+          },
+          "error": null,
+          "reason": null
+        }
+      },
+      "events": [
+        {
+          "sequence": 1,
+          "ts": "2026-10-14T01:33:35.646943+00:00",
+          "level": "info",
+          "trace_id": "trace-0000000000000014",
+          "task_id": "task-000000000014",
+          "request_id": null,
+          "step_id": "s3",
+          "capability_id": "m5.promotion_plan",
+          "status": "pending",
+          "reason": "已加入执行计划",
+          "error_code": null
+        },
+        {
+          "sequence": 2,
+          "ts": "2026-10-14T01:33:35.646988+00:00",
+          "level": "info",
+          "trace_id": "trace-0000000000000014",
+          "task_id": "task-000000000014",
+          "request_id": null,
+          "step_id": "s1",
+          "capability_id": "m6.data_fusion",
+          "status": "pending",
+          "reason": "已加入执行计划",
+          "error_code": null
+        },
+        {
+          "sequence": 3,
+          "ts": "2026-10-14T01:33:35.646995+00:00",
+          "level": "info",
+          "trace_id": "trace-0000000000000014",
+          "task_id": "task-000000000014",
+          "request_id": null,
+          "step_id": "s2",
+          "capability_id": "m3.weekly_report",
+          "status": "pending",
+          "reason": "已加入执行计划",
+          "error_code": null
+        },
+        {
+          "sequence": 4,
+          "ts": "2026-10-14T01:33:35.647029+00:00",
+          "level": "info",
+          "trace_id": "trace-0000000000000014",
+          "task_id": "task-000000000014",
+          "request_id": "req-19f48dfe85cf",
+          "step_id": "s1",
+          "capability_id": "m6.data_fusion",
+          "status": "running",
+          "reason": "解析输入并调用能力",
+          "error_code": null
+        },
+        {
+          "sequence": 5,
+          "ts": "2026-10-14T01:33:35.650025+00:00",
+          "level": "info",
+          "trace_id": "trace-0000000000000014",
+          "task_id": "task-000000000014",
+          "request_id": "req-19f48dfe85cf",
+          "step_id": "s1",
+          "capability_id": "m6.data_fusion",
+          "status": "completed",
+          "reason": "能力执行完成",
+          "error_code": null
+        },
+        {
+          "sequence": 6,
+          "ts": "2026-10-14T01:33:35.650049+00:00",
+          "level": "info",
+          "trace_id": "trace-0000000000000014",
+          "task_id": "task-000000000014",
+          "request_id": "req-f3f6637b33d8",
+          "step_id": "s2",
+          "capability_id": "m3.weekly_report",
+          "status": "running",
+          "reason": "解析输入并调用能力",
+          "error_code": null
+        },
+        {
+          "sequence": 7,
+          "ts": "2026-10-14T01:33:35.650576+00:00",
+          "level": "info",
+          "trace_id": "trace-0000000000000014",
+          "task_id": "task-000000000014",
+          "request_id": "req-f3f6637b33d8",
+          "step_id": "s2",
+          "capability_id": "m3.weekly_report",
+          "status": "completed",
+          "reason": "能力执行完成",
+          "error_code": null
+        },
+        {
+          "sequence": 8,
+          "ts": "2026-10-14T01:33:35.650591+00:00",
+          "level": "info",
+          "trace_id": "trace-0000000000000014",
+          "task_id": "task-000000000014",
+          "request_id": "req-c65c9c477eea",
+          "step_id": "s3",
+          "capability_id": "m5.promotion_plan",
+          "status": "running",
+          "reason": "解析输入并调用能力",
+          "error_code": null
+        },
+        {
+          "sequence": 9,
+          "ts": "2026-10-14T01:33:35.651199+00:00",
+          "level": "info",
+          "trace_id": "trace-0000000000000014",
+          "task_id": "task-000000000014",
+          "request_id": "req-c65c9c477eea",
+          "step_id": "s3",
+          "capability_id": "m5.promotion_plan",
+          "status": "completed",
+          "reason": "能力执行完成",
+          "error_code": null
+        }
+      ],
+      "final_results": {
+        "s3": {
+          "plan_markdown": "## 一、四方主张与冲突消解\n\n| 角色 | 核心主张 |\n| --- | --- |\n| 产品 | 产品侧围绕本次大促给出专属动作，聚焦产品维度的落地安排。 |\n| 运营 | 运营侧围绕本次大促给出专属动作，聚焦运营维度的落地安排。 |\n| 数据 | 数据侧围绕本次大促给出专属动作，聚焦数据维度的落地安排。 |\n| 客服 | 客服侧围绕本次大促给出专属动作，聚焦客服维度的落地安排。 |\n\n## 二、统一执行方案\n\n四方共识：以恢复转化率为核心约束，预算优先投向转化洼地。\n\n冲突消解：运营侧希望 30% 折扣，数据侧测算仅支持 20%，最终按数据侧口径执行 20% 折扣并保留 5% 弹性额度。\n\n统一时间线：预热（D-7）→ 爆发（D1）→ 返场（D2-D3）。\n",
+          "roles": [
+            {
+              "role": "product",
+              "contribution": "产品侧围绕本次大促给出专属动作，聚焦产品维度的落地安排。",
+              "rationale": "基于上周环比数据与产品侧现有资源测算。"
+            },
+            {
+              "role": "operation",
+              "contribution": "运营侧围绕本次大促给出专属动作，聚焦运营维度的落地安排。",
+              "rationale": "基于上周环比数据与运营侧现有资源测算。"
+            },
+            {
+              "role": "data",
+              "contribution": "数据侧围绕本次大促给出专属动作，聚焦数据维度的落地安排。",
+              "rationale": "基于上周环比数据与数据侧现有资源测算。"
+            },
+            {
+              "role": "service",
+              "contribution": "客服侧围绕本次大促给出专属动作，聚焦客服维度的落地安排。",
+              "rationale": "基于上周环比数据与客服侧现有资源测算。"
+            }
+          ]
+        }
+      }
+    },
+    "refund_waiting": {
+      "plan_id": "plan-20261012-004",
+      "task_id": "task-000000000014",
+      "trace_id": "trace-0000000000000014",
+      "status": "waiting_approval",
+      "steps": {
+        "s1": {
+          "step_id": "s1",
+          "capability_id": "m2.order_tracking",
+          "depends_on": [],
+          "request_id": "req-d1456e711099",
+          "status": "completed",
+          "inputs": {
+            "order_id": "2025101234"
+          },
+          "result": {
+            "request_id": "req-d1456e711099",
+            "task_id": "task-000000000014",
+            "trace_id": "trace-0000000000000014",
+            "capability_id": "m2.order_tracking",
+            "status": "completed",
+            "data": {
+              "order_id": "2025101234",
+              "order_amount": 69900,
+              "order_status": "paid",
+              "tracking_number": "mock-track-001",
+              "actions": [
+                "query_order",
+                "query_logistics"
+              ],
+              "observations": [
+                "{\"round\": 1, \"action\": \"query_order\", \"decision_summary\": \"本地确定性演示：读取尚缺失的共享样例事实\", \"result\": {\"order_id\": \"2025101234\", \"order_amount\": 69900, \"order_status\": \"paid\", \"tracking_number\": \"mock-track-001\", \"source\": \"local_fixture\"}, \"mode\": \"local\"}",
+                "{\"round\": 2, \"action\": \"query_logistics\", \"decision_summary\": \"本地确定性演示：读取尚缺失的共享样例事实\", \"result\": {\"order_id\": \"2025101234\", \"tracking_number\": \"mock-track-001\", \"source\": \"local_fixture\"}, \"mode\": \"local\"}"
+              ],
+              "stop_reason": "goal_achieved"
+            },
+            "error": null,
+            "waiting_reason": null,
+            "continuation_token": null
+          },
+          "error": null,
+          "reason": null
+        },
+        "s2": {
+          "step_id": "s2",
+          "capability_id": "m7.refund_approval",
+          "depends_on": [
+            "s1"
+          ],
+          "request_id": "req-36e29526f33f",
+          "status": "waiting_approval",
+          "inputs": {
+            "order_id": "2025101234",
+            "reason": "未使用商品申请退款",
+            "refund_amount": 69900
+          },
+          "result": {
+            "request_id": "req-36e29526f33f",
+            "task_id": "task-000000000014",
+            "trace_id": "trace-0000000000000014",
+            "capability_id": "m7.refund_approval",
+            "status": "waiting_approval",
+            "data": {
+              "request_id": "refund-1ed2ec4fc7c8",
+              "approval_status": "waiting_approval",
+              "node_trace": [
+                {
+                  "node_name": "receive"
+                }
+              ],
+              "state_view": {
+                "order_id": "2025101234",
+                "order_amount": 69900,
+                "refund_amount": 69900
+              }
+            },
+            "error": null,
+            "waiting_reason": "金额超过 50000 分，等待人工审核。",
+            "continuation_token": "cont-78d907417a49453d"
+          },
+          "error": null,
+          "reason": "金额超过 50000 分，等待人工审核。"
+        }
+      },
+      "events": [
+        {
+          "sequence": 1,
+          "ts": "2026-10-14T01:33:35.710499+00:00",
+          "level": "info",
+          "trace_id": "trace-0000000000000014",
+          "task_id": "task-000000000014",
+          "request_id": null,
+          "step_id": "s1",
+          "capability_id": "m2.order_tracking",
+          "status": "pending",
+          "reason": "已加入执行计划",
+          "error_code": null
+        },
+        {
+          "sequence": 2,
+          "ts": "2026-10-14T01:33:35.710517+00:00",
+          "level": "info",
+          "trace_id": "trace-0000000000000014",
+          "task_id": "task-000000000014",
+          "request_id": null,
+          "step_id": "s2",
+          "capability_id": "m7.refund_approval",
+          "status": "pending",
+          "reason": "已加入执行计划",
+          "error_code": null
+        },
+        {
+          "sequence": 3,
+          "ts": "2026-10-14T01:33:35.710537+00:00",
+          "level": "info",
+          "trace_id": "trace-0000000000000014",
+          "task_id": "task-000000000014",
+          "request_id": "req-d1456e711099",
+          "step_id": "s1",
+          "capability_id": "m2.order_tracking",
+          "status": "running",
+          "reason": "解析输入并调用能力",
+          "error_code": null
+        },
+        {
+          "sequence": 4,
+          "ts": "2026-10-14T01:33:35.711568+00:00",
+          "level": "info",
+          "trace_id": "trace-0000000000000014",
+          "task_id": "task-000000000014",
+          "request_id": "req-d1456e711099",
+          "step_id": "s1",
+          "capability_id": "m2.order_tracking",
+          "status": "completed",
+          "reason": "能力执行完成",
+          "error_code": null
+        },
+        {
+          "sequence": 5,
+          "ts": "2026-10-14T01:33:35.711590+00:00",
+          "level": "info",
+          "trace_id": "trace-0000000000000014",
+          "task_id": "task-000000000014",
+          "request_id": "req-36e29526f33f",
+          "step_id": "s2",
+          "capability_id": "m7.refund_approval",
+          "status": "running",
+          "reason": "解析输入并调用能力",
+          "error_code": null
+        },
+        {
+          "sequence": 6,
+          "ts": "2026-10-14T01:33:35.722052+00:00",
+          "level": "info",
+          "trace_id": "trace-0000000000000014",
+          "task_id": "task-000000000014",
+          "request_id": "req-36e29526f33f",
+          "step_id": "s2",
+          "capability_id": "m7.refund_approval",
+          "status": "waiting_approval",
+          "reason": "金额超过 50000 分，等待人工审核。",
+          "error_code": null
+        }
+      ],
+      "final_results": {}
+    }
+  }
+}

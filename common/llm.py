@@ -1,4 +1,4 @@
-"""Minimal chat-completions adapter shared by M4 routing and code generation."""
+"""Minimal chat-completions adapter shared by the Planner and model-using modules."""
 import json
 from typing import Protocol
 

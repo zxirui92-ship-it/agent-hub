@@ -1,0 +1,74 @@
+{
+  "date": "2026-10-14",
+  "timezone": "Asia/Tokyo",
+  "text_models": [
+    "deepseek-flash",
+    "qwen-plus"
+  ],
+  "image_model": "qwen-image-2.0",
+  "batches": [
+    {
+      "artifact": "business_m1_live.xml",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 6.032
+    },
+    {
+      "artifact": "business_modules_live.xml",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 180.615
+    },
+    {
+      "artifact": "m4_bailian_live.xml",
+      "tests": 8,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 1,
+      "seconds": 7.693
+    },
+    {
+      "artifact": "business_qwen_live.xml",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 2.612
+    },
+    {
+      "artifact": "business_e2e_live.xml",
+      "tests": 2,
+      "failures": 1,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 176.364
+    },
+    {
+      "artifact": "business_refund_retest_live.xml",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 6.766
+    }
+  ],
+  "resolved_findings": [
+    "M5 cents versus yuan and missing aggregator facts",
+    "M2 premature finish for amount-only query",
+    "offline subprocess credentials"
+  ],
+  "not_verified": [
+    "web_search: no provider configured",
+    "production business data",
+    "image visual quality"
+  ],
+  "offline_regression": {
+    "passed": 388,
+    "skipped": 23,
+    "seconds": 23.68
+  }
+}

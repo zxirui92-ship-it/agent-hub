@@ -16,8 +16,8 @@ def test_operations_out_of_order_and_data_flow(registry, load_plan):
     assert report.status == "completed" and plan == before
     assert [event.step_id for event in report.events if event.status == StepState.RUNNING] == ["s1", "s2", "s3"]
     assert report.steps["s2"].inputs["fused_data"] == report.steps["s1"].result.data["fused_data"]
-    assert report.steps["s3"].inputs["report"] == report.steps["s2"].result.data["report_markdown"]
-    assert report.final_results["s3"]["source_report"] == report.steps["s3"].inputs["report"]
+    assert report.steps["s3"].inputs["report_markdown"] == report.steps["s2"].result.data["report_markdown"]
+    assert report.steps["s3"].inputs["report_markdown"] in report.final_results["s3"]["plan_markdown"]
     assert all(e.trace_id == "trace-0000000000000001" and e.task_id == "task-000000000001" for e in report.events)
     assert [e.sequence for e in report.events] == list(range(1, len(report.events) + 1))
 

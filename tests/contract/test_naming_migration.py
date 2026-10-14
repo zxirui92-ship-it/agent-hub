@@ -19,7 +19,11 @@ def test_catalog_fields_owners_and_old_id_removed(registry):
     for cls, expected in zip(MOCK_TYPES, fields):
         spec = registry.get_manifest(cls.manifest.capability_id)
         assert expected <= set(spec.output_schema['required'])
-        assert spec.version == '1.0' and 'pending' not in spec.owner
+        versions = {'m1.faq_chat': '1.1', 'm2.order_tracking': '1.1', 'm3.weekly_report': '2.0',
+                    'm4.capability_gateway': '1.0', 'm5.promotion_plan': '2.0', 'm6.data_fusion': '1.0',
+                    'm7.refund_approval': '2.0'}
+        assert spec.version == versions[spec.capability_id]
+        assert 'pending' not in spec.owner
     with pytest.raises(HubError) as exc:
         registry.get('m1.faq')
     assert exc.value.code == ErrorCode.UNKNOWN_CAPABILITY

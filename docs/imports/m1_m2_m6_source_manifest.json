@@ -1,0 +1,25 @@
+{
+  "date": "2026-10-14",
+  "source_files_unchanged": true,
+  "files": [
+    {
+      "source": "D:\\agent 项目\\M1.zip",
+      "archive_sha256": "e93415a4094cf9b1d019da20bab139e386708e6c87de35c11e49b8341bb5e850",
+      "member": "single_agent.py",
+      "source_sha256": "56ec04d7cd4893db504e06bc2f617b96923b70398653b5b9894278272b0653b3",
+      "target": "agents/single_agent.py"
+    },
+    {
+      "source": "D:\\agent 项目\\M2.zip",
+      "archive_sha256": "5b2b6e8a2b00a60cb4b9773568ca3b9a99893142a5961683737dcc3e92b49fd2",
+      "member": "react_agent.py",
+      "source_sha256": "93108afbbcdb61f002f31951a7814ec8613a25833ad7a7ce4ff3978a1c305203",
+      "target": "agents/react_agent.py"
+    },
+    {
+      "source": "D:\\agent 项目\\M6_blackboard.py",
+      "source_sha256": "e85f043ccfd3809dfd18c220b283e156c9ab52d828af33750f0d6fda3a1b2dc5",
+      "target": "agents/blackboard.py"
+    }
+  ]
+}

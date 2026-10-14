@@ -1,0 +1,38 @@
+[
+  {
+    "case_id": "single_order",
+    "query": "查询订单2025101234的物流状态。",
+    "expected_status": "ready",
+    "expected_capabilities": ["m2.order_tracking"]
+  },
+  {
+    "case_id": "operations_promotion",
+    "query": "融合2026年第41周订单、行为和营销数据，先生成运营周报，再根据周报制定下周大促方案，预算10万元。",
+    "expected_status": "ready",
+    "expected_capabilities": ["m6.data_fusion", "m3.weekly_report", "m5.promotion_plan"]
+  },
+  {
+    "case_id": "order_refund",
+    "query": "查询订单2025101234，然后按查询到的订单金额申请整单退款，退款原因是买错了。",
+    "expected_status": "ready",
+    "expected_capabilities": ["m2.order_tracking", "m7.refund_approval"]
+  },
+  {
+    "case_id": "gateway_code",
+    "query": "用Python写一个两个整数相加的函数，只返回代码，不要执行。",
+    "expected_status": "ready",
+    "expected_capabilities": ["m4.capability_gateway"]
+  },
+  {
+    "case_id": "missing_order",
+    "query": "帮我查询一笔订单的物流，我还没有提供订单号。",
+    "expected_status": "needs_clarification",
+    "expected_capabilities": []
+  },
+  {
+    "case_id": "physical_action",
+    "query": "请你现在亲自去我家给阳台的花浇水，不要给建议或生成说明。",
+    "expected_status": "unsupported",
+    "expected_capabilities": []
+  }
+]

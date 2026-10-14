@@ -1,0 +1,830 @@
+{
+  "scope": "Offline only. M6/M2 are mocks; M3 local Plan/Execute; M5 real roles with FakeLLM; M7 LangGraph + fixture orders.",
+  "live_business_api_calls": 0,
+  "m5_fake_model_calls": 5,
+  "operations": {
+    "plan_id": "plan-20261012-003",
+    "task_id": "task-b793140aa515",
+    "trace_id": "trace-735055a049b243d2",
+    "status": "completed",
+    "steps": {
+      "s3": {
+        "step_id": "s3",
+        "capability_id": "m5.promotion_plan",
+        "depends_on": [
+          "s2"
+        ],
+        "request_id": "req-083bbb5bc01b",
+        "status": "completed",
+        "inputs": {
+          "report_markdown": "# 2026-W41 运营周报\n\n运行方式：本地标准计划与计算；数据来自调用方提供的经营视图。\n\n## 核心指标\n| 指标 | 数值 |\n|---|---:|\n| 销售额 | 12000000 分（120000.00 元） |\n| 订单量 | 800 |\n| 转化率 | 3.20% |\n\n## 环比\n未提供上一周同口径原始指标，无法重新计算环比。\n\n## 异常与待核查项\n输入数据记录：转化率环比下降 0.5 个百分点。归因仅供核查，当前未接入额外归因证据。\n",
+          "goal": "根据第 41 周经营分析制定下周大促方案",
+          "fused_data": {
+            "week": "2026-W41",
+            "revenue_amount": 12000000,
+            "order_count": 800,
+            "conversion_rate": 0.032,
+            "anomaly": "转化率环比下降 0.5 个百分点"
+          }
+        },
+        "result": {
+          "request_id": "req-083bbb5bc01b",
+          "task_id": "task-b793140aa515",
+          "trace_id": "trace-735055a049b243d2",
+          "capability_id": "m5.promotion_plan",
+          "status": "completed",
+          "data": {
+            "plan_markdown": "## 一、四方主张与冲突消解\n\n| 角色 | 核心主张 |\n| --- | --- |\n| 产品 | 产品侧围绕本次大促给出专属动作，聚焦产品维度的落地安排。 |\n| 运营 | 运营侧围绕本次大促给出专属动作，聚焦运营维度的落地安排。 |\n| 数据 | 数据侧围绕本次大促给出专属动作，聚焦数据维度的落地安排。 |\n| 客服 | 客服侧围绕本次大促给出专属动作，聚焦客服维度的落地安排。 |\n\n## 二、统一执行方案\n\n四方共识：以恢复转化率为核心约束，预算优先投向转化洼地。\n\n冲突消解：运营侧希望 30% 折扣，数据侧测算仅支持 20%，最终按数据侧口径执行 20% 折扣并保留 5% 弹性额度。\n\n统一时间线：预热（D-7）→ 爆发（D1）→ 返场（D2-D3）。\n",
+            "roles": [
+              {
+                "role": "product",
+                "contribution": "产品侧围绕本次大促给出专属动作，聚焦产品维度的落地安排。",
+                "rationale": "基于上周环比数据与产品侧现有资源测算。"
+              },
+              {
+                "role": "operation",
+                "contribution": "运营侧围绕本次大促给出专属动作，聚焦运营维度的落地安排。",
+                "rationale": "基于上周环比数据与运营侧现有资源测算。"
+              },
+              {
+                "role": "data",
+                "contribution": "数据侧围绕本次大促给出专属动作，聚焦数据维度的落地安排。",
+                "rationale": "基于上周环比数据与数据侧现有资源测算。"
+              },
+              {
+                "role": "service",
+                "contribution": "客服侧围绕本次大促给出专属动作，聚焦客服维度的落地安排。",
+                "rationale": "基于上周环比数据与客服侧现有资源测算。"
+              }
+            ]
+          },
+          "error": null,
+          "waiting_reason": null,
+          "continuation_token": null
+        },
+        "error": null,
+        "reason": null
+      },
+      "s1": {
+        "step_id": "s1",
+        "capability_id": "m6.data_fusion",
+        "depends_on": [],
+        "request_id": "req-46785357a63d",
+        "status": "completed",
+        "inputs": {
+          "week": "2026-W41"
+        },
+        "result": {
+          "request_id": "req-46785357a63d",
+          "task_id": "task-b793140aa515",
+          "trace_id": "trace-735055a049b243d2",
+          "capability_id": "m6.data_fusion",
+          "status": "completed",
+          "data": {
+            "fused_data": {
+              "week": "2026-W41",
+              "revenue_amount": 12000000,
+              "order_count": 800,
+              "conversion_rate": 0.032,
+              "anomaly": "转化率环比下降 0.5 个百分点"
+            },
+            "field_definitions": [
+              "revenue_amount：销售额，整数分",
+              "order_count：订单数量",
+              "conversion_rate：转化率"
+            ],
+            "update_events": [
+              "Mock 订单读取",
+              "Mock 行为与营销数据融合"
+            ]
+          },
+          "error": null,
+          "waiting_reason": null,
+          "continuation_token": null
+        },
+        "error": null,
+        "reason": null
+      },
+      "s2": {
+        "step_id": "s2",
+        "capability_id": "m3.weekly_report",
+        "depends_on": [
+          "s1"
+        ],
+        "request_id": "req-ca75d69ca450",
+        "status": "completed",
+        "inputs": {
+          "fused_data": {
+            "week": "2026-W41",
+            "revenue_amount": 12000000,
+            "order_count": 800,
+            "conversion_rate": 0.032,
+            "anomaly": "转化率环比下降 0.5 个百分点"
+          }
+        },
+        "result": {
+          "request_id": "req-ca75d69ca450",
+          "task_id": "task-b793140aa515",
+          "trace_id": "trace-735055a049b243d2",
+          "capability_id": "m3.weekly_report",
+          "status": "completed",
+          "data": {
+            "week": "2026-W41",
+            "report_markdown": "# 2026-W41 运营周报\n\n运行方式：本地标准计划与计算；数据来自调用方提供的经营视图。\n\n## 核心指标\n| 指标 | 数值 |\n|---|---:|\n| 销售额 | 12000000 分（120000.00 元） |\n| 订单量 | 800 |\n| 转化率 | 3.20% |\n\n## 环比\n未提供上一周同口径原始指标，无法重新计算环比。\n\n## 异常与待核查项\n输入数据记录：转化率环比下降 0.5 个百分点。归因仅供核查，当前未接入额外归因证据。\n",
+            "steps": [
+              {
+                "step_id": "s1",
+                "description": "读取融合经营数据",
+                "status": "completed",
+                "result_summary": "已读取 2026-W41 融合数据；订单 800，销售额 12000000 分",
+                "duration_ms": 0
+              },
+              {
+                "step_id": "s2",
+                "description": "计算同口径环比",
+                "status": "completed",
+                "result_summary": "未提供上一周同口径原始指标，无法重新计算环比。",
+                "duration_ms": 0
+              },
+              {
+                "step_id": "s3",
+                "description": "分析输入异常",
+                "status": "completed",
+                "result_summary": "输入数据记录：转化率环比下降 0.5 个百分点。归因仅供核查，当前未接入额外归因证据。",
+                "duration_ms": 0
+              },
+              {
+                "step_id": "s4",
+                "description": "汇总 Markdown 周报",
+                "status": "completed",
+                "result_summary": "已生成周报，保留数据缺口和统计口径说明",
+                "duration_ms": 0
+              }
+            ]
+          },
+          "error": null,
+          "waiting_reason": null,
+          "continuation_token": null
+        },
+        "error": null,
+        "reason": null
+      }
+    },
+    "events": [
+      {
+        "sequence": 1,
+        "ts": "2026-10-13T08:22:40.810451+00:00",
+        "level": "info",
+        "trace_id": "trace-735055a049b243d2",
+        "task_id": "task-b793140aa515",
+        "request_id": null,
+        "step_id": "s3",
+        "capability_id": "m5.promotion_plan",
+        "status": "pending",
+        "reason": "已加入执行计划",
+        "error_code": null
+      },
+      {
+        "sequence": 2,
+        "ts": "2026-10-13T08:22:40.810486+00:00",
+        "level": "info",
+        "trace_id": "trace-735055a049b243d2",
+        "task_id": "task-b793140aa515",
+        "request_id": null,
+        "step_id": "s1",
+        "capability_id": "m6.data_fusion",
+        "status": "pending",
+        "reason": "已加入执行计划",
+        "error_code": null
+      },
+      {
+        "sequence": 3,
+        "ts": "2026-10-13T08:22:40.810492+00:00",
+        "level": "info",
+        "trace_id": "trace-735055a049b243d2",
+        "task_id": "task-b793140aa515",
+        "request_id": null,
+        "step_id": "s2",
+        "capability_id": "m3.weekly_report",
+        "status": "pending",
+        "reason": "已加入执行计划",
+        "error_code": null
+      },
+      {
+        "sequence": 4,
+        "ts": "2026-10-13T08:22:40.810512+00:00",
+        "level": "info",
+        "trace_id": "trace-735055a049b243d2",
+        "task_id": "task-b793140aa515",
+        "request_id": "req-46785357a63d",
+        "step_id": "s1",
+        "capability_id": "m6.data_fusion",
+        "status": "running",
+        "reason": "解析输入并调用能力",
+        "error_code": null
+      },
+      {
+        "sequence": 5,
+        "ts": "2026-10-13T08:22:40.810791+00:00",
+        "level": "info",
+        "trace_id": "trace-735055a049b243d2",
+        "task_id": "task-b793140aa515",
+        "request_id": "req-46785357a63d",
+        "step_id": "s1",
+        "capability_id": "m6.data_fusion",
+        "status": "completed",
+        "reason": "能力执行完成",
+        "error_code": null
+      },
+      {
+        "sequence": 6,
+        "ts": "2026-10-13T08:22:40.810806+00:00",
+        "level": "info",
+        "trace_id": "trace-735055a049b243d2",
+        "task_id": "task-b793140aa515",
+        "request_id": "req-ca75d69ca450",
+        "step_id": "s2",
+        "capability_id": "m3.weekly_report",
+        "status": "running",
+        "reason": "解析输入并调用能力",
+        "error_code": null
+      },
+      {
+        "sequence": 7,
+        "ts": "2026-10-13T08:22:40.811354+00:00",
+        "level": "info",
+        "trace_id": "trace-735055a049b243d2",
+        "task_id": "task-b793140aa515",
+        "request_id": "req-ca75d69ca450",
+        "step_id": "s2",
+        "capability_id": "m3.weekly_report",
+        "status": "completed",
+        "reason": "能力执行完成",
+        "error_code": null
+      },
+      {
+        "sequence": 8,
+        "ts": "2026-10-13T08:22:40.811367+00:00",
+        "level": "info",
+        "trace_id": "trace-735055a049b243d2",
+        "task_id": "task-b793140aa515",
+        "request_id": "req-083bbb5bc01b",
+        "step_id": "s3",
+        "capability_id": "m5.promotion_plan",
+        "status": "running",
+        "reason": "解析输入并调用能力",
+        "error_code": null
+      },
+      {
+        "sequence": 9,
+        "ts": "2026-10-13T08:22:40.812079+00:00",
+        "level": "info",
+        "trace_id": "trace-735055a049b243d2",
+        "task_id": "task-b793140aa515",
+        "request_id": "req-083bbb5bc01b",
+        "step_id": "s3",
+        "capability_id": "m5.promotion_plan",
+        "status": "completed",
+        "reason": "能力执行完成",
+        "error_code": null
+      }
+    ],
+    "final_results": {
+      "s3": {
+        "plan_markdown": "## 一、四方主张与冲突消解\n\n| 角色 | 核心主张 |\n| --- | --- |\n| 产品 | 产品侧围绕本次大促给出专属动作，聚焦产品维度的落地安排。 |\n| 运营 | 运营侧围绕本次大促给出专属动作，聚焦运营维度的落地安排。 |\n| 数据 | 数据侧围绕本次大促给出专属动作，聚焦数据维度的落地安排。 |\n| 客服 | 客服侧围绕本次大促给出专属动作，聚焦客服维度的落地安排。 |\n\n## 二、统一执行方案\n\n四方共识：以恢复转化率为核心约束，预算优先投向转化洼地。\n\n冲突消解：运营侧希望 30% 折扣，数据侧测算仅支持 20%，最终按数据侧口径执行 20% 折扣并保留 5% 弹性额度。\n\n统一时间线：预热（D-7）→ 爆发（D1）→ 返场（D2-D3）。\n",
+        "roles": [
+          {
+            "role": "product",
+            "contribution": "产品侧围绕本次大促给出专属动作，聚焦产品维度的落地安排。",
+            "rationale": "基于上周环比数据与产品侧现有资源测算。"
+          },
+          {
+            "role": "operation",
+            "contribution": "运营侧围绕本次大促给出专属动作，聚焦运营维度的落地安排。",
+            "rationale": "基于上周环比数据与运营侧现有资源测算。"
+          },
+          {
+            "role": "data",
+            "contribution": "数据侧围绕本次大促给出专属动作，聚焦数据维度的落地安排。",
+            "rationale": "基于上周环比数据与数据侧现有资源测算。"
+          },
+          {
+            "role": "service",
+            "contribution": "客服侧围绕本次大促给出专属动作，聚焦客服维度的落地安排。",
+            "rationale": "基于上周环比数据与客服侧现有资源测算。"
+          }
+        ]
+      }
+    }
+  },
+  "refund_waiting_platform_report": {
+    "plan_id": "plan-20261012-004",
+    "task_id": "task-7f5e28455fc9",
+    "trace_id": "trace-558efeeaab674e71",
+    "status": "waiting_approval",
+    "steps": {
+      "s1": {
+        "step_id": "s1",
+        "capability_id": "m2.order_tracking",
+        "depends_on": [],
+        "request_id": "req-24501649a1d4",
+        "status": "completed",
+        "inputs": {
+          "order_id": "2025101234"
+        },
+        "result": {
+          "request_id": "req-24501649a1d4",
+          "task_id": "task-7f5e28455fc9",
+          "trace_id": "trace-558efeeaab674e71",
+          "capability_id": "m2.order_tracking",
+          "status": "completed",
+          "data": {
+            "order_id": "2025101234",
+            "order_amount": 69900,
+            "order_status": "paid",
+            "tracking_number": "mock-track-001",
+            "actions": [
+              "query_order",
+              "query_logistics"
+            ],
+            "observations": [
+              "Mock 订单金额 69900 分",
+              "Mock 物流运输中"
+            ],
+            "stop_reason": "查询完成"
+          },
+          "error": null,
+          "waiting_reason": null,
+          "continuation_token": null
+        },
+        "error": null,
+        "reason": null
+      },
+      "s2": {
+        "step_id": "s2",
+        "capability_id": "m7.refund_approval",
+        "depends_on": [
+          "s1"
+        ],
+        "request_id": "req-1d359e793277",
+        "status": "waiting_approval",
+        "inputs": {
+          "order_id": "2025101234",
+          "reason": "未使用商品申请退款",
+          "refund_amount": 69900
+        },
+        "result": {
+          "request_id": "req-1d359e793277",
+          "task_id": "task-7f5e28455fc9",
+          "trace_id": "trace-558efeeaab674e71",
+          "capability_id": "m7.refund_approval",
+          "status": "waiting_approval",
+          "data": {
+            "request_id": "refund-a0b2c07a06d7",
+            "approval_status": "waiting_approval",
+            "node_trace": [
+              {
+                "node_name": "receive"
+              }
+            ],
+            "state_view": {
+              "order_id": "2025101234",
+              "order_amount": 69900,
+              "refund_amount": 69900
+            }
+          },
+          "error": null,
+          "waiting_reason": "金额超过 50000 分，等待人工审核。",
+          "continuation_token": "cont-93fe812e755041d9"
+        },
+        "error": null,
+        "reason": "金额超过 50000 分，等待人工审核。"
+      }
+    },
+    "events": [
+      {
+        "sequence": 1,
+        "ts": "2026-10-13T08:22:40.812350+00:00",
+        "level": "info",
+        "trace_id": "trace-558efeeaab674e71",
+        "task_id": "task-7f5e28455fc9",
+        "request_id": null,
+        "step_id": "s1",
+        "capability_id": "m2.order_tracking",
+        "status": "pending",
+        "reason": "已加入执行计划",
+        "error_code": null
+      },
+      {
+        "sequence": 2,
+        "ts": "2026-10-13T08:22:40.812359+00:00",
+        "level": "info",
+        "trace_id": "trace-558efeeaab674e71",
+        "task_id": "task-7f5e28455fc9",
+        "request_id": null,
+        "step_id": "s2",
+        "capability_id": "m7.refund_approval",
+        "status": "pending",
+        "reason": "已加入执行计划",
+        "error_code": null
+      },
+      {
+        "sequence": 3,
+        "ts": "2026-10-13T08:22:40.812369+00:00",
+        "level": "info",
+        "trace_id": "trace-558efeeaab674e71",
+        "task_id": "task-7f5e28455fc9",
+        "request_id": "req-24501649a1d4",
+        "step_id": "s1",
+        "capability_id": "m2.order_tracking",
+        "status": "running",
+        "reason": "解析输入并调用能力",
+        "error_code": null
+      },
+      {
+        "sequence": 4,
+        "ts": "2026-10-13T08:22:40.812769+00:00",
+        "level": "info",
+        "trace_id": "trace-558efeeaab674e71",
+        "task_id": "task-7f5e28455fc9",
+        "request_id": "req-24501649a1d4",
+        "step_id": "s1",
+        "capability_id": "m2.order_tracking",
+        "status": "completed",
+        "reason": "能力执行完成",
+        "error_code": null
+      },
+      {
+        "sequence": 5,
+        "ts": "2026-10-13T08:22:40.812786+00:00",
+        "level": "info",
+        "trace_id": "trace-558efeeaab674e71",
+        "task_id": "task-7f5e28455fc9",
+        "request_id": "req-1d359e793277",
+        "step_id": "s2",
+        "capability_id": "m7.refund_approval",
+        "status": "running",
+        "reason": "解析输入并调用能力",
+        "error_code": null
+      },
+      {
+        "sequence": 6,
+        "ts": "2026-10-13T08:22:40.819950+00:00",
+        "level": "info",
+        "trace_id": "trace-558efeeaab674e71",
+        "task_id": "task-7f5e28455fc9",
+        "request_id": "req-1d359e793277",
+        "step_id": "s2",
+        "capability_id": "m7.refund_approval",
+        "status": "waiting_approval",
+        "reason": "金额超过 50000 分，等待人工审核。",
+        "error_code": null
+      }
+    ],
+    "final_results": {}
+  },
+  "refund_module_resume": {
+    "request_id": "req-1d359e793277",
+    "task_id": "task-7f5e28455fc9",
+    "trace_id": "trace-558efeeaab674e71",
+    "capability_id": "m7.refund_approval",
+    "status": "completed",
+    "data": {
+      "request_id": "refund-a0b2c07a06d7",
+      "approval_status": "approved",
+      "node_trace": [
+        {
+          "node_name": "receive"
+        },
+        {
+          "node_name": "manual_review"
+        },
+        {
+          "node_name": "compliance_check"
+        },
+        {
+          "node_name": "finalize"
+        }
+      ],
+      "state_view": {
+        "order_id": "2025101234",
+        "order_amount": 69900,
+        "refund_amount": 69900
+      }
+    },
+    "error": null,
+    "waiting_reason": null,
+    "continuation_token": null
+  },
+  "refund_checkpoints": [
+    {
+      "checkpoint_id": "1f1c6df4-1bec-6343-8005-d86a9dbc3790",
+      "step": 5,
+      "next_node": [],
+      "state": {
+        "order_snapshot": {
+          "order_amount": 69900,
+          "order_status": "paid",
+          "tracking_number": "mock-track-001"
+        },
+        "max_reflection": 3,
+        "order_id": "2025101234",
+        "reason": "未使用商品申请退款",
+        "thread_id": "workflow-edd86b9c2934480ea6c3ebe7790b8111",
+        "customer_id": "",
+        "customer_name": "",
+        "refund_amount": 69900,
+        "order_amount": 69900,
+        "product_name": "",
+        "order_status": "paid",
+        "risk_level": "normal",
+        "risk_note": "",
+        "auto_approve_amount": 50000,
+        "amount_branch": "manual",
+        "requires_manual": true,
+        "human_decision": "approved",
+        "approval_status": "approved",
+        "approval_mode": "manual",
+        "reviewer": "离线演示审核人",
+        "material_complete": true,
+        "compliance_passed": true,
+        "compliance_notes": "R1 金额阈值：✅ 通过（699 元 > 阈值 500 元，已取得人工审核通过结论）\nR2 订单状态：✅ 通过（已支付）\nR3 薅羊毛风控：✅ 通过（风险等级 normal）\nR4 材料完整性：✅ 通过\nR5 毛利保护：✅ 通过（退款 699.00 元 ≤ 实付 699.00 元）",
+        "failed_rules": [],
+        "reflection_count": 0,
+        "decision": "manual_approved",
+        "decision_detail": "审批通过；当前只运行本地流程，未执行退款打款。",
+        "history": [
+          "[受理] 收到退款申请：订单 2025101234，原因「未使用商品申请退款」",
+          "[受理] 订单 2025101234，整单退款 69900 分；订单来源为本地样例",
+          "[人工审核] 离线演示审核人：approved",
+          "[合规校验] ✅ 全部规则通过",
+          "[结束] 审批通过；当前只运行本地流程，未执行退款打款。"
+        ],
+        "node_trace": [
+          {
+            "node_name": "receive"
+          },
+          {
+            "node_name": "manual_review"
+          },
+          {
+            "node_name": "compliance_check"
+          },
+          {
+            "node_name": "finalize"
+          }
+        ],
+        "rollback_log": []
+      }
+    },
+    {
+      "checkpoint_id": "1f1c6df4-1beb-676f-8004-1e1bed7326e1",
+      "step": 4,
+      "next_node": [
+        "finalize"
+      ],
+      "state": {
+        "order_snapshot": {
+          "order_amount": 69900,
+          "order_status": "paid",
+          "tracking_number": "mock-track-001"
+        },
+        "max_reflection": 3,
+        "order_id": "2025101234",
+        "reason": "未使用商品申请退款",
+        "thread_id": "workflow-edd86b9c2934480ea6c3ebe7790b8111",
+        "customer_id": "",
+        "customer_name": "",
+        "refund_amount": 69900,
+        "order_amount": 69900,
+        "product_name": "",
+        "order_status": "paid",
+        "risk_level": "normal",
+        "risk_note": "",
+        "auto_approve_amount": 50000,
+        "amount_branch": "manual",
+        "requires_manual": true,
+        "human_decision": "approved",
+        "approval_status": "approved",
+        "approval_mode": "manual",
+        "reviewer": "离线演示审核人",
+        "material_complete": true,
+        "compliance_passed": true,
+        "compliance_notes": "R1 金额阈值：✅ 通过（699 元 > 阈值 500 元，已取得人工审核通过结论）\nR2 订单状态：✅ 通过（已支付）\nR3 薅羊毛风控：✅ 通过（风险等级 normal）\nR4 材料完整性：✅ 通过\nR5 毛利保护：✅ 通过（退款 699.00 元 ≤ 实付 699.00 元）",
+        "failed_rules": [],
+        "reflection_count": 0,
+        "decision": "pending",
+        "history": [
+          "[受理] 收到退款申请：订单 2025101234，原因「未使用商品申请退款」",
+          "[受理] 订单 2025101234，整单退款 69900 分；订单来源为本地样例",
+          "[人工审核] 离线演示审核人：approved",
+          "[合规校验] ✅ 全部规则通过"
+        ],
+        "node_trace": [
+          {
+            "node_name": "receive"
+          },
+          {
+            "node_name": "manual_review"
+          },
+          {
+            "node_name": "compliance_check"
+          }
+        ],
+        "rollback_log": []
+      }
+    },
+    {
+      "checkpoint_id": "1f1c6df4-1bea-61e5-8003-df30b2bd7456",
+      "step": 3,
+      "next_node": [
+        "compliance_check"
+      ],
+      "state": {
+        "order_snapshot": {
+          "order_amount": 69900,
+          "order_status": "paid",
+          "tracking_number": "mock-track-001"
+        },
+        "max_reflection": 3,
+        "order_id": "2025101234",
+        "reason": "未使用商品申请退款",
+        "thread_id": "workflow-edd86b9c2934480ea6c3ebe7790b8111",
+        "customer_id": "",
+        "customer_name": "",
+        "refund_amount": 69900,
+        "order_amount": 69900,
+        "product_name": "",
+        "order_status": "paid",
+        "risk_level": "normal",
+        "risk_note": "",
+        "auto_approve_amount": 50000,
+        "amount_branch": "manual",
+        "requires_manual": true,
+        "human_decision": "approved",
+        "approval_status": "approved",
+        "approval_mode": "manual",
+        "reviewer": "离线演示审核人",
+        "material_complete": true,
+        "compliance_passed": false,
+        "reflection_count": 0,
+        "decision": "pending",
+        "history": [
+          "[受理] 收到退款申请：订单 2025101234，原因「未使用商品申请退款」",
+          "[受理] 订单 2025101234，整单退款 69900 分；订单来源为本地样例",
+          "[人工审核] 离线演示审核人：approved"
+        ],
+        "node_trace": [
+          {
+            "node_name": "receive"
+          },
+          {
+            "node_name": "manual_review"
+          }
+        ],
+        "rollback_log": []
+      }
+    },
+    {
+      "checkpoint_id": "1f1c6df4-1be7-6e4f-8002-6dfe339780b2",
+      "step": 2,
+      "next_node": [
+        "manual_review"
+      ],
+      "state": {
+        "order_snapshot": {
+          "order_amount": 69900,
+          "order_status": "paid",
+          "tracking_number": "mock-track-001"
+        },
+        "max_reflection": 3,
+        "order_id": "2025101234",
+        "reason": "未使用商品申请退款",
+        "thread_id": "workflow-edd86b9c2934480ea6c3ebe7790b8111",
+        "customer_id": "",
+        "customer_name": "",
+        "refund_amount": 69900,
+        "order_amount": 69900,
+        "product_name": "",
+        "order_status": "paid",
+        "risk_level": "normal",
+        "risk_note": "",
+        "auto_approve_amount": 50000,
+        "amount_branch": "manual",
+        "requires_manual": true,
+        "human_decision": "approved",
+        "approval_status": "pending",
+        "approval_mode": "",
+        "reviewer": "离线演示审核人",
+        "material_complete": true,
+        "compliance_passed": false,
+        "reflection_count": 0,
+        "decision": "pending",
+        "history": [
+          "[受理] 收到退款申请：订单 2025101234，原因「未使用商品申请退款」",
+          "[受理] 订单 2025101234，整单退款 69900 分；订单来源为本地样例"
+        ],
+        "node_trace": [
+          {
+            "node_name": "receive"
+          }
+        ],
+        "rollback_log": []
+      }
+    },
+    {
+      "checkpoint_id": "1f1c6df4-1be3-606d-8001-8f41a0d90720",
+      "step": 1,
+      "next_node": [
+        "manual_review"
+      ],
+      "state": {
+        "order_snapshot": {
+          "order_amount": 69900,
+          "order_status": "paid",
+          "tracking_number": "mock-track-001"
+        },
+        "max_reflection": 3,
+        "order_id": "2025101234",
+        "reason": "未使用商品申请退款",
+        "thread_id": "workflow-edd86b9c2934480ea6c3ebe7790b8111",
+        "customer_id": "",
+        "customer_name": "",
+        "refund_amount": 69900,
+        "order_amount": 69900,
+        "product_name": "",
+        "order_status": "paid",
+        "risk_level": "normal",
+        "risk_note": "",
+        "auto_approve_amount": 50000,
+        "amount_branch": "manual",
+        "requires_manual": true,
+        "human_decision": "",
+        "approval_status": "pending",
+        "approval_mode": "",
+        "material_complete": false,
+        "compliance_passed": false,
+        "reflection_count": 0,
+        "decision": "pending",
+        "history": [
+          "[受理] 收到退款申请：订单 2025101234，原因「未使用商品申请退款」",
+          "[受理] 订单 2025101234，整单退款 69900 分；订单来源为本地样例"
+        ],
+        "node_trace": [
+          {
+            "node_name": "receive"
+          }
+        ],
+        "rollback_log": []
+      }
+    },
+    {
+      "checkpoint_id": "1f1c6df4-1be0-6838-8000-4041b1666a51",
+      "step": 0,
+      "next_node": [
+        "receive"
+      ],
+      "state": {
+        "order_snapshot": {
+          "order_amount": 69900,
+          "order_status": "paid",
+          "tracking_number": "mock-track-001"
+        },
+        "max_reflection": 3,
+        "order_id": "2025101234",
+        "reason": "未使用商品申请退款",
+        "thread_id": "workflow-edd86b9c2934480ea6c3ebe7790b8111",
+        "refund_amount": 0,
+        "order_amount": 0,
+        "auto_approve_amount": 50000,
+        "amount_branch": "",
+        "requires_manual": false,
+        "human_decision": "",
+        "approval_status": "pending",
+        "approval_mode": "",
+        "material_complete": false,
+        "compliance_passed": false,
+        "reflection_count": 0,
+        "decision": "pending",
+        "history": [
+          "[受理] 收到退款申请：订单 2025101234，原因「未使用商品申请退款」"
+        ],
+        "node_trace": [],
+        "rollback_log": []
+      }
+    },
+    {
+      "checkpoint_id": "1f1c6df4-1bde-6863-bfff-7f35941218ef",
+      "step": -1,
+      "next_node": [
+        "__start__"
+      ],
+      "state": {
+        "history": [],
+        "node_trace": [],
+        "rollback_log": []
+      }
+    }
+  ],
+  "platform_resume_implemented": false
+}
