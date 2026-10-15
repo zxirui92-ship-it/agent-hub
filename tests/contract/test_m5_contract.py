@@ -38,6 +38,7 @@ def test_real_and_mock_share_manifest_and_result_contract():
     {'goal': 'x', 'budget_amount': -1}, {'goal': 'x', 'budget_amount': 100.0},
     {'goal': 'x', 'budget_amount': True}, {'goal': 'x', 'budget_amount': '100'},
     {'goal': 'x', 'week': '2026-W54'}, {'goal': 'x', 'report_markdown': None},
+    {'goal': 'x', 'week': '2025-W53'}, {'goal': 'x', 'week': '0000-W01'},
     {'goal': 'x', 'fused_data': {}},
 ])
 def test_invalid_payload_rejected_by_both_without_model_call(payload):

@@ -23,14 +23,15 @@ if __package__ in (None, ''):
     sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from dotenv import load_dotenv
-from jsonschema import Draft202012Validator, ValidationError
-from jsonschema.validators import extend
+from jsonschema import ValidationError
 
 from common.contracts import AgentRequest, AgentResult, ErrorDetail
 from common.errors import ErrorCode, ServiceError
 from common.llm import ChatModel
 from common.model_config import text_config
+from common.money import format_cents
 from common.promotion_contract import promotion_manifest
+from hub_platform.schema import DataValidator
 
 M5_MODULE = "m5"
 M5_CAPABILITY_ID = "m5.promotion_plan"
@@ -43,8 +44,7 @@ ROLE_ORDER = (ROLE_PRODUCT, ROLE_OPERATION, ROLE_DATA, ROLE_SERVICE)
 STEP_AGGREGATE, ROLE_AGGREGATOR = "agg", "aggregator"
 LlmFn = Callable[..., str]
 LOGGER = logging.getLogger('agent_hub.m5')
-StrictValidator = extend(Draft202012Validator, type_checker=Draft202012Validator.TYPE_CHECKER.redefine(
-    'integer', lambda checker, value: type(value) is int))
+StrictValidator = DataValidator
 
 
 def _public_message(message: str) -> str:
@@ -108,13 +108,16 @@ def _parse_suggestion(raw: str) -> tuple[str, str]:
 def facts_for_prompt(context: dict[str, Any]) -> str:
     lines = ['金额口径：所有 _amount 原始字段单位都是分，100 分=1 元；禁止把分数值直接当元。',
              '只把下列输入当作事实；角色建议不是事实。未知库存、人力、峰值、成本和 ROI 须标记待确认，建议目标须标记假设。']
+    if context.get('week'):
+        lines.append(f"目标活动周（以此安排方案时间线）：{context['week']}。")
     if 'budget_amount' in context:
         amount = context['budget_amount']
-        lines.append(f'预算：{amount} 分 = {amount // 100}.{amount % 100:02d} 元。')
+        lines.append(f'预算：{amount} 分 = {format_cents(amount)} 元。')
     fused = context.get('fused_data')
     if fused:
         amount = fused['revenue_amount']
-        lines.append(f"成交金额：{amount} 分 = {amount // 100}.{amount % 100:02d} 元（不是会计收入）。")
+        lines.append(f"融合数据统计周：{fused['week']}（历史依据，不替代目标活动周）。")
+        lines.append(f"成交金额：{amount} 分 = {format_cents(amount)} 元（不是会计收入）。")
         lines.append('完整融合事实：' + json.dumps(fused, ensure_ascii=False))
     if context.get('report_markdown'):
         lines.append('输入周报：' + context['report_markdown'])
@@ -149,7 +152,7 @@ class BaseRoleAgent:
             background.append(f"周期：{context['week']}")
         if context.get("budget_amount") is not None:
             # 入参单位是「分」，展示时换算成元，避免四个人各写各的单位
-            background.append(f"预算：{int(context['budget_amount']) / 100:.2f} 元")
+            background.append(f"预算：{format_cents(context['budget_amount'])} 元")
         if context.get("report_markdown"):
             background.append(f"运营周报摘要：{_clip(str(context['report_markdown']), 200)}")
         if context.get("fused_data"):

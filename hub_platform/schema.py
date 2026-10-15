@@ -1,25 +1,42 @@
-from common.errors import ErrorCode
 """Small, explicit JSON Schema profile; unsupported constructs fail at registration.
 
 Static binding checks prove shape/type compatibility. Value constraints are checked
 on literals and on resolved runtime data, not via a general schema theorem prover.
 """
+import math
 from typing import Any
 
 from jsonschema import Draft202012Validator
 from jsonschema.validators import extend
-from jsonschema.exceptions import SchemaError
+from jsonschema.exceptions import SchemaError, ValidationError
 
+from common.errors import ErrorCode
+from common.iso_week import week_start
 from hub_platform.errors import HubError
 
 _ALLOWED = {
     "$schema", "title", "description", "type", "properties", "required",
     "additionalProperties", "items", "enum", "minimum", "maximum",
-    "minLength", "maxLength", "minItems", "maxItems", "pattern",
+    "minLength", "maxLength", "minItems", "maxItems", "pattern", "format",
 }
 _TYPES = {"object", "array", "string", "integer", "number", "boolean", "null"}
-DataValidator = extend(Draft202012Validator, type_checker=Draft202012Validator.TYPE_CHECKER.redefine(
-    "integer", lambda checker, value: type(value) is int))
+
+
+def _iso_week_format(validator, format_name, value, schema):
+    if format_name == 'iso-week' and isinstance(value, str):
+        try:
+            week_start(value)
+        except ValueError:
+            yield ValidationError(f'{value!r} is not a valid ISO week')
+
+
+DataValidator = extend(Draft202012Validator, validators={'format': _iso_week_format},
+    type_checker=Draft202012Validator.TYPE_CHECKER.redefine_many({
+        'integer': lambda checker, value: type(value) is int,
+        # Exact integers need no float conversion, which could itself overflow.
+        'number': lambda checker, value: type(value) is int or
+            (type(value) is float and math.isfinite(value)),
+    }))
 
 
 def check_schema(schema: dict[str, Any], *, root: bool = True) -> None:
@@ -35,6 +52,8 @@ def check_schema(schema: dict[str, Any], *, root: bool = True) -> None:
     kind = schema.get("type")
     if not isinstance(kind, str) or kind not in _TYPES:
         raise HubError(ErrorCode.UNSUPPORTED_SCHEMA, "Every schema node requires one explicit type")
+    if 'format' in schema and (kind != 'string' or schema['format'] != 'iso-week'):
+        raise HubError(ErrorCode.UNSUPPORTED_SCHEMA, "Only string format=iso-week is supported")
     if root and kind != "object":
         raise HubError(ErrorCode.INVALID_SCHEMA, "Payload and output roots must be objects")
     if kind == "object":

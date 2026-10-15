@@ -37,7 +37,7 @@ Set-Location 'D:\模组\agent-hub'
 
 顶部 Planner 选择注册能力并生成依赖计划；M4 自己选择内部 Skill，M5 自己协调角色。没有硬编码关键词选链路；一次正常规划只需一次模型调用。非法输出默认反馈一次校验错误给模型修正，业务执行失败不自动重跑。
 
-输出展示生成计划和实际结果，不将模型的执行说明当作已完成答案。缺参、不支持或非法计划都不调用业务模块。等待审核保留原报告，当前顶层会话不支持恢复；M7 自己支持同进程 token 恢复。不能在顶层用“同意”触发整条退款链重新执行。
+输出展示生成计划和实际结果，不将模型的执行说明当作已完成答案。缺参、不支持或非法计划都不调用业务模块。等待审核保留原报告，当前顶层会话不支持恢复；M7 自己支持同进程 token 恢复。不能在顶层用“同意”触发整条退款链重新执行；即使无关分支失败、总体报告为 failed，仍按各步骤的待审批状态保护。
 
 自然语言单次入口退出码：0=完成/计划就绪，1=规划或执行失败，2=不支持/参数错误，3=等待审核，4=需要补充信息。`--chat --json` 每个响应输出一行 JSON；提示语写 stderr。
 
@@ -142,7 +142,7 @@ $env:M4_MODE='mock'
 ## 契约要点
 
 - 七个规定 ID 从 `m1.faq_chat` 到 `m7.refund_approval`，无旧 ID 映射。
-- 金额用整数分；M2/M7 共用订单 Fixture，整单退款必须与订单金额一致，50000 分自动审批边界。
+- 金额用整数分；M2/M7 共用订单 Fixture，整单退款必须与订单金额一致，50000 分为普通风险订单自动审批边界；高风险订单一律人工审核。
 - task/request/trace ID 使用规定前缀与小写 hex；step_id=s1 等。Fixture 的经营链仍故意打乱数组顺序。
 - waiting_approval 不是完成或失败。无恢复能力时 token 必须为空；相关下游等待，无关分支继续。
 - M4 data 为 `skill_name`、`result`、`route_reason` 三个字符串；result 内 JSON 文本表示 Skill 业务结果。
@@ -198,3 +198,18 @@ $env:M2_MODE='local'
 最后一条经营演示使用 M5 Mock；测试中已用注入模型响应的真实 M5 验证三模块经营链。三个独立入口均输出 AgentResult JSON，退出码 0=完成、1=模块失败。M1 的 mock 是标记明确的固定回答；M2 的 local 是确定性动作选择；M6 是真实融合计算但数据来自样例。M1/M2 的 live 使用公共模型解析器（显式 LLM_* 或所选本机服务变量），无配置则失败。M1 多轮记忆需要复用同一 SingleAgent 实例和 session_id；独立 CLI 每次启动是新进程。
 
 `--real-m1` 至 `--real-m7` 可组合使用；`--list-capabilities` 加全部开关只查看 Manifest，不调用模型。无需修改 Executor、Validator 或 Planner。
+
+## 审计加固与安装包验收（2026-10-15）
+
+已修复离线审计的 F01–F10、D01–D02、H01–H04。变更与验证范围见 [审计修复说明](docs/audit_hardening.md)。新增回归位于 tests/audit；保留异常断言，不通过跳过或弱化用例隐藏缺陷。
+
+运行时 Mock 已迁至 hub_platform.demo_agents，订单和周汇总数据通过 importlib.resources 从 common/fixtures 读取；安装 wheel 后不依赖源码 tests/ 或 data/ 目录。data/fixtures 保留为文档示例，测试检查它与分发资源一致。
+
+```bash
+python -m pip install -r requirements.txt
+python -m pip wheel . --no-deps --wheel-dir dist
+AUDIT_WHEEL="$(find "$PWD/dist" -name '*.whl' -print -quit)" python -m pytest -q
+python scripts/check_wheel.py dist/*.whl
+```
+
+check_wheel.py 会在源码目录外安装 wheel，测试平台能力清单和 M2/M3/M6/M7 离线入口，禁用网络且不读取 API Key。GitHub Actions 在 Python 3.10/3.12 上运行相同回归、wheel smoke、编译与依赖一致性检查。真实 API 测试仍需专门开关，本轮不启用。

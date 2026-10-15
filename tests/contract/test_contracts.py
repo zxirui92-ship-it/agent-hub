@@ -1,7 +1,8 @@
 import pytest
+from jsonschema import validate
 from pydantic import ValidationError
 
-from common.contracts import AgentModule, AgentRequest, AgentResult, ExecutionPlan
+from common.contracts import AgentModule, AgentRequest, AgentResult, ExecutionPlan, ExecutionReport
 from hub_platform.errors import HubError
 from hub_platform.schema import validate_data
 from tests.mocks.agents import MOCK_TYPES, DataFusionMock, OrderTrackingMock, result
@@ -89,3 +90,29 @@ def test_schema_generation_and_round_trip(load_plan):
     plan = ExecutionPlan.model_validate(raw)
     assert ExecutionPlan.model_validate_json(plan.model_dump_json()) == plan
     assert "steps" in ExecutionPlan.model_json_schema()["properties"]
+
+
+@pytest.mark.parametrize("suffix", ["001", "999", "1000", "1000000", "1" + "0" * 20])
+def test_plan_and_report_ids_share_expanding_sequence_contract(load_plan, suffix):
+    plan = ExecutionPlan.model_validate({**load_plan("operations"), "plan_id": f"plan-20261015-{suffix}"})
+    report = ExecutionReport(plan_id=plan.plan_id, task_id="task-000000000001",
+                             trace_id="trace-0000000000000001", status="completed",
+                             steps={}, events=[], final_results={})
+    for value in (plan, report):
+        model = type(value)
+        assert model.model_validate_json(value.model_dump_json()) == value
+        validate(value.model_dump(mode="json"), model.model_json_schema())
+    assert (ExecutionPlan.model_json_schema()["properties"]["plan_id"] ==
+            ExecutionReport.model_json_schema()["properties"]["plan_id"])
+
+
+@pytest.mark.parametrize("plan_id", [
+    "plan-20261015-1", "plan-20261015-01", "plan-20261015-", "plan-20261015--1000",
+    "plan-20261015-100a", "plan-20261015-1.000", "plan-2026101-1000", "PLAN-20261015-1000",
+])
+def test_expanded_plan_ids_still_reject_malformed_values(load_plan, plan_id):
+    with pytest.raises(ValidationError):
+        ExecutionPlan.model_validate({**load_plan("operations"), "plan_id": plan_id})
+    with pytest.raises(ValidationError):
+        ExecutionReport(plan_id=plan_id, task_id="task-000000000001", trace_id="trace-0000000000000001",
+                        status="completed", steps={}, events=[], final_results={})

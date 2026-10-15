@@ -1,0 +1,54 @@
+{
+  "description": "订单基础数据 Mock（按周汇总）",
+  "weeks": {
+    "2026-W40": {
+      "order_count": 78231,
+      "gmv_amount": 1173465000,
+      "avg_order_amount": 15000,
+      "refund_count": 2347,
+      "refund_rate": 0.030,
+      "daily_breakdown": [
+        {"date": "2026-09-28", "order_count": 10200, "gmv_amount": 153000000},
+        {"date": "2026-09-29", "order_count": 11000, "gmv_amount": 165000000},
+        {"date": "2026-09-30", "order_count": 11500, "gmv_amount": 172500000},
+        {"date": "2026-10-01", "order_count": 12000, "gmv_amount": 180000000},
+        {"date": "2026-10-02", "order_count": 11800, "gmv_amount": 177000000},
+        {"date": "2026-10-03", "order_count": 11200, "gmv_amount": 168000000},
+        {"date": "2026-10-04", "order_count": 10531, "gmv_amount": 157965000}
+      ]
+    },
+    "2026-W41": {
+      "order_count": 84562,
+      "gmv_amount": 1268430000,
+      "avg_order_amount": 15000,
+      "refund_count": 2788,
+      "refund_rate": 0.033,
+      "daily_breakdown": [
+        {"date": "2026-10-05", "order_count": 10800, "gmv_amount": 162000000},
+        {"date": "2026-10-06", "order_count": 11500, "gmv_amount": 172500000},
+        {"date": "2026-10-07", "order_count": 14725, "gmv_amount": 220875000},
+        {"date": "2026-10-08", "order_count": 12200, "gmv_amount": 183000000},
+        {"date": "2026-10-09", "order_count": 12000, "gmv_amount": 180000000},
+        {"date": "2026-10-10", "order_count": 12300, "gmv_amount": 184500000},
+        {"date": "2026-10-11", "order_count": 11037, "gmv_amount": 165555000}
+      ],
+      "anomalies": [
+        {
+          "date": "2026-10-07",
+          "metric": "order_count",
+          "deviation": "+15.2%",
+          "reason": "秋日焕新限时秒杀活动，10 点场流量集中"
+        },
+        {
+          "date": "2026-10-11",
+          "metric": "refund_rate",
+          "deviation": "+2.0%",
+          "reason": "秒杀服装类商品尺码偏差集中退货"
+        }
+      ],
+      "campaigns": [
+        {"name": "秋日焕新季", "start_date": "2026-10-07", "end_date": "2026-10-11", "budget_amount": 50000000}
+      ]
+    }
+  }
+}

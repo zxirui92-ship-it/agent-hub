@@ -17,6 +17,7 @@ include = ["common*", "hub_platform*", "agents*"]
 
 [tool.setuptools.package-data]
 "agents.router.skills" = ["knowledge_sample.json"]
+"common" = ["fixtures/*.json", "fixtures/m3/*.json"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

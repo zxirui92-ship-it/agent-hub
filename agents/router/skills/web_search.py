@@ -1,10 +1,9 @@
 """Tavily-compatible search, explicit offline sample, or explicit unconfigured error."""
 import json
-from urllib.parse import urlparse
 
 from agents.router.skills import query_text
 from common.errors import ErrorCode, ServiceError
-from common.http_client import post_json
+from common.http_client import parse_http_url, post_json
 
 
 class WebSearchSkill:
@@ -27,7 +26,9 @@ class WebSearchSkill:
         for row in rows:
             if not isinstance(row, dict) or not all(isinstance(row.get(k), str) for k in ('title', 'url', 'content')):
                 raise ServiceError(ErrorCode.CONTRACT_MISMATCH, 'Search result requires title/url/content strings')
-            if urlparse(row['url']).scheme not in ('http', 'https') or not urlparse(row['url']).netloc:
-                raise ServiceError(ErrorCode.CONTRACT_MISMATCH, 'Search result has invalid source URL')
+            try:
+                parse_http_url(row['url'])
+            except ValueError as exc:
+                raise ServiceError(ErrorCode.CONTRACT_MISMATCH, 'Search result has invalid source URL') from exc
             results.append({'title': row['title'], 'source_url': row['url'], 'content': row['content']})
         return json.dumps({'mode': 'live', 'query': query, 'results': results}, ensure_ascii=False)

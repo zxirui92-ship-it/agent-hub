@@ -1,9 +1,9 @@
 """Minimal chat-completions adapter shared by the Planner and model-using modules."""
-import json
 from typing import Protocol
 
 from common.errors import ErrorCode, ServiceError
 from common.http_client import post_json
+from common.json_data import strict_json_loads
 
 
 class TextModel(Protocol):
@@ -32,7 +32,7 @@ class ChatModel:
 
 def json_object(text: str) -> dict:
     try:
-        value = json.loads(text)
+        value = strict_json_loads(text)
     except (ValueError, TypeError) as exc:
         raise ServiceError(ErrorCode.CONTRACT_MISMATCH, 'Model must return a JSON object without Markdown fences') from exc
     if not isinstance(value, dict):

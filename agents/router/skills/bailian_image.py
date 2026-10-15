@@ -2,7 +2,7 @@
 import json
 from urllib.parse import urlsplit, urlunsplit
 from common.errors import ErrorCode, ServiceError
-from common.http_client import post_json
+from common.http_client import parse_http_url, post_json
 from agents.router.skills import query_text
 from agents.router.skills.image_gen import ImageGenSkill
 
@@ -54,9 +54,7 @@ class BailianImageSkill:
                         continue
                     if not isinstance(resource, str):
                         raise ValueError('Invalid image URL')
-                    parsed = urlsplit(resource)
-                    if parsed.scheme not in ('http', 'https') or not parsed.netloc:
-                        raise ValueError('Invalid image URL')
+                    parse_http_url(resource)
                     images.append({'image_url': resource})
             if not images:
                 raise ValueError('No images')

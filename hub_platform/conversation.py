@@ -8,7 +8,7 @@ from uuid import uuid4
 
 from pydantic import Field
 
-from common.contracts import Contract, ErrorDetail, ExecutionPlan, ExecutionReport
+from common.contracts import Contract, ErrorDetail, ExecutionPlan, ExecutionReport, StepState
 from common.errors import ErrorCode
 from hub_platform.errors import HubError
 from hub_platform.executor import Executor
@@ -72,11 +72,16 @@ class Conversation:
 
     def submit(self, text: str, *, execute: bool = True) -> TurnResult:
         task = self._context.active_task
-        if task and task.report and task.report.status == 'waiting_approval':
-            # The current executor has no resume protocol. Do not rerun a waiting task.
+        if task and task.report and any(
+            step.status == StepState.WAITING_APPROVAL for step in task.report.steps.values()
+        ):
+            # Aggregate failure must not hide a pending approval in another branch.
+            # The executor has no resume protocol: preserve the report, never replay it.
+            message = ('此任务包含失败步骤，仍有步骤等待审批；' if task.report.status == 'failed'
+                       else '此任务仍在等待审批；')
             return TurnResult(session_id=self._context.session_id, task_id=task.task_id,
-                              trace_id=task.trace_id, status='waiting_approval',
-                              message='此任务仍在等待审批；当前版本不支持恢复。可用 /new 开始另一项任务。',
+                              trace_id=task.trace_id, status=task.report.status,
+                              message=message + '当前版本不支持恢复。可用 /new 开始另一项任务。',
                               plan=task.plan.model_copy(deep=True), report=task.report.model_copy(deep=True))
         if task and task.status in ('completed', 'unsupported', 'execution_failed'):
             self.new_task()

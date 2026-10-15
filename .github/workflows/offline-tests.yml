@@ -1,0 +1,38 @@
+name: Offline regression and wheel
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  offline:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ['3.10', '3.12']
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+      - name: Install dependencies
+        run: python -m pip install -r requirements.txt
+      - name: Build distributable
+        run: python -m pip wheel . --no-deps --wheel-dir dist
+      - name: Run offline suite including isolated wheel probes
+        run: |
+          export AUDIT_WHEEL="$(find "$PWD/dist" -name '*.whl' -print -quit)"
+          python -m pytest -q
+      - name: Install wheel outside source tree and smoke-test CLIs
+        run: python scripts/check_wheel.py dist/*.whl
+      - name: Check bytecode and dependency consistency
+        run: |
+          python -m compileall -q agents common hub_platform scripts
+          python -m pip check

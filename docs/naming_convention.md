@@ -226,7 +226,7 @@ class QueryOrderResponse(BaseModel):
 
 | 字段              | 规范                                                                     |
 | --------------- | ---------------------------------------------------------------------- |
-| `plan_id`       | `plan-{yyyyMMdd}-{3位序号}`，如 `plan-20261012-001`                         |
+| `plan_id`       | `plan-{yyyyMMdd}-{至少3位序号}`，如 `plan-20261012-001`、`plan-20261012-1000` |
 | `goal`          | 自然语言原样保留用户目标                                                           |
 | `steps[]`       | 步骤数组                                                                   |
 | `step_id`       | `s` + 从 1 开始的序号，如 `s1`、`s2`；单计划内唯一                                     |
@@ -343,7 +343,7 @@ M2 补充 order_amount（整数分）；M7 真实流程和 Mock 都使用本地�
 | `request_id`         | `req-{12位小写hex}`         | 平台 Executor | 一次模块调用    |
 | `trace_id`           | `trace-{16位小写hex}`       | 平台入口，全链路透传  | 一次链路追踪    |
 | `session_id`         | `sess-{12位小写hex}`        | 平台会话层或独立 M1 入口 | 一段多轮会话    |
-| `plan_id`            | `plan-{yyyyMMdd}-{3位序号}` | 平台 Planner  | 一份执行计划    |
+| `plan_id`            | `plan-{yyyyMMdd}-{至少3位序号}` | 平台 Planner  | 一份执行计划    |
 | `step_id`            | `s{序号}`                  | 平台 Planner  | 计划内唯一     |
 | `continuation_token` | 不透明字符串，`cont-{16位小写hex}` | 支持恢复的模块（M7） | 一次挂起-恢复配对 |
 
@@ -354,6 +354,7 @@ M2 补充 order_amount（整数分）；M7 真实流程和 Mock 都使用本地�
 3. `continuation_token` 对平台**不透明**：平台只负责保存与回传，不解析其内容。
 4. `continuation_token` **必须幂等**：同一 token 重复提交同一决策，只产生一次状态迁移。
 5. ID 一律小写，禁止大写 hex。
+6. `plan_id` 日期使用 UTC；序号在单个 Planner 实例内单调递增，最少三位、不足补零，超过 999 自然扩展，不取模、不按日期重置。唯一性范围为该实例，不承诺跨实例或跨进程唯一。
 
 ---
 

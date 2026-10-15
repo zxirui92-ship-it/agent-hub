@@ -5,3 +5,11 @@ __pycache__/
 build/
 dist/
 .env
+
+# Local verification output
+.coverage
+.coverage.*
+htmlcov/
+coverage.xml
+coverage.json
+audit_artifacts/

@@ -44,3 +44,12 @@ def test_cli_bad_file_and_limits(tmp_path):
         assert run.returncode == 2 and json.loads(run.stdout)["code"] == "INVALID_PLAN_FILE"
     run = cli("tests/fixtures/operations.json", "--max-steps", "2", "--json")
     assert run.returncode == 2 and json.loads(run.stdout)["code"] == "EXECUTION_LIMIT"
+
+
+@pytest.mark.parametrize('constant', ['NaN', 'Infinity', '-Infinity', '1e9999'])
+def test_cli_rejects_non_json_numeric_values_before_execution(tmp_path, constant):
+    path = tmp_path / 'nonfinite.json'
+    path.write_text('{"unexpected": ' + constant + '}', encoding='utf-8')
+    run = cli(str(path), '--json')
+    assert run.returncode == 2
+    assert json.loads(run.stdout)['code'] == 'INVALID_PLAN_FILE'

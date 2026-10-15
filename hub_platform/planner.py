@@ -116,6 +116,8 @@ class DynamicPlanner:
             return PlanningResult(decision=PlannerDecision(status='unsupported',
                                   message='当前没有已注册的能力。'), attempts=[])
         today = datetime.now(timezone.utc).date().isoformat()
+        # Minimum width only: keep the full, instance-local monotonic sequence.
+        # Never wrap at 999 or reset on date changes, which could reuse an ID.
         plan_id = f"plan-{today.replace('-', '')}-{next(self._sequence):03d}"
         prompt = SYSTEM_PROMPT + '\nOutput schema:\n' + json.dumps(PlannerDecision.model_json_schema(), ensure_ascii=False)
         data = {'current_date_utc': today, 'goal': goal, 'context': context or {},

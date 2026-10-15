@@ -8,7 +8,8 @@ import argparse
 from collections import deque
 from copy import deepcopy
 from dataclasses import dataclass, field
-from datetime import date, datetime, timezone
+from datetime import datetime, timezone
+from importlib.resources import files
 import json
 import logging
 import os
@@ -19,11 +20,13 @@ from dotenv import load_dotenv
 from common.contracts import AgentRequest, AgentResult
 from common.errors import ErrorCode, ServiceError
 from common.fusion_contract import fusion_manifest
+from common.iso_week import week_start
+from common.json_data import strict_json_loads
 from common.module_boundary import result_for, failure, correlation
 from hub_platform.errors import HubError
 from hub_platform.schema import validate_data
 
-FIXTURES = Path(__file__).resolve().parents[1] / 'data/fixtures/m3'
+FIXTURES = files('common').joinpath('fixtures', 'm3')
 FIELD_DEFINITIONS = [
     'week：ISO 周；输入必须显式指定。本地周汇总样例，非生产实时数据。',
     'revenue_amount：订单周汇总 gmv_amount，整数分；本视图沿用成交金额口径，不表示会计确认收入。',
@@ -34,26 +37,25 @@ FIELD_DEFINITIONS = [
 
 
 class WeeklySource:
-    def __init__(self, path=FIXTURES):
-        self.path = Path(path)
+    def __init__(self, path=None):
+        self.path = FIXTURES if path is None else Path(path)
 
     def load(self, week):
         try:
-            year, number = week.split('-W')
-            date.fromisocalendar(int(year), int(number), 1)
+            week_start(week)
         except ValueError as exc:
             raise ServiceError(ErrorCode.INVALID_INPUT, 'week 不是有效 ISO 周', retryable=False) from exc
         try:
-            files = {name: json.loads((self.path / f'{name}.json').read_text(encoding='utf-8-sig'))
-                     for name in ('order_basic', 'user_behavior', 'marketing_campaign')}
+            documents = {name: strict_json_loads((self.path / f'{name}.json').read_text(encoding='utf-8-sig'))
+                         for name in ('order_basic', 'user_behavior', 'marketing_campaign')}
         except OSError as exc:
             raise ServiceError(ErrorCode.TOOL_UNAVAILABLE, 'M6 无法读取周汇总样例') from exc
         except ValueError as exc:
             raise ServiceError(ErrorCode.CONTRACT_MISMATCH, 'M6 数据源不是有效 JSON', retryable=False) from exc
         try:
-            orders = files['order_basic']['weeks']
-            behavior = files['user_behavior']['weeks']
-            campaigns = files['marketing_campaign']['campaigns']
+            orders = documents['order_basic']['weeks']
+            behavior = documents['user_behavior']['weeks']
+            campaigns = documents['marketing_campaign']['campaigns']
             if not isinstance(orders, dict) or not isinstance(behavior, dict) or not isinstance(campaigns, list):
                 raise TypeError('Invalid source collections')
             if week not in orders or week not in behavior:
@@ -223,7 +225,7 @@ class DataFusionModule:
 
     def __init__(self, source=None, *, max_rounds=4):
         load_dotenv(Path(__file__).resolve().parents[1] / '.env', override=False)
-        self.source = source if source is not None else WeeklySource(os.getenv('M6_DATA_DIR') or FIXTURES)
+        self.source = source if source is not None else WeeklySource(os.getenv('M6_DATA_DIR') or None)
         self.max_rounds = max_rounds
 
     def invoke(self, request: AgentRequest) -> AgentResult:

@@ -1,10 +1,11 @@
 """M6's exported view shared with report/promotion consumers."""
 from common.contracts import CapabilityManifest
+from common.iso_week import week_schema
 
 
 def fused_schema():
     properties = {
-        'week': {'type': 'string', 'pattern': r'^[0-9]{4}-W(0[1-9]|[1-4][0-9]|5[0-3])$'},
+        'week': week_schema(),
         'revenue_amount': {'type': 'integer', 'minimum': 0},
         'order_count': {'type': 'integer', 'minimum': 0},
         'conversion_rate': {'type': 'number', 'minimum': 0, 'maximum': 1},

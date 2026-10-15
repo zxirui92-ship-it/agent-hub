@@ -82,7 +82,7 @@ SessionContext 保存 session_id、active_task 和 history。每个任务保存�
 - context 属性返回深复制快照，返回结果的外部修改不会污染会话内部报告。
 - 业务参数仍放 payload；目前模块 context 仅包含 session_id，模块内部状态由模块管理。
 
-等待审批沿用原执行器边界：保存 report，后续消息不会让该任务重跑，也不伪装恢复成功。用户可 `/new` 开始另一个任务。真实 M7 已有模块内部 checkpoint/submit_decision；平台尚未实现统一 resume，不能跨 CLI 进程恢复 token。
+等待审批沿用原执行器边界：只要任一步骤仍为 waiting_approval，保存 report，后续消息不会让该任务重跑，也不伪装恢复成功。即使无关分支失败导致总体 failed，也保留原失败状态、每步错误和等待结果，不重新规划或提交退款。用户可 `/new` 开始另一个任务并保留历史，或 `/reset` 清空会话。真实 M7 已有模块内部 checkpoint/submit_decision；平台尚未实现统一 resume，不能跨 CLI 进程恢复 token。
 
 ## 输出与错误
 
