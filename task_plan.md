@@ -157,5 +157,5 @@ resolver 无命名计划，按脚本约定继续使用根目录 legacy 计划。
 1. 核对代码与远端：complete。本人main=8a300a5，成员main=4760d44，本地包含两者和f88d4e8修复。
 2. 七模块侧栏、中文业务表单、任务及结果页面：complete。
 3. 前端/离线回归及真实浏览器验收：complete。1396离线通过、11前端通过；真实页面订单、知识问答、预览执行、退款审核及手机客服通过。
-4. 本地提交并快进推送zxirui92-ship-it/agent-hub main：in_progress。保留成员origin，新增personal远端，不强推。
+4. 本地提交并快进推送zxirui92-ship-it/agent-hub main：complete。d46f049已正常推送，包含f88d4e8及成员前端历史。保留成员origin，新增personal远端，不强推。
 错误记录：apply_patch不支持同一补丁内delete/add同路径，原子未应用；改为直接写入完整HTML。
