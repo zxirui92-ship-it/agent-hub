@@ -232,7 +232,7 @@ check_wheel.py 会在源码目录外安装 wheel，测试平台能力清单和 M
 
 本机文本配置现使用百炼 qwen-plus（DeepSeek 本轮文本请求超时），不是运行时自动 fallback；密钥仍在本机环境。实际测试记录见 [可靠性验收](docs/reliability_acceptance.md)，会话/状态/审核接入方式见 [前端接入说明](docs/frontend_handoff.md)。
 
-## 前端控制台（web 包）
+## 业务工作台（web 包）
 
 新增 `web/` 薄层把现有 `Conversation` 暴露为浏览器可访问的 HTTP 服务与单页界面，不重写 Planner / Executor / 七个 Agent。仅做组装与映射，错误体与报告原样透传。详见 [前端接入说明](docs/frontend_handoff.md) 与 `web/server.py` 顶部注释。
 
@@ -247,6 +247,6 @@ check_wheel.py 会在源码目录外安装 wheel，测试平台能力清单和 M
 
 启动后访问 http://127.0.0.1:8000/ 。每个浏览器会话保留一个 `Conversation` 实例，同一会话请求串行；界面严格区分 `needs_clarification / ready / unsupported / completed / waiting_approval / failed` 六种状态，金额按整数分展示并换算为元，M4 结果按 JSON 或纯文本回退渲染，M7 读取 `data.approval_status`（而非仅 `AgentResult.status`）并内嵌审批表单。
 
-界面顶部的“调用入口”下拉框可以选择**对话编排**或七个**模块直调**入口。直调绕过 Planner，通过同一 Executor 调用能力；M1 提供多轮聊天界面。表单根据 `/api/capabilities` 的 `input_schema` 生成，示例由后端按当前数据来源提供，退款金额与订单事实一致；金额输入单位为分。审批通过 `/api/review` 或 `/api/invoke/review` 续跑，页面更新原报告。
+业务工作台提供左侧七助手导航、智能任务输入、助手卡片和中文表单；窄屏使用“切换助手”下拉框。直调绕过 Planner，通过同一 Executor 调用能力；M1 提供多轮聊天，M4 提供搜索、知识问答、代码与图片快捷入口。表单根据 `/api/capabilities` 的 `input_schema` 生成，示例与当前后端资料一致，金额输入单位为分。切换助手保留本页的输入与结果；人工审核后更新原报告，技术轨迹与原始 JSON 可展开查看。[工作台使用与验收说明](docs/workspace_frontend.md)。
 
 Web 默认启用 M1/M2/M3/M4 的 live 模式及真实 M5/M6/M7；环境中的旧 mock/local 值不会把 Web 偷偷切回演示。`--offline` 才使用确定性 Planner 和七个 Mock，不能与 `--real-m*` 组合。历史 CLI 的显式 `--real-m*` 方式保持不变。搜索、图片未配置时对应功能明确失败。最新修复、联网与日志记录见 [前端验收记录](docs/frontend_acceptance.md)。

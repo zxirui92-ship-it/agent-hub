@@ -1,100 +1,33 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Agent Hub 控制台</title>
-  <link rel="stylesheet" href="/static/styles.css" />
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="description" content="Agent Hub 电商智能工作台：客服、订单、经营分析、创作与退款审核。"/>
+<title>Agent Hub · 智能工作台</title><link rel="stylesheet" href="/static/styles.css"/>
 </head>
 <body>
-  <header class="topbar">
-    <div class="brand">
-      <span class="logo">AH</span>
-      <div>
-        <h1>Agent Hub 控制台</h1>
-        <p class="subtitle">顶层语义规划 · 七模块编排 · 会话式控制台</p>
-      </div>
-    </div>
-    <div class="topbar-right">
-      <span id="modeBadge" class="badge badge-neutral" title="规划与执行模式">模式</span>
-      <div class="session-info">
-        <span class="label">会话</span>
-        <code id="sessionId">—</code>
-      </div>
-      <button id="btnNew" class="btn btn-ghost" title="结束当前任务并保留历史">新任务</button>
-      <button id="btnReset" class="btn btn-ghost" title="清空整个会话">重置会话</button>
-    </div>
-  </header>
-
-  <nav class="nav">
-    <label class="nav-label" for="navSelect">调用入口</label>
-    <select id="navSelect" class="nav-select">
-      <option value="orchestrate">对话编排（统一调用）</option>
-      <optgroup label="模块直调" id="moduleOptGroup"></optgroup>
-    </select>
-  </nav>
-
-  <!-- 视图一：对话编排 -->
-  <main class="layout" id="viewOrchestrate">
-    <section class="transcript-pane">
-      <div id="transcript" class="transcript">
-        <div class="empty-state" id="emptyState">
-          <h2>开始一个任务</h2>
-          <p>输入自然语言目标，顶层规划器会选择能力并生成执行计划。右侧列出了可直接套用的演示场景。</p>
-          <ul class="hints">
-            <li><b>客服：</b>小家电保修几年？请说明不同条目差异。</li>
-            <li><b>订单：</b>查询订单 2025101234 的物流。</li>
-            <li><b>经营：</b>分别融合 2025-W41 和 2025-W40 数据，生成 W41 环比周报，再制定下周预算 10000 元的大促方案。</li>
-            <li><b>退款：</b>查询订单 2025100004 并申请整单退款，原因是买错了。</li>
-          </ul>
-        </div>
-      </div>
-
-      <div class="composer">
-        <textarea id="goalInput" rows="2" placeholder="输入任务目标，例如：查询订单 2025101234 的物流"></textarea>
-        <div class="composer-actions">
-          <button id="btnRun" class="btn btn-primary">执行</button>
-          <button id="btnPlan" class="btn btn-secondary">仅预览计划</button>
-        </div>
-      </div>
-    </section>
-
-    <aside class="side-pane">
-      <div class="card">
-        <h3>演示场景</h3>
-        <p class="muted">点击填入输入框，再点“执行”。</p>
-        <div id="scenarioList" class="scenario-list"></div>
-      </div>
-      <div class="card collapsible collapsed" data-collapsible>
-        <h3 class="card-title">能力清单 <span class="caret">▸</span></h3>
-        <p class="muted">当前注册的能力（Manifest）。点击标题展开/收起。顶部下拉选择某一模块即可单独调用。</p>
-        <div id="capabilityList" class="capability-list"></div>
-      </div>
-    </aside>
-  </main>
-
-  <!-- 视图二：模块单独调用（下拉选择后跳转） -->
-  <main class="layout module-view" id="viewModule" hidden>
-    <section class="module-detail-pane">
-      <div id="moduleDetail"></div>
-    </section>
-
-    <aside class="side-pane">
-      <div class="card">
-        <h3>演示场景</h3>
-        <p class="muted">点击切换到对应模块并带入示例输入。</p>
-        <div id="scenarioList2" class="scenario-list"></div>
-      </div>
-      <div class="card collapsible collapsed" data-collapsible>
-        <h3 class="card-title">能力清单 <span class="caret">▸</span></h3>
-        <p class="muted">当前注册的能力（Manifest）。点击标题展开/收起。</p>
-        <div id="capabilityList2" class="capability-list"></div>
-      </div>
-    </aside>
-  </main>
-
-  <div id="toast" class="toast" hidden></div>
-
-  <script src="/static/app.js"></script>
-</body>
-</html>
+<a class="skip-link" href="#workspace">跳到工作区</a>
+<aside class="sidebar" aria-label="主导航">
+<a class="brand" href="/" aria-label="Agent Hub 首页"><span class="logo" aria-hidden="true"><svg viewBox="0 0 32 32"><path d="M5 23 16 5l11 18M10 16h12M10 25h12"/></svg></span><span><strong>Agent Hub</strong><small>电商智能工作台</small></span></a>
+<div class="nav-caption">工作空间</div>
+<button class="nav-item active" data-view="orchestrate" aria-current="page"><span class="nav-icon">◎</span><span>智能任务</span><span class="nav-arrow">↗</span></button>
+<div class="nav-caption nav-section">业务助手 <span id="moduleCount">—</span></div><nav id="moduleNav" class="module-nav" aria-label="业务助手"></nav>
+<div class="sidebar-foot"><span class="status-dot"></span><div>本地工作空间<small>数据来自模拟业务资料</small></div><span class="workspace-avatar">AH</span></div>
+</aside>
+<div class="app-shell" id="workspace">
+<header class="topbar"><div class="breadcrumbs">工作空间 <span>/</span> <strong id="pageTitle">智能任务</strong></div><div class="topbar-right"><span id="modeBadge" class="badge badge-neutral" role="status">正在连接</span><button id="btnNew" class="btn btn-ghost" title="结束当前任务，保留历史和待审核记录">＋ 新任务</button><button id="btnReset" class="btn btn-ghost" title="清空当前会话和待审核记录">重置会话</button></div></header>
+<div class="mobile-nav"><label for="navSelect">切换助手</label><select id="navSelect"><option value="orchestrate">智能任务</option><optgroup label="业务助手" id="moduleOptGroup"></optgroup></select></div>
+<div id="connectionError" class="connection-error" role="alert" hidden>后端连接失败。请确认服务已启动，然后刷新页面。</div>
+<main class="layout" id="viewOrchestrate">
+<section class="transcript-pane" aria-label="智能任务工作区">
+<section class="welcome" id="emptyState"><div class="eyebrow"><span class="status-dot"></span> YOUR AGENT WORKSPACE</div><h1>工作，从一句话开始<span>。</span></h1><p>告诉我们你的目标，让合适的助手协作完成。</p><div class="welcome-note"><span>01 描述目标</span><i></i><span>02 规划与执行</span><i></i><span>03 查看结果</span></div></section>
+<section class="composer" aria-label="任务输入"><label class="composer-label" for="goalInput">今天，有什么需要帮忙？</label><textarea id="goalInput" rows="3" placeholder="例如：查询订单物流，再按实际金额申请整单退款…"></textarea><div class="composer-actions"><span class="input-hint">Ctrl / ⌘ + Enter 发送</span><button id="btnPlan" class="btn btn-secondary">仅预览计划</button><button id="btnRun" class="btn btn-primary">开始执行 <span aria-hidden="true">↗</span></button></div><div id="taskProgress" class="task-progress" role="status" hidden></div></section>
+<div id="transcript" class="transcript" aria-live="polite"></div>
+<section class="assistants-section" aria-labelledby="assistantsTitle"><div class="section-heading"><div><span class="eyebrow">YOUR SPECIALISTS</span><h2 id="assistantsTitle">也可以，直接找一位助手</h2></div><span class="muted">独立使用 · 随时协作</span></div><div id="assistantGrid" class="assistant-grid"></div></section>
+</section>
+<aside class="side-pane"><section class="card"><div class="eyebrow">QUICK START</div><h3>从一个场景开始</h3><p class="muted">选一个示例，改成你的任务。</p><div id="scenarioList" class="scenario-list"></div></section><section class="card quiet-card"><span class="card-symbol">↳</span><h3>需要审批时，等你决定</h3><p>退款达到审核条件后会暂停。填写审核人并提交决定，任务才会继续。</p><small>本项目为模拟业务，不产生实际支付。</small></section><details class="card technical"><summary>当前能力与接口</summary><div id="capabilityList" class="capability-list"></div></details></aside>
+</main>
+<main class="layout module-view" id="viewModule" hidden><section class="module-detail-pane" aria-label="助手工作区"><div id="moduleDetail"></div></section><aside class="side-pane"><section class="card"><div class="eyebrow">QUICK START</div><h3>试试这些任务</h3><p class="muted">切换助手并带入示例，执行前可以修改。</p><div id="scenarioList2" class="scenario-list"></div></section><section class="card quiet-card"><h3>结果，来自真实调用</h3><p>真实模式连接你在本机配置的服务。缺少配置或服务不可用时，会明确显示失败。</p><small>生成内容仅供参考，请结合业务资料核对。</small></section><details class="card technical"><summary>当前能力与接口</summary><div id="capabilityList2" class="capability-list"></div></details></aside></main>
+<footer class="workspace-footer"><span>Agent Hub <span class="footer-separator">/</span> 让协作更简单</span><span class="session-info">当前会话 <code id="sessionId">连接中</code></span></footer>
+</div><div id="toast" class="toast" role="status" hidden></div><script src="/static/app.js"></script>
+</body></html>

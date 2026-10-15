@@ -23,7 +23,7 @@ function ui() {
   assert.ok(offset > 0);
   vm.runInContext(source.slice(0, offset) + `
     globalThis.testUi = {renderGateway,renderPromotion,miniMarkdown,sendFaqMessage,
-      submitReview,resetSession,state,faqChats};
+      submitReview,resetSession,state,faqChats,fieldHtml,collectForm,renderReport,renderFusion};
   })();`, sandbox);
   return { ...sandbox.testUi, sandbox, element };
 }
@@ -77,4 +77,56 @@ test('session reset uses the new server session and clears old FAQ memory view',
   await app.resetSession();
   assert.equal(app.state.sessionId, 'new');
   assert.equal(app.faqChats.old, undefined);
+});
+
+test('business forms use accessible Chinese labels and integer cents', () => {
+  const html = ui().fieldHtml('refund_amount', {type:'integer'}, 'refund_amount', true);
+  assert.match(html, /退款金额（分）/);
+  assert.match(html, /for="field-refund_amount"/);
+  assert.match(html, /id="field-refund_amount"/);
+  const text = ui().fieldHtml('goal', {type:'string'}, 'goal', true);
+  assert.match(text, /textarea/);
+});
+
+test('form keeps cents unchanged and rejects fractional integer input', () => {
+  const app = ui();
+  const el = {tagName:'INPUT', type:'number', value:'109900',
+    getAttribute(name) {return name === 'data-field' ? 'refund_amount' : 'integer';}};
+  const card = {querySelectorAll:()=>[el]};
+  assert.equal(app.collectForm(card).refund_amount, 109900);
+  el.value='1099.5'; assert.throws(()=>app.collectForm(card), /整数/);
+  el.value='Infinity'; assert.throws(()=>app.collectForm(card), /合法数字/);
+});
+
+test('business results stay visible and technical detail is collapsed', () => {
+  const html = ui().renderReport({status:'completed',task_id:'task-demo',steps:{s1:{
+    step_id:'s1',capability_id:'m6.data_fusion',status:'completed',
+    result:{data:{fused_data:{week:'2025-W41',conversion_rate:.14}}}}},
+    events:[{sequence:1,step_id:'s1',status:'completed'}],final_results:{s1:{amount:1}}});
+  assert.match(html,/14.00%/);
+  assert.match(html,/<details class="diagnostics"><summary>查看原始结果 JSON/);
+  assert.doesNotMatch(html,/<details[^>]*\bopen\b/);
+});
+
+test('in-flight FAQ prevents session reset and restores controls after completion', async () => {
+  const app = ui(); app.state.sessionId='sess-demo'; app.element('#faqInput').value='hello';
+  let release;
+  app.sandbox.fetch = () => new Promise(resolve => {release=resolve;});
+  const pending = app.sendFaqMessage();
+  assert.equal(app.element('#btnReset').disabled, true);
+  assert.equal(app.element('#btnNew').disabled, true);
+  await app.resetSession();
+  assert.equal(app.state.sessionId,'sess-demo');
+  release({ok:true,json:async()=>({status:'failed',steps:{s1:{status:'failed',error:{message:'test outage'}}}})});
+  await pending;
+  assert.equal(app.element('#btnReset').disabled, false);
+  assert.equal(app.element('#btnNew').disabled, false);
+});
+
+test('failed empty business output does not show misleading blank order facts', () => {
+  const html = ui().renderReport({status:'failed',task_id:'task-demo',steps:{s1:{
+    step_id:'s1',capability_id:'m2.order_tracking',status:'failed',
+    error:{code:'NOT_FOUND',message:'订单不存在'},result:{data:{}}}}});
+  assert.match(html,/订单不存在/);
+  assert.doesNotMatch(html,/<dt>订单号<\/dt>/);
 });

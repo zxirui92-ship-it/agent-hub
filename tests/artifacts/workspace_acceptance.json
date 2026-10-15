@@ -1,0 +1,25 @@
+{
+  "date": "2026-10-15",
+  "python_offline": {
+    "passed": 1396,
+    "skipped": 32,
+    "seconds": 41.12
+  },
+  "frontend_tests": 11,
+  "installed_wheel_checks": 7,
+  "browser_real_checks": [
+    "order lookup",
+    "unknown order error",
+    "knowledge routing",
+    "refund approval after navigation",
+    "plan preview then execute",
+    "mobile FAQ"
+  ],
+  "viewport_checks": [
+    390,
+    1360
+  ],
+  "console_errors": 0,
+  "runtime_logs": "audit_artifacts/workspace-ui (local, ignored)",
+  "external_suite": "Not repeated; see frontend_live_summary.json for prior full live acceptance"
+}
