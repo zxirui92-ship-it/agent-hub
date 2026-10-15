@@ -48,3 +48,25 @@ def test_real_planner_multiturn_clarification(registry, record_property):
     assert {step.capability_id for step in second.plan.steps} == {'m2.order_tracking'}
     order = next(iter(second.report.steps.values()))
     assert order.inputs['order_id'] == '2025101234'
+
+
+def test_real_planner_respects_approval_before_answer(registry, record_property):
+    """Control dependencies must survive even when the answer needs no refund data."""
+    model = configured_model()
+    if not all((model.base_url, model.api_key, model.model)):
+        pytest.skip('Planner LLM service not configured')
+    outcome = DynamicPlanner(registry, model).plan(
+        '查询订单2025101234，按实际金额申请整单退款，原因是买错了。审核结束后再回答七天无理由退货条件。')
+    record_property('planning_result', outcome.model_dump_json())
+    assert outcome.plan is not None, outcome.model_dump_json()
+    steps = {step.step_id: step for step in outcome.plan.steps}
+    refund = next(s for s in steps.values() if s.capability_id == 'm7.refund_approval')
+    answer = next(s for s in steps.values() if s.capability_id == 'm1.faq_chat')
+    def ancestors(step_id):
+        return {dep for dep in steps[step_id].depends_on} | {
+            ancestor for dep in steps[step_id].depends_on for ancestor in ancestors(dep)}
+    assert refund.step_id in ancestors(answer.step_id), outcome.model_dump_json()
+    report = Executor(registry).execute(outcome.plan)
+    record_property('mock_execution', report.model_dump_json())
+    assert report.steps[refund.step_id].status == 'waiting_approval'
+    assert report.steps[answer.step_id].status == 'pending'

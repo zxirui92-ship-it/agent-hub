@@ -1,6 +1,6 @@
 # 前端接入说明（2026-10-15）
 
-本轮整理的是可复用的 Python 业务入口，尚未实现 HTTP 服务、前端页面或跨进程会话持久化。浏览器接入时，在这些入口外增加薄 HTTP 层即可，不要重写 Planner、Executor 或七个 Agent。验收结果见 reliability_acceptance.md。
+已接入成员提供的 `web/` HTTP 服务和前端页面，复用 Conversation、Planner、Executor 与七个 Agent。Web 默认使用真实服务，只有显式 `--offline` 才使用 Mock。跨进程会话持久化尚未实现。最新验收见 [前端验收记录](frontend_acceptance.md)，此前业务验收见 reliability_acceptance.md。
 
 ## 本机启动
 
@@ -9,8 +9,11 @@
 在仓库根运行。密钥仅从本机环境读取；本机 `.env` 已显式选择 `LLM_PROVIDER=bailian`、`BAILIAN_TEXT_MODEL=qwen-plus`、`HUB_DATA_DIR=data/group02`。所有文本模块共用千问；搜索、生图共用百炼配置，图片模型独立。DeepSeek 本轮文本请求超时，因此不作为本机验收默认服务；没有自动降级到 Mock。
 
 ```powershell
-$env:M3_MODE='live'
-.\.venv\Scripts\python.exe -m hub_platform --chat --json --real-m1 --real-m2 --real-m3 --real-m4 --real-m5 --real-m6 --real-m7
+python -m pip install -r requirements.txt
+python -m scripts.check_live_config
+python -m web
+# 访问 http://127.0.0.1:8000/；更换端口使用 --port 8765
+# 无网络排练使用 python -m web --offline
 ```
 
 默认 CLI 不带 `--real-m*` 时使用七个 Mock，不应把这种输出当作实际模型演示。全部真实模块清单可以用 `--list-capabilities` 加上述七个开关查看，无模型费用。
@@ -55,7 +58,21 @@ response_json = result.model_dump(mode='json')
 | 新任务 | chat.new_task() | 保留历史及旧任务审核入口 |
 | 重置 | chat.reset() | 清空会话并丢弃平台恢复入口 |
 
-HTTP 路径和状态码尚未定义，不要直接假设 `/api/chat` 等地址存在。建议在下一阶段将上述方法一一映射，保持错误体和报告原样。不同会话隔离；同一会话请求串行，防止发送消息和审批同时操作状态。耗时模型调用放到服务工作线程，前端显示加载状态；本版没有流式 token 或进度推送接口。
+HTTP 层已实现以下接口；字段以 `web/server.py` 为准。不同会话隔离，同一会话请求串行。耗时调用在请求线程执行；页面显示加载状态，无 token 流式推送。
+
+| 方法与路径 | 请求/响应 |
+| --- | --- |
+| GET /api/health | mode 和已注册能力数量 |
+| GET /api/capabilities | mode、Manifest 清单、当前数据对应的 examples |
+| POST /api/session | 返回 session_id |
+| GET /api/context?session_id=... | 会话快照 |
+| POST /api/chat /api/plan | session_id、text；执行或仅预览 |
+| POST /api/invoke | session_id、capability_id、payload；返回 ExecutionReport |
+| POST /api/review /api/invoke/review | session_id、task_id、step_id、approved、reviewer、material_complete |
+| POST /api/new | session_id；保留历史，开始新任务 |
+| POST /api/reset | session_id；清空会话及直调等待任务，返回新 session_id，前端必须替换旧 ID |
+
+审批布尔字段必须是 JSON true/false，字符串 "false" 会拒绝。无效输入返回 400，会话不存在返回 404；业务失败也可能以 200 返回 failed 报告，前端必须读取业务状态。运行时异常返回结构化错误。模型配置缺失时启动失败，不自动回退 Mock。示例按 `HUB_DATA_DIR` 选择资料，不能把旧样例订单金额与 group02 混用。
 
 ## 页面必须区分的状态
 

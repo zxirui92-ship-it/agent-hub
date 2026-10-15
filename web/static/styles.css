@@ -145,7 +145,7 @@ body { display: flex; flex-direction: column; }
 .rstep-head { display: flex; align-items: center; gap: 8px; padding: 8px 10px; background: #fafbfe; border-bottom: 1px solid var(--line); }
 .rstep-status { font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 999px; }
 .rstep-body { padding: 10px 12px; font-size: 13px; }
-.kv { display: grid; grid-template-columns: max-content 1fr; gap: 4px 12px; margin: 6px 0; }
+.kv { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 4px 12px; margin: 6px 0; }
 .kv dt { color: var(--muted); font-size: 12px; }
 .kv dd { margin: 0; font-size: 13px; word-break: break-word; }
 .money { font-weight: 700; color: var(--ok); }
@@ -237,4 +237,23 @@ pre.code { background: #0f172a; color: #e2e8f0; padding: 10px 12px; border-radiu
 .card.collapsible:not(.collapsed) .caret { transform: rotate(90deg); }
 .card.collapsible.collapsed .capability-list,
 .card.collapsible.collapsed .muted { display: none; }
+
+/* Keep the form usable in a narrow browser panel; side cards follow the task. */
+@media (max-width: 900px) {
+  html, body { height: auto; min-height: 100%; }
+  .topbar { flex-wrap: wrap; gap: 12px; padding: 12px; }
+  .brand, .topbar-right { flex-wrap: wrap; }
+  .logo, .badge, .btn { flex-shrink: 0; }
+  .topbar-right { gap: 8px; }
+  .nav { padding: 10px 12px; }
+  .nav-label { flex-shrink: 0; }
+  .nav-select { min-width: 0; width: 100%; }
+  .layout, .module-view { grid-template-columns: minmax(0, 1fr); padding: 12px; flex: none; }
+  .transcript, .module-detail-pane, .side-pane { overflow: visible; }
+  .transcript-pane, .module-detail-pane { min-width: 0; }
+  .rstep-head, .turn-status-line, .chat-foot { flex-wrap: wrap; }
+  .chat-input-row textarea { min-width: 0; }
+  .module-card, .transcript { padding: 12px; }
+  .turn-user-text, .evt { overflow-wrap: anywhere; }
+}
 

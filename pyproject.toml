@@ -13,11 +13,12 @@ dependencies = ["pydantic>=2.10,<3", "jsonschema>=4.23,<5", "python-dotenv>=1,<2
 test = ["pytest>=8.3,<10"]
 
 [tool.setuptools.packages.find]
-include = ["common*", "hub_platform*", "agents*"]
+include = ["common*", "hub_platform*", "agents*", "web*"]
 
 [tool.setuptools.package-data]
 "agents.router.skills" = ["knowledge_sample.json"]
 "common" = ["fixtures/*.json", "fixtures/m3/*.json"]
+"web" = ["static/*.html", "static/*.js", "static/*.css"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

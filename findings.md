@@ -110,7 +110,15 @@
 - JSON模式依据：https://help.aliyun.com/en/model-studio/qwen-structured-output 和 https://api-docs.deepseek.com/guides/json_mode/。格式模式不代替Schema/业务金额校验。
 - 此前最终离线1339 passed/30 skipped、wheel 7项通过；增加金额修复和新退款live验收后需再次全量。
 
+## 2026-10-15 成员前端初查
+- 成员分支4760d44是8a300a5后两个提交；新增web标准库HTTP/静态界面，无额外前端构建依赖，未发现AGENTS/GLOSSARY/ADR。
+- 原始哈希测试实际失败。13个JSON仅LF→CRLF便全部匹配source_manifest原始SHA256，Excel原本匹配；验证支持换行根因，排除业务内容/清单错误。
+- Web main默认七Mock，且缺LLM配置时自动离线；mode=real仅表示Planner真实，不能证明七模块真实。M3真实类默认local，须显式live。
+- 前端仍有旧样例退款订单/金额，以及M5“预算10000元”却提交10000分。M1失败报告被展示成“未返回答案”，重置会话未更新前端session ID，审批入口还需实际HTTP/浏览器验证。
+
 ## 2026-10-15 最终结论
 - 1368离线通过、31live默认跳过、7项wheel检查通过；实际31个不同live场景分批均有成功记录，修复后的M5双周链额外复验通过。
 - 程序精确提供M5客单价191.54元和2025-W42日期10月13日至19日，解决此前十倍金额和周日历错误；模型自由文本的其他推演不能认定全部正确（仍有UV估算偏差），已如实记录。
 - 可进入前端集成；当前提供Python会话/审批入口，尚无HTTP服务。会话/审批保存在内存，经营链约100秒。详见docs/reliability_acceptance.md与docs/frontend_handoff.md。
+
+实测新增发现：Planner规则错误地只允许数据依赖，遗漏用户明确控制顺序；修复后真实退款等待时FAQ保持pending，审核后才运行。裸literal首次输出导致严格max_repairs=0测试失败；明确正反例后受影响12项联网复验通过。窄窗口340px侧栏挤压表单，改为单列，458px下不再横向溢出。全量HTTP日志64次请求/响应已脱敏保存；嵌套JSON签名转义问题已修复且原日志保留。

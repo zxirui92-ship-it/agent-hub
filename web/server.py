@@ -10,6 +10,7 @@
 - 不重写 Planner / Executor / 七个 Agent；只做组装与映射，错误体与报告原样透传。
 """
 import argparse
+from dataclasses import replace
 import json
 import secrets
 import threading
@@ -17,12 +18,16 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import urlparse
 from uuid import uuid4
+from dotenv import load_dotenv
 
 from common.model_config import text_config
+from common.json_data import strict_json_loads
+from common.errors import ServiceError
 
 from hub_platform.conversation import Conversation
 from hub_platform.errors import HubError
 from hub_platform.planner import DynamicPlanner, configured_model
+from hub_platform.planner import public_diagnostic
 from hub_platform.demo_agents import create_mock_registry
 from web.offline_planner import build_offline_planner
 
@@ -30,8 +35,36 @@ STATIC_DIR = Path(__file__).resolve().parent / "static"
 ROOT_DIR = STATIC_DIR.parent.parent
 
 
-def build_registry(real_flags: dict):
-    """复刻 cli.py 的模块组装：默认七个 Mock，--real-m* 逐个替换为真实模块。"""
+def build_examples(mode):
+    """Use the selected local facts, rather than old amounts hardcoded in JS."""
+    from common.business_data import configured_data
+    from common.order_data import order_fact
+    from agents.plan_execute import load_sample_view
+    data = configured_data() if mode == 'real' else None
+    order_id = '2025100004' if data else '2025101234'
+    amount = data.order(order_id)['order_amount'] if data else order_fact(order_id)['order_amount']
+    week = '2025-W41' if data else '2026-W41'
+    previous = '2025-W40' if data else '2026-W40'
+    # Offline examples are explicitly illustrative; live views use shared data.
+    weekly = ({'fused_data': load_sample_view(week), 'previous_fused_data': load_sample_view(previous)}
+              if mode == 'real' else {'fused_data': {'week':week, 'revenue_amount':1268430000,
+                  'order_count':84562, 'conversion_rate':.0242, 'anomaly':'离线演示样例'}})
+    return {
+        'm1.faq_chat': {'question':'小家电保修几年？请说明不同条目差异。'},
+        'm2.order_tracking': {'order_id':'2025100003' if data else order_id, 'query':'查询订单与物流'},
+        'm3.weekly_report': weekly,
+        'm4.capability_gateway': {'query':'联网搜索近期电商新闻，提供来源。'},
+        'm5.promotion_plan': {'goal':'制定下周预算10000元的大促方案',
+            'week':week[:4] + '-W42', 'budget_amount':1000000},
+        'm6.data_fusion': {'week':week},
+        'm7.refund_approval': {'order_id':order_id, 'refund_amount':amount, 'reason':'买错了，申请整单退款'},
+    }
+
+
+def build_registry(real_flags: dict | None = None):
+    """Web defaults to seven real modules; explicit offline mode passes all False."""
+    if real_flags is None:
+        real_flags = {f'm{i}': True for i in range(1, 8)}
     registry = create_mock_registry()
     if not any(real_flags.values()):
         return registry
@@ -40,17 +73,19 @@ def build_registry(real_flags: dict):
     try:
         if real_flags.get("m1"):
             from agents.single_agent import SingleAgent
-            modules[SingleAgent().manifest.capability_id] = SingleAgent()
+            m1 = SingleAgent(mode='live')
+            modules[m1.manifest.capability_id] = m1
         if real_flags.get("m2"):
             from agents.react_agent import ReActAgent
-            modules[ReActAgent().manifest.capability_id] = ReActAgent()
+            m2 = ReActAgent(mode='live')
+            modules[m2.manifest.capability_id] = m2
         if real_flags.get("m6"):
             from agents.blackboard import DataFusionModule
             m6 = DataFusionModule()
             modules[m6.manifest.capability_id] = m6
         if real_flags.get("m3"):
             from agents.plan_execute import WeeklyReportAgent
-            m3 = WeeklyReportAgent()
+            m3 = WeeklyReportAgent(mode='live')
             modules[m3.manifest.capability_id] = m3
         if real_flags.get("m7"):
             from agents.workflow.refund_graph import RefundWorkflow
@@ -58,7 +93,8 @@ def build_registry(real_flags: dict):
             modules[m7.manifest.capability_id] = m7
         if real_flags.get("m4"):
             from agents.router.factory import create_agent
-            m4 = create_agent()
+            from agents.router.config import Settings
+            m4 = create_agent(replace(Settings.from_env(), mode='live'))
             modules[m4.manifest.capability_id] = m4
         if real_flags.get("m5"):
             from agents.multi_agent import PromotionAgent
@@ -107,15 +143,19 @@ class HubHTTPRequestHandler(BaseHTTPRequestHandler):
 
     def _read_body(self):
         length = int(self.headers.get("Content-Length") or 0)
+        if length < 0 or length > 2_000_000:
+            raise ValueError('请求体长度无效')
         if not length:
             return {}
         raw = self.rfile.read(length)
-        try:
-            return json.loads(raw.decode("utf-8"))
-        except (ValueError, UnicodeError):
-            return {}
+        value = strict_json_loads(raw.decode('utf-8'))
+        if not isinstance(value, dict):
+            raise ValueError('请求体必须是 JSON 对象')
+        return value
 
     def _session(self, session_id):
+        if not isinstance(session_id, str):
+            raise ValueError('session_id 必须是字符串')
         return self.server.sessions.get(session_id)
 
     # ---- 路由 ----
@@ -128,7 +168,8 @@ class HubHTTPRequestHandler(BaseHTTPRequestHandler):
             return self._serve_static(STATIC_DIR / path[len("/static/"):], None)
         if path == "/api/capabilities":
             caps = [m.model_dump(mode="json") for m in self.server.registry.list_capabilities()]
-            return self._send_json({"mode": self.server.mode, "capabilities": caps})
+            return self._send_json({"mode": self.server.mode, "capabilities": caps,
+                                    'examples': self.server.examples})
         if path == "/api/health":
             return self._send_json({"status": "ok", "mode": self.server.mode})
         if path.startswith("/api/context"):
@@ -143,6 +184,18 @@ class HubHTTPRequestHandler(BaseHTTPRequestHandler):
         return self._send_json({"error": {"code": "NOT_FOUND", "message": "未知路径"}}, 404)
 
     def do_POST(self):
+        try:
+            return self._post()
+        except (ValueError, TypeError) as exc:
+            return self._send_json({'error': {'code':'INVALID_INPUT', 'message':public_diagnostic(str(exc))}}, 400)
+        except (HubError, ServiceError) as exc:
+            return self._send_json({'error': {'code':exc.code.value,
+                'message':public_diagnostic(str(exc)), 'retryable':getattr(exc, 'retryable', False)}}, 400)
+        except Exception as exc:
+            return self._send_json({'error': {'code':'INTERNAL_ERROR',
+                'message':f'请求处理失败：{type(exc).__name__}', 'retryable':False}}, 500)
+
+    def _post(self):
         parsed = urlparse(self.path)
         path = parsed.path
         body = self._read_body()
@@ -170,7 +223,10 @@ class HubHTTPRequestHandler(BaseHTTPRequestHandler):
         sess = self._session(body.get("session_id", ""))
         if not sess:
             return self._send_json({"error": {"code": "NOT_FOUND", "message": "会话不存在"}}, 404)
-        text = (body.get("text") or "").strip()
+        text = body.get('text', '')
+        if not isinstance(text, str):
+            raise ValueError('text 必须是字符串')
+        text = text.strip()
         if not text:
             return self._send_json({"error": {"code": "INVALID_INPUT", "message": "请输入任务目标"}}, 400)
         with sess["lock"]:
@@ -182,11 +238,7 @@ class HubHTTPRequestHandler(BaseHTTPRequestHandler):
         if not sess:
             return self._send_json({"error": {"code": "NOT_FOUND", "message": "会话不存在"}}, 404)
         step_id = body.get("step_id")
-        decision = {
-            "approved": bool(body.get("approved")),
-            "reviewer": str(body.get("reviewer") or "").strip(),
-            "material_complete": bool(body.get("material_complete")),
-        }
+        decision = self._decision(body)
         if not step_id or not decision["reviewer"]:
             return self._send_json({"error": {"code": "INVALID_INPUT",
                                              "message": "审批需要 step_id、reviewer（审核人）与 approved/material_complete"}}, 400)
@@ -196,6 +248,14 @@ class HubHTTPRequestHandler(BaseHTTPRequestHandler):
             return self._send_json(turn.model_dump(mode="json"))
 
     # ---- 模块直调（绕过规划器，单步执行单个能力） ----
+    @staticmethod
+    def _decision(body):
+        if any(type(body.get(key)) is not bool for key in ('approved', 'material_complete')):
+            raise ValueError('approved/material_complete 必须是 JSON 布尔值')
+        if not isinstance(body.get('reviewer'), str) or not body['reviewer'].strip():
+            raise ValueError('请填写审核人')
+        return {key: body[key] for key in ('approved', 'material_complete', 'reviewer')}
+
     @staticmethod
     def _build_single_plan(capability_id: str, payload: dict) -> dict:
         inputs = {k: {"literal": v} for k, v in (payload or {}).items()}
@@ -211,7 +271,7 @@ class HubHTTPRequestHandler(BaseHTTPRequestHandler):
         capability_id = body.get("capability_id")
         payload = body.get("payload")
         if not isinstance(payload, dict):
-            payload = {}
+            raise ValueError('payload 必须是 JSON 对象')
         if not capability_id:
             return self._send_json({"error": {"code": "INVALID_INPUT", "message": "缺少 capability_id"}}, 400)
         plan = self._build_single_plan(capability_id, payload)
@@ -221,7 +281,7 @@ class HubHTTPRequestHandler(BaseHTTPRequestHandler):
             try:
                 report = sess["conv"].executor.execute(
                     plan, task_id=task_id, trace_id=trace_id,
-                    context={"session_id": sess["conv"]._context.session_id})
+                    context={"session_id": sess["conv"].context.session_id})
             except HubError as exc:
                 return self._send_json({"error": {"code": exc.code.name, "message": str(exc),
                                                  "task_id": task_id, "trace_id": trace_id}}, 400)
@@ -238,11 +298,7 @@ class HubHTTPRequestHandler(BaseHTTPRequestHandler):
             return self._send_json({"error": {"code": "NOT_FOUND", "message": "会话不存在"}}, 404)
         step_id = body.get("step_id")
         task_id = body.get("task_id")
-        decision = {
-            "approved": bool(body.get("approved")),
-            "reviewer": str(body.get("reviewer") or "").strip(),
-            "material_complete": bool(body.get("material_complete")),
-        }
+        decision = self._decision(body)
         if not step_id or not task_id or not decision["reviewer"]:
             return self._send_json({"error": {"code": "INVALID_INPUT",
                                              "message": "直调审批需要 step_id、task_id、reviewer 与 approved/material_complete"}}, 400)
@@ -260,13 +316,20 @@ class HubHTTPRequestHandler(BaseHTTPRequestHandler):
         if not sess:
             return self._send_json({"error": {"code": "NOT_FOUND", "message": "会话不存在"}}, 404)
         with sess["lock"]:
-            getattr(sess["conv"], method)()
+            if method == 'reset':
+                # Also drop direct-invoke waits, absent from Conversation history.
+                sess['conv'] = Conversation(self.server.planner)
+                with self.server._lock:
+                    self.server.sessions.pop(body['session_id'], None)
+                    self.server.sessions[sess['conv'].context.session_id] = sess
+            else:
+                getattr(sess["conv"], method)()
             return self._send_json(sess["conv"].context.model_dump(mode="json"))
 
     # ---- 静态托管 ----
     def _serve_static(self, rel_path: Path, content_type):
         target = (STATIC_DIR / rel_path).resolve()
-        if not str(target).startswith(str(STATIC_DIR.resolve())) or not target.is_file():
+        if not target.is_relative_to(STATIC_DIR.resolve()) or not target.is_file():
             return self._send_text("Not Found", "text/plain; charset=utf-8", 404)
         if content_type is None:
             content_type = {
@@ -295,21 +358,24 @@ class HubServer(ThreadingHTTPServer):
         self.registry = registry
         self.planner = planner
         self.mode = mode
+        self.examples = build_examples(mode)
         self.sessions = {}
         self._lock = threading.Lock()
 
     def new_session(self):
         from uuid import uuid4
         with self._lock:
-            sid = f"sess-{uuid4().hex[:12]}"
+            conversation = Conversation(self.planner)
+            sid = conversation.context.session_id
             self.sessions[sid] = {
-                "conv": Conversation(self.planner),
+                "conv": conversation,
                 "lock": threading.Lock(),
             }
             return sid
 
 
 def main(argv=None):
+    load_dotenv(ROOT_DIR / '.env', override=False)
     parser = argparse.ArgumentParser(description="Agent Hub 前端接入服务")
     parser.add_argument("--host", default="127.0.0.1")
     parser.add_argument("--port", type=int, default=8000)
@@ -317,14 +383,15 @@ def main(argv=None):
                         help="强制使用离线演示 Planner（无需 LLM 配置）")
     for i in range(1, 8):
         parser.add_argument(f"--real-m{i}", action="store_true",
-                            help=f"用真实 M{i} 模块替换 Mock")
+                            help=f"兼容旧命令；默认已使用真实 M{i} 模块")
     args = parser.parse_args(argv)
 
-    real_flags = {f"m{i}": getattr(args, f"real_m{i}") for i in range(1, 8)}
-    registry = build_registry(real_flags)
-
-    offline = args.offline or not llm_configured()
-    if offline:
+    if args.offline and any(getattr(args, f'real_m{i}') for i in range(1, 8)):
+        parser.error('--offline 不可与 --real-m* 同时使用')
+    if not args.offline and not llm_configured():
+        parser.error('真实模式缺少有效的文本模型配置；运行 python -m scripts.check_live_config 检查。离线演示请显式使用 --offline。')
+    registry = build_registry({f'm{i}': False for i in range(1, 8)} if args.offline else None)
+    if args.offline:
         planner = build_offline_planner(registry)
         mode = "offline"
     else:
@@ -343,6 +410,8 @@ def main(argv=None):
         server.serve_forever()
     except KeyboardInterrupt:
         print("\n已停止。")
+    finally:
+        server.server_close()
 
 
 if __name__ == "__main__":

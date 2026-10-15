@@ -1,6 +1,6 @@
 """离线演示用的确定性 Planner。
 
-当本机未配置 LLM（或显式 HUB_WEB_OFFLINE=1）时使用。它返回一个符合
+仅当显式使用 --offline 时使用。它返回一个符合
 PlannerDecision Schema 的 JSON，仍走真实的 PlanValidator / Executor 路径，
 因此七个 Mock 模块会被真正执行，前端可以离线看到完整的状态流转。
 

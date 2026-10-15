@@ -3,7 +3,7 @@
 (function () {
   "use strict";
 
-  const state = { sessionId: null, mode: "offline", capabilities: [] };
+  const state = { sessionId: null, mode: null, capabilities: [], examples: {} };
 
   const $ = (sel) => document.querySelector(sel);
   const transcript = $("#transcript");
@@ -13,7 +13,7 @@
     { tag: "客服", text: "小家电保修几年？请说明不同条目差异。", cap: "m1.faq_chat" },
     { tag: "订单", text: "查询订单 2025101234 的物流。", cap: "m2.order_tracking" },
     { tag: "经营", text: "分别融合 2025-W41 和 2025-W40 数据，生成 W41 环比周报，再制定下周预算 10000 元的大促方案。", cap: "m3.weekly_report" },
-    { tag: "退款", text: "查询订单 2025101234 并申请整单退款。", cap: "m7.refund_approval" },
+    { tag: "退款", text: "查询订单 2025100004 并申请整单退款。", cap: "m7.refund_approval" },
     { tag: "网关", text: "查找今天的电商新闻并给出来源。", cap: "m4.capability_gateway" },
   ];
 
@@ -33,7 +33,7 @@
     let html = "", inCode = false, codeBuf = [];
     for (const line of lines) {
       if (/^```/.test(line.trim())) {
-        if (inCode) { html += `<pre class="code">${escapeHtml(codeBuf.join("\n"))}</pre>`; codeBuf = []; inCode = false; }
+        if (inCode) { html += `<pre class="code">${codeBuf.join("\n")}</pre>`; codeBuf = []; inCode = false; }
         else { inCode = true; }
         continue;
       }
@@ -48,7 +48,7 @@
       else if (t.trim() === "") { html += ""; }
       else { html += `<p>${t}</p>`; }
     }
-    if (inCode) html += `<pre class="code">${escapeHtml(codeBuf.join("\n"))}</pre>`;
+    if (inCode) html += `<pre class="code">${codeBuf.join("\n")}</pre>`;
     return html;
   }
 
@@ -89,8 +89,8 @@
     } catch (e) {
       toast("无法创建会话：" + e.message);
     }
+    await loadCapabilities();
     renderScenarios();
-    loadCapabilities();
   }
 
   function renderScenarios() {
@@ -126,10 +126,13 @@
     try {
       const data = await api("/api/capabilities", "GET");
       state.capabilities = data.capabilities || [];
+      state.examples = data.examples || {};
+      const refund = state.examples['m7.refund_approval'];
+      if (refund) SCENARIOS.find(s => s.tag === '退款').text = `查询订单 ${refund.order_id} 并申请整单退款，原因是买错了。`;
       renderCapabilityList($("#capabilityList"));
       renderCapabilityList($("#capabilityList2"));
       populateNav();
-    } catch (e) { /* 非阻塞 */ }
+    } catch (e) { toast('能力清单加载失败：' + e.message); }
   }
 
   function renderCapabilityList(box) {
@@ -148,18 +151,6 @@
 
   /* ---------- 模块直调 ---------- */
   // 各能力的演示默认值（嵌套对象用点号路径在表单中还原）
-  const MODULE_DEFAULTS = {
-    "m1.faq_chat": { question: "小家电保修几年？请说明不同条目差异。", session_id: "" },
-    "m2.order_tracking": { order_id: "2025101234", query: "查询物流" },
-    "m3.weekly_report": {
-      fused_data: { week: "2025-W41", revenue_amount: 12000000, order_count: 800, conversion_rate: 0.032, anomaly: "转化率环比下降 0.5 个百分点" },
-      previous_fused_data: { week: "2025-W40", revenue_amount: 11000000, order_count: 760, conversion_rate: 0.037, anomaly: "无显著异常" },
-    },
-    "m4.capability_gateway": { query: "查找今天的电商新闻并给出来源。" },
-    "m5.promotion_plan": { goal: "制定下周预算 10000 元的大促方案", week: "2025-W41", budget_amount: 10000, report_markdown: "", fused_data: "" },
-    "m6.data_fusion": { week: "2025-W41" },
-    "m7.refund_approval": { order_id: "2025101234", refund_amount: 69900, reason: "客户申请整单退款" },
-  };
 
   function populateNav() {
     const group = $("#moduleOptGroup");
@@ -196,7 +187,7 @@
       `</div>`;
 
     const card = detail.querySelector(".module-card");
-    const defaults = MODULE_DEFAULTS[cap.capability_id] || {};
+    const defaults = state.examples[cap.capability_id] || {};
     const prefill = Object.assign({}, defaults);
     if (cap.capability_id === "m1.faq_chat" && state.sessionId) prefill.session_id = state.sessionId;
     fillDefaults(card, prefill);
@@ -225,7 +216,7 @@
       `<button class="btn btn-primary" id="faqSend">发送</button>` +
       `</div>` +
       `<div class="chat-foot">` +
-      `<button class="btn btn-ghost" id="faqClear">清空对话</button>` +
+      `<button class="btn btn-ghost" id="faqClear">重置会话并清空</button>` +
       `<span class="muted">多轮记忆基于会话 ID：<code>${escapeHtml(sid)}</code></span>` +
       `</div>` +
       `</div></div>`;
@@ -235,7 +226,7 @@
     input.addEventListener("keydown", (e) => {
       if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendFaqMessage(); }
     });
-    $("#faqClear").onclick = () => { faqChats[sid] = []; renderFaqBubbles(sid, false); };
+    $("#faqClear").onclick = resetSession;
 
     renderFaqBubbles(sid, false);
   }
@@ -265,6 +256,7 @@
   }
 
   async function sendFaqMessage() {
+    if ($("#faqSend")?.disabled) return;
     const input = $("#faqInput");
     const text = input.value.trim();
     if (!text) return;
@@ -280,16 +272,19 @@
     try {
       const report = await api("/api/invoke", "POST", {
         session_id: sid, capability_id: "m1.faq_chat",
-        payload: { question: text, session_id: sid },
+        payload: { question: text },
       });
       const step = report && report.steps ? Object.values(report.steps)[0] : null;
+      if (report.status !== 'completed' || step?.status !== 'completed') {
+        throw new Error(step?.error?.message || step?.result?.error?.message || '客服调用未完成');
+      }
       const answer = (step && step.result && step.result.data && step.result.data.answer) || "（未返回答案）";
       faqChats[sid].push({ role: "bot", text: answer });
     } catch (e) {
       faqChats[sid].push({ role: "bot", text: "调用失败：" + e.message });
     } finally {
       sendBtn.disabled = false;
-      renderFaqBubbles(sid, false);
+      if (state.sessionId === sid) renderFaqBubbles(sid, false);
     }
   }
 
@@ -316,7 +311,7 @@
   }
 
   function fieldHtml(key, prop, path, isRequired) {
-    const label = escapeHtml(key) + (isRequired ? ' <span class="req">*</span>' : '');
+    const label = escapeHtml(key) + (key.endsWith('_amount') ? '（分）' : '') + (isRequired ? ' <span class="req">*</span>' : '');
     const type = prop.type;
     let control;
     if (type === "string" && Array.isArray(prop.enum)) {
@@ -514,7 +509,7 @@
       }
     }
 
-    if (turn.report) html += renderReport(turn.report);
+    if (turn.report) html += `<div class="module-result">${renderReport(turn.report)}</div>`;
     if (turn.error) {
       html += `<div class="section-title">错误</div>` +
         `<div class="kv"><dt>错误码</dt><dd>${escapeHtml(turn.error.code)}</dd>` +
@@ -646,7 +641,7 @@
     }
     if (Array.isArray(d.observations)) {
       html += `<div class="section-title" style="margin-top:8px">观察</div>`;
-      d.observations.forEach((o) => (html += `<div class="evt">${escapeHtml(o)}</div>`));
+      d.observations.forEach((o) => (html += `<div class="evt">${renderDataValue(o)}</div>`));
     }
     return html;
   }
@@ -664,7 +659,7 @@
       if (typeof sv.refund_amount === "number") html += kvRow("退款金额", moneyFen(sv.refund_amount));
     }
     if (Array.isArray(d.node_trace)) {
-      html += kvRow("节点轨迹", d.node_trace.map((n) => escapeHtml(n.node_name)).join(" → "));
+      html += kvRow("节点轨迹", d.node_trace.map((n) => escapeHtml(typeof n === 'string' ? n : n.node_name || n.node || JSON.stringify(n))).join(" → "));
     }
     return html;
   }
@@ -676,16 +671,22 @@
     if (parsed && typeof parsed === "object") {
       // 结构化结果（真实/部分 Mock）
       Object.entries(parsed).forEach(([k, v]) => {
-        if (k === "sources" && Array.isArray(v)) {
+        if ((k === "sources" || k === "results") && Array.isArray(v)) {
           html += `<div class="section-title" style="margin-top:6px">来源</div>`;
           v.forEach((s) => {
-            const url = s.url || s.link;
+            const url = safeUrl(s.source_url || s.url || s.link);
             const title = s.title || s.name || url || "来源";
             if (url) html += `<a class="source-link" href="${escapeHtml(url)}" target="_blank" rel="noopener">${escapeHtml(title)}</a>`;
             else html += `<div class="evt">${escapeHtml(title)}</div>`;
           });
+        } else if (k === 'images' && Array.isArray(v)) {
+          v.forEach(img => {
+            const url = safeUrl(img.image_url) || rasterDataUrl(img.b64_json);
+            if (url) html += `<img src="${escapeHtml(url)}" alt="生成图片" style="max-width:100%;max-height:480px;border-radius:8px" />`;
+          });
         } else if (k === "image" || k === "image_url" || k === "url") {
-          html += kvRow(k, `<img src="${escapeHtml(String(v))}" alt="生成图片" style="max-width:240px;border-radius:8px" />`);
+          const url = safeUrl(v);
+          if (url) html += kvRow(k, `<img src="${escapeHtml(url)}" alt="生成图片" style="max-width:240px;border-radius:8px" />`);
         } else if (k === "code" || (typeof v === "string" && /```/.test(v))) {
           html += `<pre class="code">${escapeHtml(typeof v === "string" ? v : JSON.stringify(v))}</pre>`;
         } else {
@@ -707,12 +708,11 @@
     if (d.plan_markdown) {
       // 顶部“已核对的基础数据”为程序计算，单独标注；其余为模型建议
       const md = d.plan_markdown;
-      const idx = md.indexOf("已核对");
-      if (idx >= 0) {
-        const head = md.slice(0, idx);
-        const tail = md.slice(idx);
-        html += `<div class="section-title">方案（模型建议 · 草稿）</div>` + miniMarkdown(head);
-        html += `<div class="approve-box"><h4>已核对的基础数据（程序计算，非模型建议）</h4>` + miniMarkdown(tail) + `</div>`;
+      const first = /^## 已核对的基础数据\s*\n/.test(md);
+      const end = first ? md.indexOf('\n## ', 3) : -1;
+      if (first && end >= 0) {
+        html += `<div class="verified-facts"><h4>已核对的基础数据（程序计算）</h4>` + miniMarkdown(md.slice(0, end)) + `</div>`;
+        html += `<div class="section-title">方案（模型建议 · 草稿）</div>` + miniMarkdown(md.slice(end));
       } else {
         html += `<div class="section-title">方案（模型建议 · 草稿）</div>` + miniMarkdown(md);
       }
@@ -794,12 +794,15 @@
       });
       // 直调返回的是报告本身（含 task_id），对话返回的是回合；统一取 report 字段
       const rep = report.report || report;
+      if (report.error) throw new Error(report.error.message || '审核失败');
       const container = card.classList.contains("module-result") ? card : card.querySelector(".module-result");
       if (container) {
         container.innerHTML = renderReport(rep);
         bindReviews(container, endpoint || "/api/review");
         container.scrollIntoView({ behavior: "smooth", block: "nearest" });
       }
+      const status = card.querySelector('.turn-status-line .status-badge');
+      if (status) { status.textContent = statusLabel(report.status); status.className = 'status-badge status-' + report.status; }
       toast("审核已提交");
     } catch (e) {
       toast("审核失败：" + e.message);
@@ -815,10 +818,28 @@
   }
   async function resetSession() {
     try {
+      const oldId = state.sessionId;
       const c = await api("/api/reset", "POST", { session_id: state.sessionId });
+      state.sessionId = c.session_id;
+      $('#sessionId').textContent = c.session_id;
+      delete faqChats[oldId];
       transcript.innerHTML = "";
+      const selected = $('#navSelect').value;
+      if (selected !== 'orchestrate') renderModuleDetail(selected);
       toast("会话已重置");
     } catch (e) { toast(e.message); }
+  }
+
+  function safeUrl(value) {
+    if (typeof value !== 'string') return '';
+    try { const url = new URL(value); return ['https:', 'http:'].includes(url.protocol) ? url.href : ''; }
+    catch (_) { return ''; }
+  }
+
+  function rasterDataUrl(value) {
+    if (typeof value !== 'string' || !/^[A-Za-z0-9+/=]+$/.test(value)) return '';
+    const mime = value.startsWith('iVBORw0KGgo') ? 'png' : value.startsWith('/9j/') ? 'jpeg' : value.startsWith('R0lGOD') ? 'gif' : value.startsWith('UklGR') ? 'webp' : '';
+    return mime ? `data:image/${mime};base64,${value}` : '';
   }
 
   /* ---------- 绑定 ---------- */

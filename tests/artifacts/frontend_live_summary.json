@@ -1,0 +1,28 @@
+{
+  "first_full": {
+    "tests": 1427,
+    "failed": [
+      "test_end_to_end_real_planner_and_business_models[operations]"
+    ],
+    "skipped": 0,
+    "xml": "audit_artifacts/live-20261015/full.xml",
+    "http_events": {
+      "test_start": 32,
+      "request": 64,
+      "response": 64,
+      "test_end": 32
+    }
+  },
+  "planner_recheck": {
+    "tests": 12,
+    "failed": [],
+    "skipped": 0,
+    "xml": "audit_artifacts/live-20261015-recheck/results.xml",
+    "http_events": {
+      "test_start": 12,
+      "request": 32,
+      "response": 32,
+      "test_end": 12
+    }
+  }
+}

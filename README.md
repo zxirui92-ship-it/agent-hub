@@ -188,7 +188,7 @@ $env:HUB_RUN_LIVE_TESTS='1'
 .\.venv\Scripts\python.exe -m pytest tests/live/test_planner_live.py --run-live -q
 ```
 
-当前七模块架构均已接入，M7 支持模块内同进程恢复；顶层恢复和跨进程会话存储尚未实现。Planner 的后续联网验证见 API 报告，业务模型与搜索完成有限样例实测，不能据此声明普遍语义准确率；正式业务数据仍未接入。当前接口以最新 ICD 与功能说明为准。
+当前七模块架构均已接入，M7与顶层平台支持同进程审核恢复；跨进程会话存储尚未实现。Planner 的后续联网验证见 API 报告，业务模型与搜索完成有限样例实测，不能据此声明普遍语义准确率；已接入 group02 模拟业务资料，仍非生产数据。当前接口以最新 ICD 与功能说明为准。
 
 ## M1 / M2 / M6 独立运行与平台替换
 
@@ -239,12 +239,14 @@ check_wheel.py 会在源码目录外安装 wheel，测试平台能力清单和 M
 ```powershell
 # 离线演示（无需 LLM 配置；确定性 Planner + 七个 Mock，覆盖文档中的演示场景）
 .\.venv\Scripts\python.exe -m web --offline
-# 真实模式：配置 LLM 后直接启动，顶层规划改用真实模型
+# 真实模式：默认真实 Planner + 七个真实模块；缺配置明确报错
 .\.venv\Scripts\python.exe -m web
-# 也可逐个替换真实模块，例如退款审批走真实 M7（支持审批恢复）
-.\.venv\Scripts\python.exe -m web --real-m7
+# 如默认端口已占用
+.\.venv\Scripts\python.exe -m web --port 8765
 ```
 
 启动后访问 http://127.0.0.1:8000/ 。每个浏览器会话保留一个 `Conversation` 实例，同一会话请求串行；界面严格区分 `needs_clarification / ready / unsupported / completed / waiting_approval / failed` 六种状态，金额按整数分展示并换算为元，M4 结果按 JSON 或纯文本回退渲染，M7 读取 `data.approval_status`（而非仅 `AgentResult.status`）并内嵌审批表单。
 
-界面顶部有两个标签：**对话编排**（自然语言目标经顶层 Planner 生成并执行计划）与**模块直调**（绕过 Planner，按 Manifest 输入契约直接调用单个能力）。模块直调页根据 `/api/capabilities` 返回的每个能力 `input_schema` 自动生成表单（含嵌套 `fused_data`、枚举、金额/比例数字等），并预填演示默认值，点“调用此模块”即经 `/api/invoke` 走真实 Executor 单步执行；`waiting_approval` 的步骤内嵌审批表单，提交经 `/api/invoke/review` 续跑（真实 M7 支持恢复，Mock M7 会如实提示不支持）。
+界面顶部的“调用入口”下拉框可以选择**对话编排**或七个**模块直调**入口。直调绕过 Planner，通过同一 Executor 调用能力；M1 提供多轮聊天界面。表单根据 `/api/capabilities` 的 `input_schema` 生成，示例由后端按当前数据来源提供，退款金额与订单事实一致；金额输入单位为分。审批通过 `/api/review` 或 `/api/invoke/review` 续跑，页面更新原报告。
+
+Web 默认启用 M1/M2/M3/M4 的 live 模式及真实 M5/M6/M7；环境中的旧 mock/local 值不会把 Web 偷偷切回演示。`--offline` 才使用确定性 Planner 和七个 Mock，不能与 `--real-m*` 组合。历史 CLI 的显式 `--real-m*` 方式保持不变。搜索、图片未配置时对应功能明确失败。最新修复、联网与日志记录见 [前端验收记录](docs/frontend_acceptance.md)。
