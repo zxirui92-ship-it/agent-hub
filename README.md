@@ -10,6 +10,8 @@
 
 ## 自然语言入口与多轮会话
 
+2026-10-14 已接入 `group_02` 的星潮电商仿真资料（24 条 FAQ、10 条政策、79 个订单与 4 周经营数据），详见 [数据接入与离线演示](docs/group02_data_integration.md)。`HUB_DATA_DIR=data/group02` 供真实模块使用；旧 Mock 保留基线。新资料周次为 **2025-W40～W43**，存在待业务确认的记录冲突，请使用该说明中的新示例，不混用下方旧 Fixture 的日期、订单 ID 和金额。
+
 在 `D:\模组\agent-hub` 的 `.env` 中设置 `LLM_BASE_URL`（含 `/v1`）、`LLM_API_KEY`、`LLM_MODEL`。平台复用现有 Chat Completions Adapter，不硬编码模型。首次使用可复制 `.env.example` 为 `.env`；已有 `.env` 时直接编辑，不覆盖。
 
 本机已有 `DEEPSEEK_BASE_URL` 和 `DEEPSEEK_API_KEY` 时，无需复制密钥到 `.env`：顶层 Planner 在上述三项 `LLM_*` 均为空时直接读取这组环境变量。默认模型为已实测的 `deepseek-flash`，可用 `DEEPSEEK_MODEL` 指定，或用 `HUB_PLANNER_MODEL` 仅覆盖顶层模型。只填写部分 `LLM_*` 时会保留该配置并报告缺项，不跨服务商拼接密钥。当前此配置也被 M1/M2/M3/M4/M5 复用；LLM_PROVIDER=bailian 可切换为 BAILIAN_BASE_URL/BAILIAN_API_KEY，默认文本模型 qwen-plus，BAILIAN_TEXT_MODEL 可覆盖。显式 LLM_* 配置仍整组优先；HUB_PLANNER_MODEL 仅覆盖顶层模型。
@@ -37,7 +39,14 @@ Set-Location 'D:\模组\agent-hub'
 
 顶部 Planner 选择注册能力并生成依赖计划；M4 自己选择内部 Skill，M5 自己协调角色。没有硬编码关键词选链路；一次正常规划只需一次模型调用。非法输出默认反馈一次校验错误给模型修正，业务执行失败不自动重跑。
 
-输出展示生成计划和实际结果，不将模型的执行说明当作已完成答案。缺参、不支持或非法计划都不调用业务模块。等待审核保留原报告，当前顶层会话不支持恢复；M7 自己支持同进程 token 恢复。不能在顶层用“同意”触发整条退款链重新执行。
+输出展示生成计划和实际结果，不将模型的执行说明当作已完成答案。缺参、不支持或非法计划都不调用业务模块。等待审核保留原报告；同一 `--chat` 进程可通过明确的 `/review` 决定恢复支持该协议的能力，并继续原计划下游。不能仅用自然语言“同意”重跑退款链；不支持重启后恢复。
+
+```text
+/review {"step_id":"s2","approved":true,"reviewer":"审核员姓名","material_complete":false}
+/review {"step_id":"s2","approved":true,"reviewer":"审核员姓名","material_complete":true}
+```
+
+上述两行展示“材料不足→反思回跳→补齐后续跑”，应使用实际审核决定。拒绝时填写 `approved:false`。若已 `/new` 切换任务，可额外传入 `/context` 中原任务的 `task_id`；Mock M7 不支持恢复，演示需 `--real-m7`。完整的无网络七模块演练：`python -m scripts.demo_prd`；流程见 [课堂演示脚本](docs/demo_script.md)，验收映射见 [PRD 验收记录](docs/prd_acceptance.md)。
 
 自然语言单次入口退出码：0=完成/计划就绪，1=规划或执行失败，2=不支持/参数错误，3=等待审核，4=需要补充信息。`--chat --json` 每个响应输出一行 JSON；提示语写 stderr。
 

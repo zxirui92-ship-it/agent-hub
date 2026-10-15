@@ -1,0 +1,10 @@
+{
+  "plan_id": "plan-20261014-023",
+  "goal": "客服与知识库共用 group_02 资料，并展示保修口径差异",
+  "steps": [
+    {"step_id": "s1", "capability_id": "m1.faq_chat",
+     "inputs": {"question": {"literal": "商品保修政策是什么？"}}},
+    {"step_id": "s2", "capability_id": "m4.capability_gateway",
+     "inputs": {"query": {"literal": "kb_qa: 商品保修政策是什么？"}}}
+  ]
+}

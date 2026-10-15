@@ -1,0 +1,11 @@
+knowledge: completed
+operations: completed
+approval_waiting: waiting_approval
+approval_reflection: waiting_approval
+approval_completed: completed
+M2 Action / Observation:
+{"round": 1, "action": "query_order", "decision_summary": "本地确定性演示：读取尚缺失的共享样例事实", "result": {"order_id": "2025100004", "order_amount": 109900, "order_status": "completed", "tracking_number": "ZT6748619160793", "source": "imported_simulation"}, "mode": "local"}
+{"round": 2, "action": "query_logistics", "decision_summary": "本地确定性演示：读取尚缺失的共享样例事实", "result": {"order_id": "2025100004", "carrier": "中通快递", "tracking_number": "ZT6748619160793", "logistics_status": "到达分拣中心", "current_location": "杭州西湖派送点", "updated_at": "2025-10-10T09:00+08:00", "tracking_history": "已揽收(2025-10-10 09:00) → 到达分拣中心", "source": "imported_simulation"}, "mode": "local"}
+M7 回跳节点: [{'node_name': 'receive'}, {'node_name': 'manual_review'}, {'node_name': 'compliance_check'}, {'node_name': 'reflect'}]
+检查点回滚: {'checkpoints_before': 6, 'rollback_log': ['回滚至 1f1c7cb9-89e2-6c3d-8003-f975bd2f1455'], 'final_status': 'approved'}
+完整演示证据：D:\模组\agent-hub\tests\artifacts\prd_demo.json

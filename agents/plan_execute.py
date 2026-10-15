@@ -122,6 +122,11 @@ class WeeklyReportExecutor:
             f"| 销售额 | {data['revenue_amount']} 分（{data['revenue_amount'] / 100:.2f} 元） |\n"
             f"| 订单量 | {data['order_count']} |\n| 转化率 | {data['conversion_rate']:.2%} |\n\n"
             f"## 环比\n{self.comparison}\n\n## 异常与待核查项\n{self.anomaly}\n")
+        if self.previous is not None:
+            prior = self.previous
+            self.report += (f"\n## 上周同口径依据（{prior['week']}）\n"
+                f"销售额 {prior['revenue_amount']} 分；订单量 {prior['order_count']}；"
+                f"转化率 {prior['conversion_rate']:.2%}。\n{prior['anomaly']}\n")
         if self.model is not None:
             analysis = self.model.complete(
                 '根据给定周报事实写简短运营建议。明确区分观测与假设，不补造缺失指标、外部数据或已执行动作。',
@@ -177,6 +182,11 @@ def invoke(request: AgentRequest) -> AgentResult:
 def load_sample_view(week: str) -> dict:
     """Explicit standalone fixture adapter. Upstream gmv is a sample sales proxy."""
     _previous_week(week)
+    from common.business_data import configured_data
+    from common.weekly_data import load_business_view
+    source = configured_data()
+    if source is not None:
+        return load_business_view(source, week)
     try:
         orders = json.loads((FIXTURES / 'order_basic.json').read_text(encoding='utf-8'))['weeks'][week]
         behavior = json.loads((FIXTURES / 'user_behavior.json').read_text(encoding='utf-8'))['weeks'][week]

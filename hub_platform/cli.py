@@ -160,7 +160,7 @@ def render_turn(turn) -> str:
 
 
 def chat_loop(session, *, as_json=False, execute=True) -> int:
-    print('输入任务或补充回答。/new 新任务；/reset 清空会话；/context 查看上下文；/exit 退出。', file=sys.stderr)
+    print('输入任务或补充回答。/review JSON 提交审批；/new 新任务；/reset 清空会话；/context 查看上下文；/exit 退出。', file=sys.stderr)
     while True:
         try:
             print('你 > ', end='', file=sys.stderr, flush=True)
@@ -181,6 +181,23 @@ def chat_loop(session, *, as_json=False, execute=True) -> int:
             continue
         if text == '/context':
             print(session.context.model_dump_json(indent=None if as_json else 2))
+            continue
+        if text == '/review' or text.startswith('/review '):
+            try:
+                if not execute:
+                    raise ValueError('预览模式不能提交审批')
+                value = json.loads(text[len('/review'):].strip())
+                if not isinstance(value, dict):
+                    raise ValueError('审批参数须为 JSON 对象')
+                step_id = value.pop('step_id')
+                task_id = value.pop('task_id', None)
+                if not isinstance(step_id, str) or (task_id is not None and not isinstance(task_id, str)):
+                    raise ValueError('step_id/task_id 必须为字符串')
+                turn = session.review(step_id, value, task_id=task_id)
+                print(turn.model_dump_json() if as_json else render_turn(turn))
+            except (ValueError, KeyError, HubError) as exc:
+                print(json.dumps({'status':'failed', 'error':{'code':getattr(exc, 'code', ErrorCode.INVALID_INPUT).value,
+                    'message':'审批命令无效；需要 step_id、approved、reviewer、material_complete，且须有待审核任务。'}}, ensure_ascii=False))
             continue
         turn = session.submit(text, execute=execute)
         print(turn.model_dump_json() if as_json else render_turn(turn))

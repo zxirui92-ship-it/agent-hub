@@ -2,6 +2,8 @@
 
 **产品需求文档（PRD）｜v0.1 评审草案**
 
+> 2026-10-14 实现对照附注：以下保留原始评审基线，不代表全部待决策项已由团队冻结。当前字段/命名以 naming_convention.md、interface_contract.md 和公共模型为准。七模块代码、动态编排、共享仿真数据和同进程审批续跑已实现；逐项证据及仍需业务确认事项见 [PRD 验收记录](prd_acceptance.md)，七张模块图见 [架构图](architecture.md)，演示见 [课堂脚本](demo_script.md)。生产数据库、真实支付、前端和跨进程持久化继续按本 PRD 非目标处理。
+
 |文档属性|内容|
 |-|-|
 |项目代号|Agent Hub / 智能运营中枢|
@@ -190,18 +192,18 @@
 
 ```mermaid
 flowchart TB
-    U\\\[用户 / CLI / 可选 API] --> R\\\[平台语义识别]
-    R --> C\\\[能力注册表 Capability Registry]
-    C --> P\\\[动态 Planner]
-    P --> V\\\[计划结构与依赖校验]
-    V --> E\\\[平台 Executor]
-    E --> M\\\[模块调用适配层]
-    M --> A\\\[M1–M7 独立业务模块]
+    U[用户 / CLI / 可选 API] --> R[平台语义识别]
+    R --> C[能力注册表 Capability Registry]
+    C --> P[动态 Planner]
+    P --> V[计划结构与依赖校验]
+    V --> E[平台 Executor]
+    E --> M[模块调用适配层]
+    M --> A[M1–M7 独立业务模块]
     A --> M
     M --> E
-    E --> G\\\[结果聚合 / 执行追踪]
+    E --> G[结果聚合 / 执行追踪]
     G --> U
-    I\\\[公共 LLM / Tool / Data / Logging] --> A
+    I[公共 LLM / Tool / Data / Logging] --> A
     I --> P
 ```
 
@@ -387,19 +389,19 @@ class OrderQueryTool(Protocol):
 
 ```mermaid
 flowchart TD
-    A\\\[业务请求需要什么特征?] --> B{是否需要条件审批、回跳和状态恢复?}
-    B -->|是| M7\\\[M7 Graph/Workflow]
+    A[业务请求需要什么特征?] --> B{是否需要条件审批、回跳和状态恢复?}
+    B -->|是| M7[M7 Graph/Workflow]
     B -->|否| C{是否要求多角色协作产出?}
-    C -->|是| M5\\\[M5 Multi-Agent]
+    C -->|是| M5[M5 Multi-Agent]
     C -->|否| D{是否需要通过共享状态更新触发下游?}
-    D -->|是| M6\\\[M6 Blackboard]
+    D -->|是| M6[M6 Blackboard]
     D -->|否| E{是否需多个可插拔能力路由?}
-    E -->|是| M4\\\[M4 Router + Skill]
+    E -->|是| M4[M4 Router + Skill]
     E -->|否| F{是否需预先拆解多个连续步骤?}
-    F -->|是| M3\\\[M3 Plan \\\& Execute]
+    F -->|是| M3[M3 Plan & Execute]
     F -->|否| G{是否需动态反复选择工具获取事实?}
-    G -->|是| M2\\\[M2 ReAct]
-    G -->|否| M1\\\[M1 Single Agent]
+    G -->|是| M2[M2 ReAct]
+    G -->|否| M1[M1 Single Agent]
 ```
 
 这是**模块业务选型的解释工具**，不是平台规划器的硬编码流程；复合任务允许同时选择多种能力。

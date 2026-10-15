@@ -1,0 +1,22 @@
+{
+  "2025-W40": [
+    {"name": "国庆返场专场", "channel": "全渠道", "gmv_amount": 460000000, "cost_amount": 210000000},
+    {"name": "会员日双倍积分", "channel": "APP push", "gmv_amount": 165000000, "cost_amount": 78000000},
+    {"name": "小红书种草笔记", "channel": "小红书", "gmv_amount": 88000000, "cost_amount": 70000000}
+  ],
+  "2025-W41": [
+    {"name": "秋季新品首发", "channel": "全渠道", "gmv_amount": 398000000, "cost_amount": 165000000},
+    {"name": "私域社群秒杀", "channel": "微信社群", "gmv_amount": 142000000, "cost_amount": 52000000},
+    {"name": "抖音直播带货", "channel": "抖音", "gmv_amount": 176000000, "cost_amount": 108000000}
+  ],
+  "2025-W42": [
+    {"name": "双 11 预热预售", "channel": "全渠道", "gmv_amount": 520000000, "cost_amount": 240000000},
+    {"name": "会员日双倍积分", "channel": "APP push", "gmv_amount": 180000000, "cost_amount": 90000000},
+    {"name": "小红书种草笔记", "channel": "小红书", "gmv_amount": 96000000, "cost_amount": 80000000}
+  ],
+  "2025-W43": [
+    {"name": "双 11 开门红", "channel": "全渠道", "gmv_amount": 610000000, "cost_amount": 265000000},
+    {"name": "抖音直播带货", "channel": "抖音", "gmv_amount": 205000000, "cost_amount": 120000000},
+    {"name": "私域社群秒杀", "channel": "微信社群", "gmv_amount": 158000000, "cost_amount": 58000000}
+  ]
+}

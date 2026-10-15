@@ -214,6 +214,8 @@ class QueryOrderResponse(BaseModel):
 | `task_id` | str | 是 | 原样回传请求 task_id |
 | `waiting_reason` | str 或 None | 否 | 等待时必须说明原因，其余状态为空 |
 
+审批恢复扩展（2026-10-14）：公共方法名为 `resume_approval`；平台方法为 `Executor.resume`、会话方法为 `review`。`ApprovalDecision` 的业务字段采用 `approved`、`reviewer`、`material_complete`，其中两个布尔值严格校验，作为本节明确的业务命名约定。恢复沿用原调用关联 ID，具体状态和失败语义以 interface_contract.md 为准；不得重新 invoke 原步骤来伪装恢复。
+
 ### 7.3 Capability Manifest
 
 字段名**必须**为：`capability_id`、`version`、`name`、`description`、`input_schema`、`output_schema`、`preconditions`、`side_effects`、`execution_mode`、`supports_resume`、`owner`。

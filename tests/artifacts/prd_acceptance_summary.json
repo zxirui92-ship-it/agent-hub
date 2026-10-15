@@ -1,0 +1,86 @@
+{
+  "dataset": "group_02 imported_simulation",
+  "live_batches": [
+    {
+      "file": "prd_group02_live.xml",
+      "cases": [
+        {
+          "test": "test_m1_live_greeting_memory_and_policy_conflict",
+          "seconds": 10.98,
+          "status": "passed",
+          "model": "deepseek-flash",
+          "counted_injected_calls": 3
+        },
+        {
+          "test": "test_m2_live_good_order_and_source_conflict[2025100003-completed]",
+          "seconds": 2.268,
+          "status": "passed",
+          "model": "deepseek-flash",
+          "counted_injected_calls": 2
+        },
+        {
+          "test": "test_m2_live_good_order_and_source_conflict[2025101234-failed]",
+          "seconds": 1.248,
+          "status": "passed",
+          "model": "deepseek-flash",
+          "counted_injected_calls": 1
+        },
+        {
+          "test": "test_m4_live_semantic_kb_route",
+          "seconds": 1.099,
+          "status": "passed",
+          "model": "deepseek-flash",
+          "counted_injected_calls": 0
+        },
+        {
+          "test": "test_dynamic_two_week_report_and_promotion",
+          "seconds": 190.679,
+          "status": "passed",
+          "model": "deepseek-flash",
+          "planner_attempts": 1,
+          "counted_injected_calls": 2
+        }
+      ]
+    },
+    {
+      "file": "prd_group02_live_followup.xml",
+      "cases": [
+        {
+          "test": "test_m1_live_greeting_memory_and_policy_conflict",
+          "seconds": 7.468,
+          "status": "passed",
+          "model": "deepseek-flash",
+          "counted_injected_calls": 3
+        },
+        {
+          "test": "test_m3_live_sees_both_week_funnels",
+          "seconds": 28.463,
+          "status": "passed",
+          "model": "deepseek-flash",
+          "counted_injected_calls": 2
+        }
+      ]
+    }
+  ],
+  "content_review": {
+    "m1": "复验问候自然；记住昵称海风；同时引用F019/SP007并保留年限冲突。",
+    "m2": "正常订单金额12900分、已签收；源时间冲突明确失败。",
+    "m4": "真实语义路由选择kb_qa，来源为导入资料。",
+    "m3": "1268000000分、销售额环比-8.91%、订单量-7.28%、转化变化-0.31个百分点；复验模型可使用两周完整漏斗。",
+    "m5": "四角色综合方案保留金额分/元、预算10000元，阶段分配4000+4500+1500；目标和资源缺口标为假设/待确认。",
+    "limitations": [
+      "小样本，不能推导准确率或生产SLA。",
+      "M5把阶段与渠道预算描述为冲突的措辞不够严谨，两者可作为交叉维度；方案仍需业务评审。",
+      "首轮经营链190.68秒，适合保存结果展示，不承诺10秒响应。",
+      "精确费用/token使用量未记录；counted_injected_calls不包括工厂创建的M4、Planner和M5调用，不能当总调用量。"
+    ]
+  },
+  "offline": {
+    "tests": "490",
+    "failures": "0",
+    "errors": "0",
+    "skipped": "30",
+    "time": "20.209",
+    "passed": 460
+  }
+}

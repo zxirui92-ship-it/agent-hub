@@ -5,7 +5,7 @@ from agents.workflow.state import NODE_AUTO_APPROVE, NODE_COMPLIANCE_CHECK, NODE
 import logging
 from agents.workflow.formatting import ORDER_STATUS_LABELS, format_amount, label
 logger = logging.getLogger('agents.workflow.nodes')
-NON_REFUNDABLE_ORDER_STATUS = {'canceled', 'refunded', 'not_found'}
+NON_REFUNDABLE_ORDER_STATUS = {'canceled', 'refunded', 'not_found', 'pending_payment', 'refunding'}
 BRANCH_AUTO = 'auto'
 BRANCH_MANUAL = 'manual'
 BRANCH_REJECT = 'reject'
@@ -15,7 +15,7 @@ def route_by_amount(state: RefundState) -> str:
         return BRANCH_REJECT
     refund_amount = int(state.get('refund_amount', 0))
     threshold = int(state.get('auto_approve_amount') or 50000)
-    return BRANCH_MANUAL if refund_amount > threshold else BRANCH_AUTO
+    return BRANCH_MANUAL if refund_amount > threshold or state.get('risk_level') == 'high_risk' else BRANCH_AUTO
 
 def auto_approve_node(state: RefundState) -> Dict[str, Any]:
     return {'approval_status': 'approved', 'approval_mode': 'auto', 'reviewer': '智能客服自动审批', 'material_complete': True, 'history': [f"[自动审批] 金额 {format_amount(state.get('refund_amount', 0))} ≤ 阈值，命中「小额快速退款」策略，免人工直接放行"], 'node_trace': [{'node_name': NODE_AUTO_APPROVE}]}
@@ -79,14 +79,14 @@ def receive_node(state: RefundState) -> Dict[str, Any]:
     order = state['order_snapshot']
     amount = order['order_amount']
     threshold = state['auto_approve_amount']
-    manual = amount > threshold
+    manual = amount > threshold or order.get('risk_level') == 'high_risk'
     return {
         'order_amount': amount, 'refund_amount': amount, 'order_status': order['order_status'],
         'customer_id': order.get('customer_id', ''), 'customer_name': order.get('customer_name', ''),
         'product_name': order.get('product_name', ''),
         'risk_level': order.get('risk_level', 'normal'), 'risk_note': order.get('risk_note', ''),
         'amount_branch': BRANCH_MANUAL if manual else BRANCH_AUTO, 'requires_manual': manual,
-        'history': [f"[受理] 订单 {state['order_id']}，整单退款 {amount} 分；订单来源为本地样例"],
+        'history': [f"[受理] 订单 {state['order_id']}，整单退款 {amount} 分；订单来源：{order.get('source_kind', 'local_fixture')}"],
         'node_trace': [{'node_name': NODE_RECEIVE}],
     }
 

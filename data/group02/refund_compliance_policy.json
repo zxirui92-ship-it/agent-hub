@@ -1,0 +1,22 @@
+{
+  "auto_approve_amount": 50000,
+  "max_reflection": 2,
+  "risk_users": {
+    "U10040": {
+      "risk_level": "high_risk",
+      "note": "近 30 天多次发起无理由退款申请，风控标记为高风险薅羊毛用户"
+    },
+    "U10011": {
+      "risk_level": "watch",
+      "note": "同一周期内重复提交退款申请，纳入观察名单"
+    },
+    "U10029": {
+      "risk_level": "watch",
+      "note": "同一周期内重复提交退款申请，纳入观察名单"
+    },
+    "U10034": {
+      "risk_level": "watch",
+      "note": "同一周期内重复提交退款申请，纳入观察名单"
+    }
+  }
+}

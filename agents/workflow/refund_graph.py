@@ -1,7 +1,8 @@
 """M7 facade adapted to the current hub contracts, with in-process checkpoints.
 
 Original topology/state/compliance rules: user-supplied M7 (郑江).
-No payment service is called. Module resume does not resume a platform plan.
+No payment service is called. Executor.resume can continue a platform plan via
+the optional resume_approval extension; direct submit_decision is module-only.
 """
 from __future__ import annotations
 
@@ -13,10 +14,11 @@ from uuid import uuid4
 from langgraph.checkpoint.memory import MemorySaver
 from agents.workflow._graph_definition import build_refund_graph
 from agents.workflow.state import new_state
-from common.contracts import AgentRequest, AgentResult
+from common.contracts import AgentRequest, AgentResult, ApprovalDecision
 from common.errors import ErrorCode, ServiceError
 from common.module_boundary import result_for, failure
 from common.order_data import order_fact
+from common.business_data import configured_data
 from common.refund_contract import refund_manifest
 from hub_platform.errors import HubError
 from hub_platform.schema import validate_data
@@ -28,8 +30,9 @@ MANIFEST = refund_manifest(supports_resume=True)
 class RefundWorkflow:
     manifest = MANIFEST
 
-    def __init__(self, *, order_loader=order_fact):
-        self.order_loader = order_loader
+    def __init__(self, *, order_loader=None):
+        self.data_source = configured_data() if order_loader is None else None
+        self.order_loader = order_loader if order_loader is not None else (self.data_source.refund_order if self.data_source is not None else order_fact)
         self.checkpointer = MemorySaver()
         self.graph = build_refund_graph(self.checkpointer)
         self._pending: dict[str, tuple[AgentRequest, str]] = {}
@@ -51,6 +54,9 @@ class RefundWorkflow:
             raise ServiceError(ErrorCode.INVALID_INPUT, '仅支持整单退款；refund_amount 必须等于订单事实 order_amount', retryable=False)
         state = new_state(order_id, reason, thread_id)
         state.update(order_snapshot=fact, max_reflection=3)
+        if self.data_source is not None:
+            policy = self.data_source.refund_policy()
+            state.update(max_reflection=policy['max_reflection'], auto_approve_amount=policy['auto_approve_amount'])
         self.graph.invoke(state, config)
         return dict(self.graph.get_state(config).values)
 
@@ -112,7 +118,7 @@ class RefundWorkflow:
             token = f'cont-{uuid4().hex[:16]}'
             self._pending[token] = (request.model_copy(deep=True), thread_id)
             metadata = {'continuation_token': token,
-                        'waiting_reason': state.get('reflection_notes') or '金额超过 50000 分，等待人工审核。'}
+                        'waiting_reason': state.get('reflection_notes') or ('高风险客户，等待人工核验退货材料。' if state.get('risk_level') == 'high_risk' else '金额超过 50000 分，等待人工审核。')}
         return result_for(request, status='waiting_approval' if waiting else 'completed', data=data, **metadata)
 
     def invoke(self, request: AgentRequest) -> AgentResult:
@@ -147,6 +153,13 @@ class RefundWorkflow:
         except Exception as exc:
             return failure(request, ErrorCode.INTERNAL_ERROR, f'M7 恢复失败：{type(exc).__name__}')
         del self._pending[continuation_token]
+        return result
+
+    def resume_approval(self, continuation_token: str, decision: ApprovalDecision) -> AgentResult:
+        decision = ApprovalDecision.model_validate(decision.model_dump())
+        result = self.submit_decision(continuation_token, **decision.model_dump())
+        if result.status == 'failed' and result.error.code == ErrorCode.INVALID_INPUT:
+            raise ServiceError(result.error.code, result.error.message, retryable=result.error.retryable)
         return result
 
 

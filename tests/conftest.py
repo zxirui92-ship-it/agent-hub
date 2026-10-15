@@ -26,6 +26,16 @@ def pytest_addoption(parser):
     parser.addoption('--run-live', action='store_true', default=False, help='Allow explicitly marked paid API tests')
 
 
+def pytest_configure(config):
+    # Parametrized tests also construct modules during collection, before fixtures.
+    config._dataset_env = pytest.MonkeyPatch()
+    config._dataset_env.setenv('HUB_DATA_DIR', '')
+
+
+def pytest_unconfigure(config):
+    config._dataset_env.undo()
+
+
 def pytest_sessionstart(session):
     # pytest's explicit nested basetemp needs its parent even on a fresh checkout.
     (session.config.rootpath / '.pytest_cache').mkdir(exist_ok=True)
@@ -62,6 +72,9 @@ def pytest_runtest_makereport(item, call):
 
 @pytest.fixture(autouse=True)
 def offline_network_guard(request, monkeypatch):
+    # Tests opt into the imported dataset explicitly; a developer .env must not
+    # change the historical fixtures used by contract and regression tests.
+    monkeypatch.setenv('HUB_DATA_DIR', '')
     if 'live' not in request.keywords:
         # Child CLI processes inherit these empty keys too; socket monkeypatches
         # alone do not protect subprocesses from the user's local credentials.

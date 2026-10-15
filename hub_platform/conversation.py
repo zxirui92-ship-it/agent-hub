@@ -8,7 +8,7 @@ from uuid import uuid4
 
 from pydantic import Field
 
-from common.contracts import Contract, ErrorDetail, ExecutionPlan, ExecutionReport
+from common.contracts import Contract, ErrorDetail, ExecutionPlan, ExecutionReport, ApprovalDecision
 from common.errors import ErrorCode
 from hub_platform.errors import HubError
 from hub_platform.executor import Executor
@@ -68,15 +68,39 @@ class Conversation:
         self._context.active_task = None
 
     def reset(self):
+        for task in [self._context.active_task, *self._context.history]:
+            if task is not None:
+                self.executor.discard(task.task_id)
         self._context = SessionContext()
+
+    def review(self, step_id: str, decision: ApprovalDecision | dict, *, task_id=None) -> TurnResult:
+        task = self._context.active_task
+        if task_id is not None:
+            task = next((t for t in [task, *self._context.history] if t is not None and t.task_id == task_id), None)
+        if task is None or task.report is None:
+            raise HubError(ErrorCode.NOT_FOUND, '没有可审核的任务', step_id)
+        ids = {'session_id':self._context.session_id, 'task_id':task.task_id, 'trace_id':task.trace_id}
+        try:
+            report = self.executor.resume(task.task_id, step_id, decision)
+        except HubError as exc:
+            return TurnResult(**ids, status='failed', message=str(exc), error=exc.detail(task.trace_id, task.task_id),
+                              plan=task.plan.model_copy(deep=True), report=task.report.model_copy(deep=True))
+        task.report = report.model_copy(deep=True)
+        task.status = 'execution_failed' if report.status == 'failed' else report.status
+        message = {'completed':'审核已处理，原计划就绪步骤已继续执行。',
+                   'waiting_approval':'审核已处理，流程仍需人工补充审核。',
+                   'failed':'审核后的执行存在失败，保留原始结果与错误。'}[report.status]
+        task.messages.append(Message(role='assistant', content=message))
+        return TurnResult(**ids, status=report.status, message=message,
+                          plan=task.plan.model_copy(deep=True), report=report)
 
     def submit(self, text: str, *, execute: bool = True) -> TurnResult:
         task = self._context.active_task
-        if task and task.report and task.report.status == 'waiting_approval':
-            # The current executor has no resume protocol. Do not rerun a waiting task.
+        if task and task.report and any(s.status == 'waiting_approval' for s in task.report.steps.values()):
+            # Natural-language consent never substitutes for an explicit decision.
             return TurnResult(session_id=self._context.session_id, task_id=task.task_id,
                               trace_id=task.trace_id, status='waiting_approval',
-                              message='此任务仍在等待审批；当前版本不支持恢复。可用 /new 开始另一项任务。',
+                              message='此任务仍在等待审批；用 /review 提交明确决定，或 /new 开始另一项任务。',
                               plan=task.plan.model_copy(deep=True), report=task.report.model_copy(deep=True))
         if task and task.status in ('completed', 'unsupported', 'execution_failed'):
             self.new_task()

@@ -3,6 +3,18 @@
 本文件描述命名迁移后已实现的接口，供八人团队评审。来源为 PRD 第 5 章，未修改 PRD 业务验收标准。
 类型真源是 `common/contracts.py`；模型可通过 `model_json_schema()` 导出。此处尚无冻结或通过评审的声明。
 
+## 2026-10-14 可选审批恢复扩展
+
+原 `AgentModule.invoke` 保持不变。提供恢复的模块可以实现 `ApprovalResumable.resume_approval(continuation_token: str, decision: ApprovalDecision) -> AgentResult`；当前真实 M7 已接入，Mock M7 仍不支持恢复。平台没有 M7 名称分支。
+
+`ApprovalDecision` 只接受 `approved`（严格布尔）、`reviewer`（非空白字符串）、`material_complete`（严格布尔），禁止额外字段和字符串/数字转布尔。审核决定必须由明确接口提交，Planner 和自然语言“同意”均不能替代人工决定。
+
+模块返回原 request_id/task_id/trace_id/capability_id。等待结果仍满足 may_wait、supports_resume 与 token 规则；M7 每次成功提交轮换 token。模块拒绝调用时抛 ServiceError 并保留 token；平台不更新已保存等待报告。未知异常或返回结果违反契约会使该步骤失败并阻断下游，不自动重试。
+
+`Executor.resume(task_id, step_id, decision)` 使用该实例保存的原计划、输入、上下文和步骤记录；不接受从外部导入的报告作为可执行状态。只恢复指定 waiting_approval 步骤，随后拓扑执行 pending 步骤；已完成、已失败及其他等待步骤不重跑。返回报告是深复制快照，保留原关联 ID 和连续事件序号，事件记录审核人、决定与材料标志。业务审核拒绝仍属于 completed + approval_status=rejected，下游可消费拒绝结果；这不等于审批通过。
+
+`Conversation.review(step_id, decision, task_id=None)` 默认审核当前任务，显式 task_id 可审核当前会话历史中的等待任务。`/review` 是其 CLI 入口。接口仅支持同进程串行使用；重启、跨进程恢复、并发审核互斥、审核身份认证与真实支付不在当前范围。`/reset` 丢弃本会话的平台恢复入口，不产生审批决定或支付操作。
+
 ## 调用协议与兼容性影响
 
 ```python
@@ -174,6 +186,12 @@ M5 真实模块与 Mock 共用 `common/promotion_contract.py` 的 2.0 Manifest�
 - common/order_data.py 是 M2 真实模块/Mock 与 M7 的同一订单来源。M3/M6 的同名周汇总 order_basic.json 隔离在 data/fixtures/m3/，不覆盖订单事实表。
 
 详细文件取舍、能力边界和复现步骤见 `m3_m7_integration.md`。
+
+### group_02 共享资料补充（2026-10-14）
+
+上文旧 Fixture 行为仍适用于未选择新资料源的运行。设置 `HUB_DATA_DIR` 后，真实 M1/M4 共用 FAQ/政策，真实 M2/M7 共用导入订单事实，M6 使用独立周汇总；Mock 继续使用旧资料，不跨源拼接。配置目录缺数据明确失败。M2 `observations` 中的来源增加 `imported_simulation`，可含物流轨迹与时间；公共输出字段不变。无运单记录仍不能满足现有成功 Schema，返回失败而非空运单。
+
+M6 的 group_02 转化率为 `order_uv / uv`；活动成交额/成本不称为利润 ROI，周汇总不与独立演示明细强行对账。M7 导入源阈值须为 50000 分、最大反思次数读取源策略（本源为 2）；高风险小额退款先等待人工核验材料，未付款和退款中订单不自动批准。历史退款仅校验一致性，不导入为自动执行命令。所有调用继续使用统一 `invoke`，Executor 不感知数据源或模块内部差异。
 
 ## M1 / M2 / M6 接入（2026-10-14）
 

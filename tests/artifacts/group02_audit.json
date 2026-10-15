@@ -1,0 +1,420 @@
+{
+  "source": {
+    "repository": "https://gitee.com/baisumartin/0727-rag_-agent.git",
+    "branch": "group_02",
+    "commit": "7f70950d6cfea4cab0f8a8b996e176d5eee55ae2",
+    "kind": "imported_simulation"
+  },
+  "hash_mismatches": [],
+  "rows": {
+    "user_profile": 40,
+    "order_basic": 79,
+    "logistics_status": 38,
+    "faq_knowledge": 24,
+    "sales_daily_report": 60,
+    "user_behavior": 80,
+    "marketing_campaign": 12,
+    "refund_request": 20
+  },
+  "knowledge_entries": 34,
+  "weeks": [
+    "2025-W40",
+    "2025-W41",
+    "2025-W42",
+    "2025-W43"
+  ],
+  "logistics_issues": [
+    {
+      "order_id": "2025101234",
+      "code": "CONTRACT_MISMATCH",
+      "message": "订单 2025101234 的物流更新时间早于下单时间"
+    },
+    {
+      "order_id": "2025100002",
+      "code": "NOT_FOUND",
+      "message": "订单 2025100002 缺少物流记录，不能生成运单"
+    },
+    {
+      "order_id": "2025100005",
+      "code": "CONTRACT_MISMATCH",
+      "message": "订单 2025100005 的物流更新时间早于下单时间"
+    },
+    {
+      "order_id": "2025100007",
+      "code": "NOT_FOUND",
+      "message": "订单 2025100007 缺少物流记录，不能生成运单"
+    },
+    {
+      "order_id": "2025100008",
+      "code": "NOT_FOUND",
+      "message": "订单 2025100008 缺少物流记录，不能生成运单"
+    },
+    {
+      "order_id": "2025100009",
+      "code": "CONTRACT_MISMATCH",
+      "message": "订单 2025100009 的物流更新时间早于下单时间"
+    },
+    {
+      "order_id": "2025100010",
+      "code": "CONTRACT_MISMATCH",
+      "message": "订单 2025100010 的物流更新时间早于下单时间"
+    },
+    {
+      "order_id": "2025100012",
+      "code": "CONTRACT_MISMATCH",
+      "message": "订单 2025100012 的状态与已存在物流记录冲突"
+    },
+    {
+      "order_id": "2025100013",
+      "code": "CONTRACT_MISMATCH",
+      "message": "订单 2025100013 的物流更新时间早于下单时间"
+    },
+    {
+      "order_id": "2025100014",
+      "code": "NOT_FOUND",
+      "message": "订单 2025100014 缺少物流记录，不能生成运单"
+    },
+    {
+      "order_id": "2025100015",
+      "code": "NOT_FOUND",
+      "message": "订单 2025100015 缺少物流记录，不能生成运单"
+    },
+    {
+      "order_id": "2025100016",
+      "code": "NOT_FOUND",
+      "message": "订单 2025100016 缺少物流记录，不能生成运单"
+    },
+    {
+      "order_id": "2025100018",
+      "code": "NOT_FOUND",
+      "message": "订单 2025100018 缺少物流记录，不能生成运单"
+    },
+    {
+      "order_id": "2025100020",
+      "code": "NOT_FOUND",
+      "message": "订单 2025100020 缺少物流记录，不能生成运单"
+    },
+    {
+      "order_id": "2025100021",
+      "code": "NOT_FOUND",
+      "message": "订单 2025100021 缺少物流记录，不能生成运单"
+    },
+    {
+      "order_id": "2025100022",
+      "code": "CONTRACT_MISMATCH",
+      "message": "订单 2025100022 的物流更新时间早于下单时间"
+    },
+    {
+      "order_id": "2025100023",
+      "code": "CONTRACT_MISMATCH",
+      "message": "订单 2025100023 的物流更新时间早于下单时间"
+    },
+    {
+      "order_id": "2025100024",
+      "code": "NOT_FOUND",
+      "message": "订单 2025100024 缺少物流记录，不能生成运单"
+    },
+    {
+      "order_id": "2025100025",
+      "code": "CONTRACT_MISMATCH",
+      "message": "订单 2025100025 的物流更新时间早于下单时间"
+    },
+    {
+      "order_id": "2025100026",
+      "code": "NOT_FOUND",
+      "message": "订单 2025100026 缺少物流记录，不能生成运单"
+    },
+    {
+      "order_id": "2025100027",
+      "code": "NOT_FOUND",
+      "message": "订单 2025100027 缺少物流记录，不能生成运单"
+    },
+    {
+      "order_id": "2025100028",
+      "code": "NOT_FOUND",
+      "message": "订单 2025100028 缺少物流记录，不能生成运单"
+    },
+    {
+      "order_id": "2025100029",
+      "code": "CONTRACT_MISMATCH",
+      "message": "订单 2025100029 的物流更新时间早于下单时间"
+    },
+    {
+      "order_id": "2025100031",
+      "code": "CONTRACT_MISMATCH",
+      "message": "订单 2025100031 的物流更新时间早于下单时间"
+    },
+    {
+      "order_id": "2025100033",
+      "code": "NOT_FOUND",
+      "message": "订单 2025100033 缺少物流记录，不能生成运单"
+    },
+    {
+      "order_id": "2025100034",
+      "code": "NOT_FOUND",
+      "message": "订单 2025100034 缺少物流记录，不能生成运单"
+    },
+    {
+      "order_id": "2025100036",
+      "code": "CONTRACT_MISMATCH",
+      "message": "订单 2025100036 的状态与已存在物流记录冲突"
+    },
+    {
+      "order_id": "2025100038",
+      "code": "CONTRACT_MISMATCH",
+      "message": "订单 2025100038 的物流更新时间早于下单时间"
+    },
+    {
+      "order_id": "2025100040",
+      "code": "NOT_FOUND",
+      "message": "订单 2025100040 缺少物流记录，不能生成运单"
+    },
+    {
+      "order_id": "2025100041",
+      "code": "NOT_FOUND",
+      "message": "订单 2025100041 缺少物流记录，不能生成运单"
+    },
+    {
+      "order_id": "2025100042",
+      "code": "CONTRACT_MISMATCH",
+      "message": "订单 2025100042 的状态与已存在物流记录冲突"
+    },
+    {
+      "order_id": "2025100045",
+      "code": "NOT_FOUND",
+      "message": "订单 2025100045 缺少物流记录，不能生成运单"
+    },
+    {
+      "order_id": "2025100047",
+      "code": "CONTRACT_MISMATCH",
+      "message": "订单 2025100047 的物流更新时间早于下单时间"
+    },
+    {
+      "order_id": "2025100048",
+      "code": "CONTRACT_MISMATCH",
+      "message": "订单 2025100048 的物流更新时间早于下单时间"
+    },
+    {
+      "order_id": "2025100049",
+      "code": "CONTRACT_MISMATCH",
+      "message": "订单 2025100049 的物流更新时间早于下单时间"
+    },
+    {
+      "order_id": "2025100050",
+      "code": "NOT_FOUND",
+      "message": "订单 2025100050 缺少物流记录，不能生成运单"
+    },
+    {
+      "order_id": "2025100051",
+      "code": "CONTRACT_MISMATCH",
+      "message": "订单 2025100051 的状态与已存在物流记录冲突"
+    },
+    {
+      "order_id": "2025100053",
+      "code": "CONTRACT_MISMATCH",
+      "message": "订单 2025100053 的物流更新时间早于下单时间"
+    },
+    {
+      "order_id": "2025100055",
+      "code": "NOT_FOUND",
+      "message": "订单 2025100055 缺少物流记录，不能生成运单"
+    },
+    {
+      "order_id": "2025100057",
+      "code": "NOT_FOUND",
+      "message": "订单 2025100057 缺少物流记录，不能生成运单"
+    },
+    {
+      "order_id": "2025100059",
+      "code": "NOT_FOUND",
+      "message": "订单 2025100059 缺少物流记录，不能生成运单"
+    },
+    {
+      "order_id": "2025101235",
+      "code": "NOT_FOUND",
+      "message": "订单 2025101235 缺少物流记录，不能生成运单"
+    },
+    {
+      "order_id": "2025101236",
+      "code": "NOT_FOUND",
+      "message": "订单 2025101236 缺少物流记录，不能生成运单"
+    },
+    {
+      "order_id": "2025101237",
+      "code": "NOT_FOUND",
+      "message": "订单 2025101237 缺少物流记录，不能生成运单"
+    },
+    {
+      "order_id": "2025101238",
+      "code": "NOT_FOUND",
+      "message": "订单 2025101238 缺少物流记录，不能生成运单"
+    },
+    {
+      "order_id": "2025101239",
+      "code": "NOT_FOUND",
+      "message": "订单 2025101239 缺少物流记录，不能生成运单"
+    },
+    {
+      "order_id": "2025101240",
+      "code": "NOT_FOUND",
+      "message": "订单 2025101240 缺少物流记录，不能生成运单"
+    },
+    {
+      "order_id": "2025101241",
+      "code": "NOT_FOUND",
+      "message": "订单 2025101241 缺少物流记录，不能生成运单"
+    },
+    {
+      "order_id": "2025101242",
+      "code": "NOT_FOUND",
+      "message": "订单 2025101242 缺少物流记录，不能生成运单"
+    },
+    {
+      "order_id": "2025101243",
+      "code": "NOT_FOUND",
+      "message": "订单 2025101243 缺少物流记录，不能生成运单"
+    },
+    {
+      "order_id": "2025101244",
+      "code": "NOT_FOUND",
+      "message": "订单 2025101244 缺少物流记录，不能生成运单"
+    },
+    {
+      "order_id": "2025101245",
+      "code": "NOT_FOUND",
+      "message": "订单 2025101245 缺少物流记录，不能生成运单"
+    },
+    {
+      "order_id": "2025101246",
+      "code": "NOT_FOUND",
+      "message": "订单 2025101246 缺少物流记录，不能生成运单"
+    },
+    {
+      "order_id": "2025101247",
+      "code": "NOT_FOUND",
+      "message": "订单 2025101247 缺少物流记录，不能生成运单"
+    },
+    {
+      "order_id": "2025101248",
+      "code": "NOT_FOUND",
+      "message": "订单 2025101248 缺少物流记录，不能生成运单"
+    },
+    {
+      "order_id": "2025101249",
+      "code": "NOT_FOUND",
+      "message": "订单 2025101249 缺少物流记录，不能生成运单"
+    },
+    {
+      "order_id": "2025101250",
+      "code": "NOT_FOUND",
+      "message": "订单 2025101250 缺少物流记录，不能生成运单"
+    },
+    {
+      "order_id": "2025101251",
+      "code": "NOT_FOUND",
+      "message": "订单 2025101251 缺少物流记录，不能生成运单"
+    },
+    {
+      "order_id": "2025101252",
+      "code": "NOT_FOUND",
+      "message": "订单 2025101252 缺少物流记录，不能生成运单"
+    },
+    {
+      "order_id": "2025101253",
+      "code": "NOT_FOUND",
+      "message": "订单 2025101253 缺少物流记录，不能生成运单"
+    }
+  ],
+  "refund_issues": [
+    {
+      "order_id": "2025101234",
+      "code": "CONTRACT_MISMATCH",
+      "message": "退款 R0001 与订单客户不一致"
+    }
+  ],
+  "policy_conflicts": [
+    {
+      "entries": [
+        "F019",
+        "SP007"
+      ],
+      "issue": "小家电保修 2 年与一般家电保修 1 年的适用范围未统一"
+    },
+    {
+      "entries": [
+        "F010",
+        "F017",
+        "SP008"
+      ],
+      "issue": "发票申请入口、时点与专票条件需业务确认"
+    }
+  ],
+  "logistics_issue_counts": {
+    "CONTRACT_MISMATCH": 19,
+    "NOT_FOUND": 41
+  },
+  "notes": [
+    "JSON 金额为整数分；原始 Excel 金额为元。",
+    "周汇总是独立仿真场景，不能从当前订单和日报明细复算。",
+    "退款历史只用于一致性核对，不导入为可执行审批指令。",
+    "数据库说明写近30天日报，实际文件有60天。"
+  ],
+  "excel_reconciliation": {
+    "users": {
+      "excel_rows": 40,
+      "json_rows": 40,
+      "checked_cells": 240,
+      "missing_json_keys_in_excel": 0,
+      "mismatches": []
+    },
+    "orders": {
+      "excel_rows": 79,
+      "json_rows": 79,
+      "checked_cells": 711,
+      "missing_json_keys_in_excel": 0,
+      "mismatches": []
+    },
+    "logistics": {
+      "excel_rows": 38,
+      "json_rows": 38,
+      "checked_cells": 266,
+      "missing_json_keys_in_excel": 0,
+      "mismatches": []
+    },
+    "faqs": {
+      "excel_rows": 24,
+      "json_rows": 24,
+      "checked_cells": 120,
+      "missing_json_keys_in_excel": 0,
+      "mismatches": []
+    },
+    "sales_daily": {
+      "excel_rows": 60,
+      "json_rows": 60,
+      "checked_cells": 360,
+      "missing_json_keys_in_excel": 0,
+      "mismatches": []
+    },
+    "user_behavior": {
+      "excel_rows": 80,
+      "json_rows": 80,
+      "checked_cells": 640,
+      "missing_json_keys_in_excel": 0,
+      "mismatches": []
+    },
+    "campaigns": {
+      "excel_rows": 12,
+      "json_rows": 12,
+      "checked_cells": 96,
+      "missing_json_keys_in_excel": 0,
+      "mismatches": []
+    },
+    "refunds": {
+      "excel_rows": 20,
+      "json_rows": 20,
+      "checked_cells": 160,
+      "missing_json_keys_in_excel": 0,
+      "mismatches": []
+    }
+  }
+}

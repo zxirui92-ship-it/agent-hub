@@ -1,0 +1,802 @@
+[
+  {
+    "session_id": "S555052",
+    "customer_id": "U10006",
+    "customer_name": "张涛",
+    "event_type": "搜索商品",
+    "sku_id": "P878",
+    "event_at": "2025-10-10T12:28+08:00",
+    "page": "商品详情页/P878",
+    "duration_seconds": 156
+  },
+  {
+    "session_id": "S148225",
+    "customer_id": "U10002",
+    "customer_name": "林娜",
+    "event_type": "提交订单",
+    "sku_id": "P915",
+    "event_at": "2025-10-10T07:18+08:00",
+    "page": "购物车",
+    "duration_seconds": 194
+  },
+  {
+    "session_id": "S252640",
+    "customer_id": "U10028",
+    "customer_name": "徐伟",
+    "event_type": "加入购物车",
+    "sku_id": "P643",
+    "event_at": "2025-10-12T04:36+08:00",
+    "page": "商品详情页/P643",
+    "duration_seconds": 90
+  },
+  {
+    "session_id": "S182804",
+    "customer_id": "U10012",
+    "customer_name": "周刚",
+    "event_type": "浏览评价",
+    "sku_id": "P734",
+    "event_at": "2025-10-11T06:31+08:00",
+    "page": "个人中心",
+    "duration_seconds": 76
+  },
+  {
+    "session_id": "S583550",
+    "customer_id": "U10015",
+    "customer_name": "陈艳",
+    "event_type": "点击结算",
+    "sku_id": "P570",
+    "event_at": "2025-10-11T08:42+08:00",
+    "page": "首页",
+    "duration_seconds": 241
+  },
+  {
+    "session_id": "S810526",
+    "customer_id": "U10019",
+    "customer_name": "林伟",
+    "event_type": "商品详情页",
+    "sku_id": "P175",
+    "event_at": "2025-10-12T08:22+08:00",
+    "page": "个人中心",
+    "duration_seconds": 156
+  },
+  {
+    "session_id": "S823846",
+    "customer_id": "U10028",
+    "customer_name": "徐伟",
+    "event_type": "点击结算",
+    "sku_id": "P567",
+    "event_at": "2025-10-11T14:12+08:00",
+    "page": "结算页",
+    "duration_seconds": 250
+  },
+  {
+    "session_id": "S348728",
+    "customer_id": "U10007",
+    "customer_name": "胡刚",
+    "event_type": "浏览评价",
+    "sku_id": "P685",
+    "event_at": "2025-10-11T21:36+08:00",
+    "page": "购物车",
+    "duration_seconds": 154
+  },
+  {
+    "session_id": "S970357",
+    "customer_id": "U10002",
+    "customer_name": "林娜",
+    "event_type": "浏览评价",
+    "sku_id": "P381",
+    "event_at": "2025-10-10T01:36+08:00",
+    "page": "首页",
+    "duration_seconds": 257
+  },
+  {
+    "session_id": "S913423",
+    "customer_id": "U10019",
+    "customer_name": "林伟",
+    "event_type": "加入购物车",
+    "sku_id": "P721",
+    "event_at": "2025-10-11T21:14+08:00",
+    "page": "商品详情页/P721",
+    "duration_seconds": 131
+  },
+  {
+    "session_id": "S758765",
+    "customer_id": "U10009",
+    "customer_name": "吴娜",
+    "event_type": "搜索商品",
+    "sku_id": "P742",
+    "event_at": "2025-10-10T05:19+08:00",
+    "page": "结算页",
+    "duration_seconds": 20
+  },
+  {
+    "session_id": "S482584",
+    "customer_id": "U10038",
+    "customer_name": "杨涛",
+    "event_type": "商品详情页",
+    "sku_id": "P192",
+    "event_at": "2025-10-11T13:20+08:00",
+    "page": "结算页",
+    "duration_seconds": 92
+  },
+  {
+    "session_id": "S238579",
+    "customer_id": "U10013",
+    "customer_name": "徐涛",
+    "event_type": "提交订单",
+    "sku_id": "P643",
+    "event_at": "2025-10-12T16:58+08:00",
+    "page": "购物车",
+    "duration_seconds": 87
+  },
+  {
+    "session_id": "S964749",
+    "customer_id": "U10017",
+    "customer_name": "张芳",
+    "event_type": "领取优惠券",
+    "sku_id": "P925",
+    "event_at": "2025-10-11T13:47+08:00",
+    "page": "购物车",
+    "duration_seconds": 61
+  },
+  {
+    "session_id": "S178957",
+    "customer_id": "U10030",
+    "customer_name": "何艳",
+    "event_type": "商品详情页",
+    "sku_id": "P872",
+    "event_at": "2025-10-11T04:55+08:00",
+    "page": "结算页",
+    "duration_seconds": 288
+  },
+  {
+    "session_id": "S194689",
+    "customer_id": "U10024",
+    "customer_name": "罗娜",
+    "event_type": "浏览评价",
+    "sku_id": "P114",
+    "event_at": "2025-10-11T09:34+08:00",
+    "page": "首页",
+    "duration_seconds": 235
+  },
+  {
+    "session_id": "S805511",
+    "customer_id": "U10024",
+    "customer_name": "罗娜",
+    "event_type": "点击结算",
+    "sku_id": "P698",
+    "event_at": "2025-10-12T00:52+08:00",
+    "page": "购物车",
+    "duration_seconds": 58
+  },
+  {
+    "session_id": "S594379",
+    "customer_id": "U10015",
+    "customer_name": "陈艳",
+    "event_type": "首页浏览",
+    "sku_id": "P734",
+    "event_at": "2025-10-12T23:20+08:00",
+    "page": "个人中心",
+    "duration_seconds": 116
+  },
+  {
+    "session_id": "S766269",
+    "customer_id": "U10005",
+    "customer_name": "朱杰",
+    "event_type": "领取优惠券",
+    "sku_id": "P817",
+    "event_at": "2025-10-11T14:41+08:00",
+    "page": "结算页",
+    "duration_seconds": 62
+  },
+  {
+    "session_id": "S147549",
+    "customer_id": "U10009",
+    "customer_name": "吴娜",
+    "event_type": "首页浏览",
+    "sku_id": "P411",
+    "event_at": "2025-10-12T15:07+08:00",
+    "page": "首页",
+    "duration_seconds": 123
+  },
+  {
+    "session_id": "S242254",
+    "customer_id": "U10035",
+    "customer_name": "陈明",
+    "event_type": "浏览评价",
+    "sku_id": "P564",
+    "event_at": "2025-10-11T23:42+08:00",
+    "page": "个人中心",
+    "duration_seconds": 217
+  },
+  {
+    "session_id": "S878325",
+    "customer_id": "U10038",
+    "customer_name": "杨涛",
+    "event_type": "商品详情页",
+    "sku_id": "P524",
+    "event_at": "2025-10-10T12:53+08:00",
+    "page": "结算页",
+    "duration_seconds": 211
+  },
+  {
+    "session_id": "S134305",
+    "customer_id": "U10018",
+    "customer_name": "张涛",
+    "event_type": "提交订单",
+    "sku_id": "P322",
+    "event_at": "2025-10-12T08:28+08:00",
+    "page": "商品详情页/P322",
+    "duration_seconds": 188
+  },
+  {
+    "session_id": "S818987",
+    "customer_id": "U10007",
+    "customer_name": "胡刚",
+    "event_type": "提交订单",
+    "sku_id": "P657",
+    "event_at": "2025-10-11T21:03+08:00",
+    "page": "结算页",
+    "duration_seconds": 144
+  },
+  {
+    "session_id": "S228093",
+    "customer_id": "U10013",
+    "customer_name": "徐涛",
+    "event_type": "领取优惠券",
+    "sku_id": "P193",
+    "event_at": "2025-10-11T03:41+08:00",
+    "page": "个人中心",
+    "duration_seconds": 13
+  },
+  {
+    "session_id": "S925013",
+    "customer_id": "U10004",
+    "customer_name": "林明",
+    "event_type": "提交订单",
+    "sku_id": "P349",
+    "event_at": "2025-10-10T16:50+08:00",
+    "page": "个人中心",
+    "duration_seconds": 108
+  },
+  {
+    "session_id": "S970127",
+    "customer_id": "U10005",
+    "customer_name": "朱杰",
+    "event_type": "加入购物车",
+    "sku_id": "P700",
+    "event_at": "2025-10-11T03:52+08:00",
+    "page": "商品详情页/P700",
+    "duration_seconds": 171
+  },
+  {
+    "session_id": "S926952",
+    "customer_id": "U10010",
+    "customer_name": "孙磊",
+    "event_type": "首页浏览",
+    "sku_id": "P383",
+    "event_at": "2025-10-10T18:08+08:00",
+    "page": "个人中心",
+    "duration_seconds": 131
+  },
+  {
+    "session_id": "S215266",
+    "customer_id": "U10012",
+    "customer_name": "周刚",
+    "event_type": "首页浏览",
+    "sku_id": "P234",
+    "event_at": "2025-10-10T01:22+08:00",
+    "page": "商品详情页/P234",
+    "duration_seconds": 168
+  },
+  {
+    "session_id": "S282710",
+    "customer_id": "U10002",
+    "customer_name": "林娜",
+    "event_type": "点击结算",
+    "sku_id": "P153",
+    "event_at": "2025-10-10T16:47+08:00",
+    "page": "结算页",
+    "duration_seconds": 272
+  },
+  {
+    "session_id": "S881886",
+    "customer_id": "U10008",
+    "customer_name": "郑娟",
+    "event_type": "搜索商品",
+    "sku_id": "P587",
+    "event_at": "2025-10-12T09:49+08:00",
+    "page": "购物车",
+    "duration_seconds": 265
+  },
+  {
+    "session_id": "S214351",
+    "customer_id": "U10038",
+    "customer_name": "杨涛",
+    "event_type": "领取优惠券",
+    "sku_id": "P615",
+    "event_at": "2025-10-11T04:39+08:00",
+    "page": "首页",
+    "duration_seconds": 269
+  },
+  {
+    "session_id": "S580292",
+    "customer_id": "U10020",
+    "customer_name": "吴明",
+    "event_type": "首页浏览",
+    "sku_id": "P162",
+    "event_at": "2025-10-12T13:54+08:00",
+    "page": "结算页",
+    "duration_seconds": 221
+  },
+  {
+    "session_id": "S614084",
+    "customer_id": "U10007",
+    "customer_name": "胡刚",
+    "event_type": "领取优惠券",
+    "sku_id": "P175",
+    "event_at": "2025-10-10T10:20+08:00",
+    "page": "个人中心",
+    "duration_seconds": 78
+  },
+  {
+    "session_id": "S232321",
+    "customer_id": "U10005",
+    "customer_name": "朱杰",
+    "event_type": "点击结算",
+    "sku_id": "P739",
+    "event_at": "2025-10-12T22:45+08:00",
+    "page": "购物车",
+    "duration_seconds": 198
+  },
+  {
+    "session_id": "S656329",
+    "customer_id": "U10039",
+    "customer_name": "朱刚",
+    "event_type": "点击结算",
+    "sku_id": "P564",
+    "event_at": "2025-10-12T16:38+08:00",
+    "page": "结算页",
+    "duration_seconds": 53
+  },
+  {
+    "session_id": "S994217",
+    "customer_id": "U10008",
+    "customer_name": "郑娟",
+    "event_type": "加入购物车",
+    "sku_id": "P540",
+    "event_at": "2025-10-12T09:56+08:00",
+    "page": "商品详情页/P540",
+    "duration_seconds": 214
+  },
+  {
+    "session_id": "S967611",
+    "customer_id": "U10022",
+    "customer_name": "赵静",
+    "event_type": "领取优惠券",
+    "sku_id": "P508",
+    "event_at": "2025-10-12T05:46+08:00",
+    "page": "首页",
+    "duration_seconds": 163
+  },
+  {
+    "session_id": "S427704",
+    "customer_id": "U10028",
+    "customer_name": "徐伟",
+    "event_type": "点击结算",
+    "sku_id": "P483",
+    "event_at": "2025-10-10T19:43+08:00",
+    "page": "结算页",
+    "duration_seconds": 37
+  },
+  {
+    "session_id": "S972176",
+    "customer_id": "U10006",
+    "customer_name": "张涛",
+    "event_type": "搜索商品",
+    "sku_id": "P195",
+    "event_at": "2025-10-12T07:06+08:00",
+    "page": "购物车",
+    "duration_seconds": 69
+  },
+  {
+    "session_id": "S162894",
+    "customer_id": "U10036",
+    "customer_name": "胡刚",
+    "event_type": "提交订单",
+    "sku_id": "P786",
+    "event_at": "2025-10-10T15:26+08:00",
+    "page": "购物车",
+    "duration_seconds": 219
+  },
+  {
+    "session_id": "S401601",
+    "customer_id": "U10004",
+    "customer_name": "林明",
+    "event_type": "点击结算",
+    "sku_id": "P460",
+    "event_at": "2025-10-10T13:36+08:00",
+    "page": "个人中心",
+    "duration_seconds": 111
+  },
+  {
+    "session_id": "S788637",
+    "customer_id": "U10010",
+    "customer_name": "孙磊",
+    "event_type": "领取优惠券",
+    "sku_id": "P329",
+    "event_at": "2025-10-10T13:22+08:00",
+    "page": "个人中心",
+    "duration_seconds": 191
+  },
+  {
+    "session_id": "S899649",
+    "customer_id": "U10008",
+    "customer_name": "郑娟",
+    "event_type": "点击结算",
+    "sku_id": "P687",
+    "event_at": "2025-10-11T04:51+08:00",
+    "page": "结算页",
+    "duration_seconds": 290
+  },
+  {
+    "session_id": "S743378",
+    "customer_id": "U10040",
+    "customer_name": "李桂英",
+    "event_type": "首页浏览",
+    "sku_id": "P723",
+    "event_at": "2025-10-11T10:01+08:00",
+    "page": "商品详情页/P723",
+    "duration_seconds": 142
+  },
+  {
+    "session_id": "S456331",
+    "customer_id": "U10020",
+    "customer_name": "吴明",
+    "event_type": "提交订单",
+    "sku_id": "P106",
+    "event_at": "2025-10-10T23:55+08:00",
+    "page": "商品详情页/P106",
+    "duration_seconds": 292
+  },
+  {
+    "session_id": "S172965",
+    "customer_id": "U10026",
+    "customer_name": "朱洋",
+    "event_type": "商品详情页",
+    "sku_id": "P858",
+    "event_at": "2025-10-10T03:05+08:00",
+    "page": "个人中心",
+    "duration_seconds": 113
+  },
+  {
+    "session_id": "S540226",
+    "customer_id": "U10025",
+    "customer_name": "陈霞",
+    "event_type": "领取优惠券",
+    "sku_id": "P449",
+    "event_at": "2025-10-10T20:23+08:00",
+    "page": "购物车",
+    "duration_seconds": 169
+  },
+  {
+    "session_id": "S725185",
+    "customer_id": "U10037",
+    "customer_name": "杨明",
+    "event_type": "搜索商品",
+    "sku_id": "P153",
+    "event_at": "2025-10-10T19:10+08:00",
+    "page": "个人中心",
+    "duration_seconds": 28
+  },
+  {
+    "session_id": "S385320",
+    "customer_id": "U10006",
+    "customer_name": "张涛",
+    "event_type": "领取优惠券",
+    "sku_id": "P777",
+    "event_at": "2025-10-12T06:31+08:00",
+    "page": "个人中心",
+    "duration_seconds": 229
+  },
+  {
+    "session_id": "S386436",
+    "customer_id": "U10027",
+    "customer_name": "胡平",
+    "event_type": "加入购物车",
+    "sku_id": "P873",
+    "event_at": "2025-10-12T17:07+08:00",
+    "page": "购物车",
+    "duration_seconds": 223
+  },
+  {
+    "session_id": "S397005",
+    "customer_id": "U10008",
+    "customer_name": "郑娟",
+    "event_type": "领取优惠券",
+    "sku_id": "P639",
+    "event_at": "2025-10-11T15:02+08:00",
+    "page": "商品详情页/P639",
+    "duration_seconds": 205
+  },
+  {
+    "session_id": "S157443",
+    "customer_id": "U10039",
+    "customer_name": "朱刚",
+    "event_type": "首页浏览",
+    "sku_id": "P309",
+    "event_at": "2025-10-11T14:13+08:00",
+    "page": "商品详情页/P309",
+    "duration_seconds": 133
+  },
+  {
+    "session_id": "S444061",
+    "customer_id": "U10019",
+    "customer_name": "林伟",
+    "event_type": "搜索商品",
+    "sku_id": "P107",
+    "event_at": "2025-10-12T15:47+08:00",
+    "page": "结算页",
+    "duration_seconds": 92
+  },
+  {
+    "session_id": "S498676",
+    "customer_id": "U10009",
+    "customer_name": "吴娜",
+    "event_type": "加入购物车",
+    "sku_id": "P612",
+    "event_at": "2025-10-12T23:53+08:00",
+    "page": "购物车",
+    "duration_seconds": 39
+  },
+  {
+    "session_id": "S878086",
+    "customer_id": "U10026",
+    "customer_name": "朱洋",
+    "event_type": "首页浏览",
+    "sku_id": "P546",
+    "event_at": "2025-10-10T02:29+08:00",
+    "page": "首页",
+    "duration_seconds": 163
+  },
+  {
+    "session_id": "S550137",
+    "customer_id": "U10037",
+    "customer_name": "杨明",
+    "event_type": "浏览评价",
+    "sku_id": "P826",
+    "event_at": "2025-10-12T05:18+08:00",
+    "page": "首页",
+    "duration_seconds": 210
+  },
+  {
+    "session_id": "S440544",
+    "customer_id": "U10002",
+    "customer_name": "林娜",
+    "event_type": "商品详情页",
+    "sku_id": "P920",
+    "event_at": "2025-10-12T10:53+08:00",
+    "page": "购物车",
+    "duration_seconds": 48
+  },
+  {
+    "session_id": "S985506",
+    "customer_id": "U10028",
+    "customer_name": "徐伟",
+    "event_type": "搜索商品",
+    "sku_id": "P349",
+    "event_at": "2025-10-12T07:37+08:00",
+    "page": "结算页",
+    "duration_seconds": 271
+  },
+  {
+    "session_id": "S514991",
+    "customer_id": "U10006",
+    "customer_name": "张涛",
+    "event_type": "点击结算",
+    "sku_id": "P863",
+    "event_at": "2025-10-11T19:14+08:00",
+    "page": "购物车",
+    "duration_seconds": 89
+  },
+  {
+    "session_id": "S635280",
+    "customer_id": "U10005",
+    "customer_name": "朱杰",
+    "event_type": "搜索商品",
+    "sku_id": "P643",
+    "event_at": "2025-10-12T17:12+08:00",
+    "page": "购物车",
+    "duration_seconds": 182
+  },
+  {
+    "session_id": "S347745",
+    "customer_id": "U10010",
+    "customer_name": "孙磊",
+    "event_type": "搜索商品",
+    "sku_id": "P249",
+    "event_at": "2025-10-11T08:12+08:00",
+    "page": "商品详情页/P249",
+    "duration_seconds": 81
+  },
+  {
+    "session_id": "S285751",
+    "customer_id": "U10005",
+    "customer_name": "朱杰",
+    "event_type": "领取优惠券",
+    "sku_id": "P575",
+    "event_at": "2025-10-13T00:48+08:00",
+    "page": "个人中心",
+    "duration_seconds": 232
+  },
+  {
+    "session_id": "S774225",
+    "customer_id": "U10037",
+    "customer_name": "杨明",
+    "event_type": "提交订单",
+    "sku_id": "P984",
+    "event_at": "2025-10-11T16:09+08:00",
+    "page": "结算页",
+    "duration_seconds": 37
+  },
+  {
+    "session_id": "S563688",
+    "customer_id": "U10031",
+    "customer_name": "陈桂英",
+    "event_type": "点击结算",
+    "sku_id": "P915",
+    "event_at": "2025-10-11T11:37+08:00",
+    "page": "首页",
+    "duration_seconds": 183
+  },
+  {
+    "session_id": "S177794",
+    "customer_id": "U10033",
+    "customer_name": "朱超",
+    "event_type": "点击结算",
+    "sku_id": "P572",
+    "event_at": "2025-10-12T09:02+08:00",
+    "page": "首页",
+    "duration_seconds": 191
+  },
+  {
+    "session_id": "S180458",
+    "customer_id": "U10019",
+    "customer_name": "林伟",
+    "event_type": "搜索商品",
+    "sku_id": "P729",
+    "event_at": "2025-10-12T16:24+08:00",
+    "page": "结算页",
+    "duration_seconds": 300
+  },
+  {
+    "session_id": "S930281",
+    "customer_id": "U10036",
+    "customer_name": "胡刚",
+    "event_type": "首页浏览",
+    "sku_id": "P560",
+    "event_at": "2025-10-11T00:20+08:00",
+    "page": "个人中心",
+    "duration_seconds": 246
+  },
+  {
+    "session_id": "S258189",
+    "customer_id": "U10033",
+    "customer_name": "朱超",
+    "event_type": "首页浏览",
+    "sku_id": "P561",
+    "event_at": "2025-10-10T13:51+08:00",
+    "page": "购物车",
+    "duration_seconds": 46
+  },
+  {
+    "session_id": "S777513",
+    "customer_id": "U10033",
+    "customer_name": "朱超",
+    "event_type": "商品详情页",
+    "sku_id": "P140",
+    "event_at": "2025-10-11T07:45+08:00",
+    "page": "结算页",
+    "duration_seconds": 227
+  },
+  {
+    "session_id": "S648141",
+    "customer_id": "U10034",
+    "customer_name": "徐敏",
+    "event_type": "商品详情页",
+    "sku_id": "P472",
+    "event_at": "2025-10-11T23:58+08:00",
+    "page": "购物车",
+    "duration_seconds": 201
+  },
+  {
+    "session_id": "S912085",
+    "customer_id": "U10027",
+    "customer_name": "胡平",
+    "event_type": "提交订单",
+    "sku_id": "P795",
+    "event_at": "2025-10-10T06:50+08:00",
+    "page": "购物车",
+    "duration_seconds": 36
+  },
+  {
+    "session_id": "S199096",
+    "customer_id": "U10022",
+    "customer_name": "赵静",
+    "event_type": "浏览评价",
+    "sku_id": "P390",
+    "event_at": "2025-10-11T08:46+08:00",
+    "page": "个人中心",
+    "duration_seconds": 79
+  },
+  {
+    "session_id": "S185461",
+    "customer_id": "U10022",
+    "customer_name": "赵静",
+    "event_type": "商品详情页",
+    "sku_id": "P458",
+    "event_at": "2025-10-11T15:41+08:00",
+    "page": "结算页",
+    "duration_seconds": 69
+  },
+  {
+    "session_id": "S843266",
+    "customer_id": "U10039",
+    "customer_name": "朱刚",
+    "event_type": "搜索商品",
+    "sku_id": "P417",
+    "event_at": "2025-10-12T23:24+08:00",
+    "page": "购物车",
+    "duration_seconds": 68
+  },
+  {
+    "session_id": "S197992",
+    "customer_id": "U10034",
+    "customer_name": "徐敏",
+    "event_type": "浏览评价",
+    "sku_id": "P620",
+    "event_at": "2025-10-11T22:01+08:00",
+    "page": "购物车",
+    "duration_seconds": 161
+  },
+  {
+    "session_id": "S324597",
+    "customer_id": "U10012",
+    "customer_name": "周刚",
+    "event_type": "提交订单",
+    "sku_id": "P884",
+    "event_at": "2025-10-12T14:12+08:00",
+    "page": "商品详情页/P884",
+    "duration_seconds": 73
+  },
+  {
+    "session_id": "S180913",
+    "customer_id": "U10010",
+    "customer_name": "孙磊",
+    "event_type": "点击结算",
+    "sku_id": "P964",
+    "event_at": "2025-10-10T12:32+08:00",
+    "page": "个人中心",
+    "duration_seconds": 272
+  },
+  {
+    "session_id": "S794083",
+    "customer_id": "U10003",
+    "customer_name": "赵艳",
+    "event_type": "提交订单",
+    "sku_id": "P997",
+    "event_at": "2025-10-10T16:38+08:00",
+    "page": "结算页",
+    "duration_seconds": 81
+  },
+  {
+    "session_id": "S289630",
+    "customer_id": "U10011",
+    "customer_name": "郑磊",
+    "event_type": "商品详情页",
+    "sku_id": "P838",
+    "event_at": "2025-10-12T08:02+08:00",
+    "page": "结算页",
+    "duration_seconds": 189
+  }
+]

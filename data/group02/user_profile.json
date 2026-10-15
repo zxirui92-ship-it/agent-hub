@@ -1,0 +1,322 @@
+[
+  {
+    "customer_id": "U10001",
+    "customer_name": "刘伟",
+    "phone": "13442868828",
+    "member_level": "银卡",
+    "registered_at": "2024-05-22",
+    "cumulative_order_count": 6
+  },
+  {
+    "customer_id": "U10002",
+    "customer_name": "林娜",
+    "phone": "13966629388",
+    "member_level": "普通会员",
+    "registered_at": "2024-01-31",
+    "cumulative_order_count": 5
+  },
+  {
+    "customer_id": "U10003",
+    "customer_name": "赵艳",
+    "phone": "13890801586",
+    "member_level": "普通会员",
+    "registered_at": "2025-07-28",
+    "cumulative_order_count": 12
+  },
+  {
+    "customer_id": "U10004",
+    "customer_name": "林明",
+    "phone": "13370291817",
+    "member_level": "金卡",
+    "registered_at": "2024-01-07",
+    "cumulative_order_count": 10
+  },
+  {
+    "customer_id": "U10005",
+    "customer_name": "朱杰",
+    "phone": "13430868105",
+    "member_level": "银卡",
+    "registered_at": "2024-12-10",
+    "cumulative_order_count": 6
+  },
+  {
+    "customer_id": "U10006",
+    "customer_name": "张涛",
+    "phone": "13158181396",
+    "member_level": "金卡",
+    "registered_at": "2024-09-27",
+    "cumulative_order_count": 2
+  },
+  {
+    "customer_id": "U10007",
+    "customer_name": "胡刚",
+    "phone": "13160806024",
+    "member_level": "普通会员",
+    "registered_at": "2025-07-19",
+    "cumulative_order_count": 18
+  },
+  {
+    "customer_id": "U10008",
+    "customer_name": "郑娟",
+    "phone": "13935808537",
+    "member_level": "普通会员",
+    "registered_at": "2024-02-16",
+    "cumulative_order_count": 14
+  },
+  {
+    "customer_id": "U10009",
+    "customer_name": "吴娜",
+    "phone": "13323556182",
+    "member_level": "钻石",
+    "registered_at": "2024-10-11",
+    "cumulative_order_count": 29
+  },
+  {
+    "customer_id": "U10010",
+    "customer_name": "孙磊",
+    "phone": "13557683626",
+    "member_level": "银卡",
+    "registered_at": "2024-09-30",
+    "cumulative_order_count": 4
+  },
+  {
+    "customer_id": "U10011",
+    "customer_name": "郑磊",
+    "phone": "13842857966",
+    "member_level": "银卡",
+    "registered_at": "2025-04-18",
+    "cumulative_order_count": 24
+  },
+  {
+    "customer_id": "U10012",
+    "customer_name": "周刚",
+    "phone": "13353524491",
+    "member_level": "普通会员",
+    "registered_at": "2024-08-22",
+    "cumulative_order_count": 2
+  },
+  {
+    "customer_id": "U10013",
+    "customer_name": "徐涛",
+    "phone": "13418883684",
+    "member_level": "银卡",
+    "registered_at": "2025-08-03",
+    "cumulative_order_count": 20
+  },
+  {
+    "customer_id": "U10014",
+    "customer_name": "赵霞",
+    "phone": "13696282117",
+    "member_level": "钻石",
+    "registered_at": "2024-05-26",
+    "cumulative_order_count": 16
+  },
+  {
+    "customer_id": "U10015",
+    "customer_name": "陈艳",
+    "phone": "13882340307",
+    "member_level": "金卡",
+    "registered_at": "2025-08-21",
+    "cumulative_order_count": 27
+  },
+  {
+    "customer_id": "U10016",
+    "customer_name": "罗涛",
+    "phone": "13539436733",
+    "member_level": "银卡",
+    "registered_at": "2025-06-05",
+    "cumulative_order_count": 31
+  },
+  {
+    "customer_id": "U10017",
+    "customer_name": "张芳",
+    "phone": "13130514014",
+    "member_level": "银卡",
+    "registered_at": "2025-03-08",
+    "cumulative_order_count": 38
+  },
+  {
+    "customer_id": "U10018",
+    "customer_name": "张涛",
+    "phone": "13689978790",
+    "member_level": "钻石",
+    "registered_at": "2025-06-25",
+    "cumulative_order_count": 16
+  },
+  {
+    "customer_id": "U10019",
+    "customer_name": "林伟",
+    "phone": "13182070937",
+    "member_level": "金卡",
+    "registered_at": "2024-12-14",
+    "cumulative_order_count": 7
+  },
+  {
+    "customer_id": "U10020",
+    "customer_name": "吴明",
+    "phone": "13270897765",
+    "member_level": "普通会员",
+    "registered_at": "2024-09-26",
+    "cumulative_order_count": 32
+  },
+  {
+    "customer_id": "U10021",
+    "customer_name": "杨平",
+    "phone": "13193926371",
+    "member_level": "金卡",
+    "registered_at": "2025-06-03",
+    "cumulative_order_count": 38
+  },
+  {
+    "customer_id": "U10022",
+    "customer_name": "赵静",
+    "phone": "13531682744",
+    "member_level": "普通会员",
+    "registered_at": "2024-11-27",
+    "cumulative_order_count": 31
+  },
+  {
+    "customer_id": "U10023",
+    "customer_name": "王敏",
+    "phone": "13551273847",
+    "member_level": "银卡",
+    "registered_at": "2024-02-29",
+    "cumulative_order_count": 15
+  },
+  {
+    "customer_id": "U10024",
+    "customer_name": "罗娜",
+    "phone": "13175228535",
+    "member_level": "普通会员",
+    "registered_at": "2025-06-29",
+    "cumulative_order_count": 8
+  },
+  {
+    "customer_id": "U10025",
+    "customer_name": "陈霞",
+    "phone": "13832162965",
+    "member_level": "金卡",
+    "registered_at": "2025-06-24",
+    "cumulative_order_count": 38
+  },
+  {
+    "customer_id": "U10026",
+    "customer_name": "朱洋",
+    "phone": "13836998038",
+    "member_level": "金卡",
+    "registered_at": "2025-02-12",
+    "cumulative_order_count": 23
+  },
+  {
+    "customer_id": "U10027",
+    "customer_name": "胡平",
+    "phone": "13726240908",
+    "member_level": "银卡",
+    "registered_at": "2024-08-18",
+    "cumulative_order_count": 4
+  },
+  {
+    "customer_id": "U10028",
+    "customer_name": "徐伟",
+    "phone": "13984346088",
+    "member_level": "银卡",
+    "registered_at": "2024-08-13",
+    "cumulative_order_count": 0
+  },
+  {
+    "customer_id": "U10029",
+    "customer_name": "张芳",
+    "phone": "13319046318",
+    "member_level": "普通会员",
+    "registered_at": "2024-12-04",
+    "cumulative_order_count": 4
+  },
+  {
+    "customer_id": "U10030",
+    "customer_name": "何艳",
+    "phone": "13499788677",
+    "member_level": "钻石",
+    "registered_at": "2024-08-07",
+    "cumulative_order_count": 34
+  },
+  {
+    "customer_id": "U10031",
+    "customer_name": "陈桂英",
+    "phone": "13973440831",
+    "member_level": "银卡",
+    "registered_at": "2025-04-29",
+    "cumulative_order_count": 26
+  },
+  {
+    "customer_id": "U10032",
+    "customer_name": "赵敏",
+    "phone": "13198447167",
+    "member_level": "钻石",
+    "registered_at": "2024-12-28",
+    "cumulative_order_count": 27
+  },
+  {
+    "customer_id": "U10033",
+    "customer_name": "朱超",
+    "phone": "13097705310",
+    "member_level": "普通会员",
+    "registered_at": "2024-03-03",
+    "cumulative_order_count": 25
+  },
+  {
+    "customer_id": "U10034",
+    "customer_name": "徐敏",
+    "phone": "13335714784",
+    "member_level": "银卡",
+    "registered_at": "2025-07-03",
+    "cumulative_order_count": 28
+  },
+  {
+    "customer_id": "U10035",
+    "customer_name": "陈明",
+    "phone": "13247385696",
+    "member_level": "钻石",
+    "registered_at": "2024-09-12",
+    "cumulative_order_count": 4
+  },
+  {
+    "customer_id": "U10036",
+    "customer_name": "胡刚",
+    "phone": "13116789850",
+    "member_level": "普通会员",
+    "registered_at": "2024-04-05",
+    "cumulative_order_count": 15
+  },
+  {
+    "customer_id": "U10037",
+    "customer_name": "杨明",
+    "phone": "13774606833",
+    "member_level": "银卡",
+    "registered_at": "2025-02-14",
+    "cumulative_order_count": 3
+  },
+  {
+    "customer_id": "U10038",
+    "customer_name": "杨涛",
+    "phone": "13062401521",
+    "member_level": "金卡",
+    "registered_at": "2025-04-10",
+    "cumulative_order_count": 18
+  },
+  {
+    "customer_id": "U10039",
+    "customer_name": "朱刚",
+    "phone": "13730776478",
+    "member_level": "银卡",
+    "registered_at": "2024-10-30",
+    "cumulative_order_count": 13
+  },
+  {
+    "customer_id": "U10040",
+    "customer_name": "李桂英",
+    "phone": "13818181586",
+    "member_level": "金卡",
+    "registered_at": "2024-02-28",
+    "cumulative_order_count": 3
+  }
+]

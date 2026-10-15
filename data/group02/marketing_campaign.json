@@ -1,0 +1,122 @@
+[
+  {
+    "campaign_id": "C001",
+    "campaign_name": "99 大促全场满减",
+    "start_date": "2025-09-09",
+    "end_date": "2025-09-11",
+    "budget_amount": 50000000,
+    "channel": "APP push",
+    "campaign_status": "completed",
+    "roi": 1.85
+  },
+  {
+    "campaign_id": "C002",
+    "campaign_name": "新用户首单立减 30",
+    "start_date": "2025-09-01",
+    "end_date": "2025-10-31",
+    "budget_amount": 20000000,
+    "channel": "短信",
+    "campaign_status": "active",
+    "roi": 2.4
+  },
+  {
+    "campaign_id": "C003",
+    "campaign_name": "抖音直播专场",
+    "start_date": "2025-09-20",
+    "end_date": "2025-09-21",
+    "budget_amount": 80000000,
+    "channel": "抖音",
+    "campaign_status": "completed",
+    "roi": 1.32
+  },
+  {
+    "campaign_id": "C004",
+    "campaign_name": "会员日双倍积分",
+    "start_date": "2025-10-15",
+    "end_date": "2025-10-17",
+    "budget_amount": 10000000,
+    "channel": "APP push",
+    "campaign_status": "pending",
+    "roi": 0.0
+  },
+  {
+    "campaign_id": "C005",
+    "campaign_name": "双 11 预热预售",
+    "start_date": "2025-10-20",
+    "end_date": "2025-10-31",
+    "budget_amount": 120000000,
+    "channel": "全渠道",
+    "campaign_status": "pending",
+    "roi": 0.0
+  },
+  {
+    "campaign_id": "C006",
+    "campaign_name": "老客召回短信",
+    "start_date": "2025-08-01",
+    "end_date": "2025-08-31",
+    "budget_amount": 5000000,
+    "channel": "短信",
+    "campaign_status": "completed",
+    "roi": 0.95
+  },
+  {
+    "campaign_id": "C007",
+    "campaign_name": "小红书种草笔记",
+    "start_date": "2025-09-15",
+    "end_date": "2025-10-15",
+    "budget_amount": 30000000,
+    "channel": "小红书",
+    "campaign_status": "active",
+    "roi": 1.1
+  },
+  {
+    "campaign_id": "C008",
+    "campaign_name": "京东超级品牌日",
+    "start_date": "2025-10-05",
+    "end_date": "2025-10-07",
+    "budget_amount": 60000000,
+    "channel": "京东",
+    "campaign_status": "completed",
+    "roi": 1.58
+  },
+  {
+    "campaign_id": "C009",
+    "campaign_name": "教师节专属优惠",
+    "start_date": "2025-09-08",
+    "end_date": "2025-09-10",
+    "budget_amount": 8000000,
+    "channel": "微信公众号",
+    "campaign_status": "completed",
+    "roi": 1.72
+  },
+  {
+    "campaign_id": "C010",
+    "campaign_name": "国庆出游装备季",
+    "start_date": "2025-09-28",
+    "end_date": "2025-10-07",
+    "budget_amount": 45000000,
+    "channel": "APP push",
+    "campaign_status": "completed",
+    "roi": 1.45
+  },
+  {
+    "campaign_id": "C011",
+    "campaign_name": "企业采购批量折扣",
+    "start_date": "2025-10-01",
+    "end_date": "2025-12-31",
+    "budget_amount": 15000000,
+    "channel": "商务渠道",
+    "campaign_status": "active",
+    "roi": 2.05
+  },
+  {
+    "campaign_id": "C012",
+    "campaign_name": "双 12 年终盛典",
+    "start_date": "2025-12-10",
+    "end_date": "2025-12-12",
+    "budget_amount": 90000000,
+    "channel": "全渠道",
+    "campaign_status": "pending",
+    "roi": 0.0
+  }
+]

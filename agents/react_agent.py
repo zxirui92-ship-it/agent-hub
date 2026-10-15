@@ -20,6 +20,7 @@ from common.model_config import text_config
 from common.llm import ChatModel, TextModel, json_object
 from common.module_boundary import result_for, failure, correlation
 from common.order_data import order_fact
+from common.business_data import configured_data
 from hub_platform.errors import HubError
 from hub_platform.schema import validate_data
 
@@ -27,12 +28,20 @@ ORDER_FACT = obj(order_amount={'type': 'integer', 'minimum': 0}, order_status=TE
 
 
 def query_order(order_id: str) -> dict:
+    data = configured_data()
+    if data is not None:
+        fact, logistics = data.order(order_id), data.logistics(order_id)
+        return {'order_id': order_id, 'order_amount': fact['order_amount'], 'order_status': fact['order_status'],
+                'tracking_number': logistics['tracking_number'], 'source': data.source_kind}
     fact = order_fact(order_id)
     validate_data(fact, ORDER_FACT, ErrorCode.CONTRACT_MISMATCH)
     return {'order_id': order_id, **fact, 'source': 'local_fixture'}
 
 
 def query_logistics(order_id: str) -> dict:
+    data = configured_data()
+    if data is not None:
+        return {**data.logistics(order_id), 'source': data.source_kind}
     fact = query_order(order_id)
     return {'order_id': order_id, 'tracking_number': fact['tracking_number'], 'source': 'local_fixture'}
 
@@ -97,9 +106,12 @@ class ReActAgent:
                 if action not in self.tools:
                     raise ServiceError(ErrorCode.TOOL_UNAVAILABLE, f'未配置工具：{action}', retryable=False)
                 fact = self.tools[action](order_id)
-                schema = obj(order_id=TEXT, source={'type': 'string', 'enum': ['local_fixture']},
+                schema = obj(order_id=TEXT, source={'type': 'string', 'enum': ['local_fixture', 'imported_simulation']},
                     **ORDER_FACT['properties']) if action == 'query_order' else obj(
-                        order_id=TEXT, tracking_number=TEXT, source={'type': 'string', 'enum': ['local_fixture']})
+                        order_id=TEXT, tracking_number=TEXT, source={'type': 'string', 'enum': ['local_fixture', 'imported_simulation']})
+                if action == 'query_logistics':
+                    schema['properties'].update({key: TEXT for key in
+                        ('carrier', 'logistics_status', 'current_location', 'updated_at', 'tracking_history')})
                 validate_data(fact, schema, ErrorCode.CONTRACT_MISMATCH)
                 if fact['order_id'] != order_id:
                     raise ServiceError(ErrorCode.CONTRACT_MISMATCH, '工具返回其他订单', retryable=False)

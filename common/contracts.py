@@ -2,7 +2,7 @@
 from enum import Enum
 from typing import Annotated, Literal, Protocol, runtime_checkable
 
-from pydantic import BaseModel, ConfigDict, Field, JsonValue, model_validator
+from pydantic import BaseModel, ConfigDict, Field, JsonValue, StrictBool, model_validator
 from common.errors import ErrorCode, default_retryable
 
 Identifier = Annotated[str, Field(pattern=r"^s[1-9][0-9]*$")]
@@ -70,6 +70,22 @@ class AgentModule(Protocol):
     """Synchronous adapter boundary. Resume is deliberately not in this protocol."""
 
     def invoke(self, request: AgentRequest) -> AgentResult: ...
+
+
+class ApprovalDecision(Contract):
+    approved: StrictBool
+    reviewer: Annotated[str, Field(min_length=1, pattern=r'\S')]
+    material_complete: StrictBool
+
+
+@runtime_checkable
+class ApprovalResumable(Protocol):
+    """Optional in-process approval extension; does not invoke a new request.
+
+    Return the original correlation IDs. Raise ServiceError on a rejected call
+    without consuming the token. A returned result is the accepted continuation.
+    """
+    def resume_approval(self, continuation_token: str, decision: ApprovalDecision) -> AgentResult: ...
 
 
 class CapabilityManifest(Contract):

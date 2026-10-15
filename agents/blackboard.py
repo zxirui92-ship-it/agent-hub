@@ -17,6 +17,8 @@ from uuid import uuid4
 
 from dotenv import load_dotenv
 from common.contracts import AgentRequest, AgentResult
+from common.business_data import configured_data
+from common.weekly_data import campaign_summary, insight_summary, fused_view
 from common.errors import ErrorCode, ServiceError
 from common.fusion_contract import fusion_manifest
 from common.module_boundary import result_for, failure, correlation
@@ -154,24 +156,14 @@ class MarketingAgent(BlackboardAgent):
     name, writes, reads = 'marketing_agent', 'marketing', ('orders',)
 
     def process(self, data):
-        return {'week': data['orders']['week'], 'campaigns': self.source['campaigns'],
-                'limitation': '未提供活动实际支出及归因成交额，无法计算 ROI；活动预算不作为支出。'}
+        return campaign_summary(data['orders'], self.source['campaigns'])
 
 
 class InsightAgent(BlackboardAgent):
     name, writes, reads = 'insight_agent', 'insight', ('orders', 'behavior', 'marketing')
 
     def process(self, data):
-        order, behavior, marketing = (data[k] for k in self.reads)
-        notes = [a['reason'] for a in order.get('anomalies', [])]
-        notes += [f"行为源转化率 {behavior['conversion_rate']:.2%}；未提供完整漏斗，无法判断加购瓶颈。",
-                  f"退款率 {order['refund_rate']:.2%}。"]
-        if marketing['campaigns']:
-            notes.append('同期活动：' + '、'.join(c['name'] for c in marketing['campaigns']) + '；仅为同期记录，不证明因果关系。')
-        else:
-            notes.append('营销样例未记录本周活动，不代表生产环境没有活动。')
-        notes.append(marketing['limitation'])
-        return {'week': order['week'], 'insights': notes}
+        return insight_summary(data['orders'], data['behavior'], data['marketing'])
 
 
 class BlackboardController:
@@ -213,9 +205,7 @@ class BlackboardController:
         snap = self.board.snapshot()
         if not self.TARGET_KEYS.issubset(snap):
             raise ServiceError(ErrorCode.EXECUTION_LIMIT, 'M6 黑板缺少必要数据区', retryable=False)
-        return {'week': self.week, 'revenue_amount': snap['orders']['gmv_amount'],
-                'order_count': snap['orders']['order_count'], 'conversion_rate': snap['behavior']['conversion_rate'],
-                'anomaly': '；'.join(snap['insight']['insights'])}
+        return fused_view(self.week, snap['orders'], snap['behavior'], snap['insight'])
 
 
 class DataFusionModule:
@@ -223,7 +213,7 @@ class DataFusionModule:
 
     def __init__(self, source=None, *, max_rounds=4):
         load_dotenv(Path(__file__).resolve().parents[1] / '.env', override=False)
-        self.source = source if source is not None else WeeklySource(os.getenv('M6_DATA_DIR') or FIXTURES)
+        self.source = source if source is not None else (WeeklySource(os.getenv('M6_DATA_DIR')) if os.getenv('M6_DATA_DIR') else configured_data() or WeeklySource())
         self.max_rounds = max_rounds
 
     def invoke(self, request: AgentRequest) -> AgentResult:
@@ -233,7 +223,7 @@ class DataFusionModule:
             validate_data(request.payload, self.manifest.input_schema, ErrorCode.INVALID_INPUT)
             controller = BlackboardController(request.payload['week'], self.source, self.max_rounds)
             controller.run()
-            data = {'fused_data': controller.fused_data(), 'field_definitions': deepcopy(FIELD_DEFINITIONS),
+            data = {'fused_data': controller.fused_data(), 'field_definitions': deepcopy(getattr(self.source, 'field_definitions', FIELD_DEFINITIONS)),
                     'update_events': [json.dumps(e, ensure_ascii=False) for e in controller.board.update_events]}
             validate_data(data, self.manifest.output_schema, ErrorCode.CONTRACT_MISMATCH)
             for event in controller.board.update_events:

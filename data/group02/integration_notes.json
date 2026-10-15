@@ -1,0 +1,8 @@
+{
+  "kind": "local_integration_notes",
+  "description": "接入时记录的口径差异，不修改原始 JSON，不指定哪条政策优先。",
+  "knowledge_conflicts": [
+    {"entry_ids": ["F019", "SP007"], "message": "保修口径待确认：F019 小家电保修 2 年；SP007 一般家电保修 1 年，适用范围尚未统一。"},
+    {"entry_ids": ["F010", "F017", "SP008"], "message": "发票口径待确认：申请入口、时点及专票条件存在差异，请业务负责人确认。"}
+  ]
+}

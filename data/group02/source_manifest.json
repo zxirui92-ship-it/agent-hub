@@ -1,0 +1,80 @@
+{
+  "repository": "https://gitee.com/baisumartin/0727-rag_-agent.git",
+  "branch": "group_02",
+  "commit": "7f70950d6cfea4cab0f8a8b996e176d5eee55ae2",
+  "kind": "imported_simulation",
+  "json_money_unit": "CNY_cent",
+  "workbook_money_unit": "CNY_yuan",
+  "files": [
+    {
+      "source_path": "agent-hub/data/fixtures/faq_knowledge.json",
+      "file": "faq_knowledge.json",
+      "sha256": "d19ea83513cac21cac4230f0dab4935f14b443f0bc0a78daba6e1ba961da01af"
+    },
+    {
+      "source_path": "agent-hub/data/fixtures/logistics_status.json",
+      "file": "logistics_status.json",
+      "sha256": "f291d3bd13343fdd935b80d0ae15be34a6f3a46da4c8b765db07fc642cc8f2f6"
+    },
+    {
+      "source_path": "agent-hub/data/fixtures/marketing_campaign.json",
+      "file": "marketing_campaign.json",
+      "sha256": "231e03a0547d8d94dd366fcad5695a43afe56b800c77d26fd765061f46c82065"
+    },
+    {
+      "source_path": "agent-hub/data/fixtures/marketing_campaign_weekly.json",
+      "file": "marketing_campaign_weekly.json",
+      "sha256": "db9d4c91c68f7b0f7e06c5a98cac9f7dda0fd863e5c77ee6942393791bbfda98"
+    },
+    {
+      "source_path": "agent-hub/data/fixtures/order_basic.json",
+      "file": "order_basic.json",
+      "sha256": "36dc470be650a77bd6817a4014763a8da33d526810a612f7a98b9fa9b982334d"
+    },
+    {
+      "source_path": "agent-hub/data/fixtures/refund_compliance_policy.json",
+      "file": "refund_compliance_policy.json",
+      "sha256": "3b7b486dbe6ed7de2a26fc5d8b4a89af9c03522e910ec9c4d9949cf95e796453"
+    },
+    {
+      "source_path": "agent-hub/data/fixtures/refund_request.json",
+      "file": "refund_request.json",
+      "sha256": "6ca07a7847aac4cb20bc44b2e03689f07827b1034b4326e13a78619c77999b3b"
+    },
+    {
+      "source_path": "agent-hub/data/fixtures/sales_daily_report.json",
+      "file": "sales_daily_report.json",
+      "sha256": "bce756bc1979dd45340673c0ea9c307f568548a7522a77e825bdb646b60e8e60"
+    },
+    {
+      "source_path": "agent-hub/data/fixtures/service_policy.json",
+      "file": "service_policy.json",
+      "sha256": "eade1d5e46bbbb97951ae0a393ad93927b43d5e33ea9c3b59f40ccf7128d50e5"
+    },
+    {
+      "source_path": "agent-hub/data/fixtures/user_behavior.json",
+      "file": "user_behavior.json",
+      "sha256": "e5bc9893eed4fa56d175bf7ecf8481519f7f0f9380f261124a6253bd27a081b0"
+    },
+    {
+      "source_path": "agent-hub/data/fixtures/user_behavior_weekly.json",
+      "file": "user_behavior_weekly.json",
+      "sha256": "f50e384b877f935c2bb0af47dfae29c7526a603d420b1bb6a9c4ebea253f0353"
+    },
+    {
+      "source_path": "agent-hub/data/fixtures/user_profile.json",
+      "file": "user_profile.json",
+      "sha256": "c4757ff73f1d7ec03536bc507844a5123e0406c15bfa54de9f1b9ede92dd41db"
+    },
+    {
+      "source_path": "agent-hub/data/fixtures/weekly_sales.json",
+      "file": "weekly_sales.json",
+      "sha256": "f2f6cb32401cf27e24076b1a8a834de9ced3a07e3820266e4c713284b9bf09c6"
+    },
+    {
+      "source_path": "agent-hub/data/星潮电商_业务数据库.xlsx",
+      "file": "星潮电商_业务数据库.xlsx",
+      "sha256": "f678733e3c7778d51ef79063507885b2a90f0908755c15ee2d0c6d2411da5e1c"
+    }
+  ]
+}

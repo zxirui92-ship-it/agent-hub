@@ -1,0 +1,12 @@
+{
+  "plan_id": "plan-20261014-021",
+  "goal": "使用 group_02 仿真周数据生成经营周报",
+  "steps": [
+    {"step_id": "s2", "capability_id": "m3.weekly_report", "depends_on": ["s1", "s3"],
+     "inputs": {"fused_data": {"ref": "s1.data.fused_data"}, "previous_fused_data": {"ref": "s3.data.fused_data"}}},
+    {"step_id": "s1", "capability_id": "m6.data_fusion",
+     "inputs": {"week": {"literal": "2025-W41"}}},
+    {"step_id": "s3", "capability_id": "m6.data_fusion",
+     "inputs": {"week": {"literal": "2025-W40"}}}
+  ]
+}

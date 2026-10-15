@@ -1,5 +1,10 @@
 # 需求审查与决策
 
+## PRD补齐后的已知边界（2026-10-14）
+- 同进程审批续跑已实现；跨进程持久化、并发审核和真实支付仍未实现，禁止把恢复解释成重新执行整单退款。
+- 新资料首轮真实5项通过，M1/M3限定复验2项通过；最新离线460项通过/30项跳过。M5建议预算加总正确，但阶段/渠道预算可交叉，模型“冲突”措辞仍需业务评审；小样本不代表质量达标率。
+- 41个缺物流订单按状态分为未付款5、已退款11、退款中6、已发货19；不能全部断言为业务数据错误，也不能直接假造运单。待办见data_quality_review.md。
+
 ## 2026-10-13 顶层 API 接通
 - 本机进程已有 DEEPSEEK_API_KEY 与 DEEPSEEK_BASE_URL=https://api.deepseek.com，LLM_* 未配置，DEEPSEEK_MODEL 未配置。未输出或保存密钥。
 - 认证 /models 返回 deepseek-flash 和 deepseek-v4-pro；选择前者执行顶层语义规划，复用 Chat Completions transport。
@@ -74,3 +79,19 @@
 - 官方 https://help.aliyun.com/zh/model-studio/web-search：qwen-plus 支持北京地域搜索；原生 text-generation 返回 output.search_info.search_results。
 - 参数 enable_search、forced_search、enable_source；OpenAI Chat Completions 兼容路径不返回来源，故选择原生端点。
 - 来源通常只有标题、URL、index，无原文片段；不把模型回答填成网页原文。不返回来源的响应不能伪装联网成功。
+
+## 2026-10-14 Gitee 数据库来源
+- 源仓库独立克隆到 D:\模组\imports\0727-rag_-agent，默认 master 提交 71fd7e8e02db11bdb68bc80dec0e4c88d2dfab2d。
+- master 只有 README、依赖、批改报告和样例图片，没有数据库代码；README 说明小组/个人分支分别提交，正在列出远端分支定位来源。
+- 根许可证为 MulanPSL2；导入来源需保留来源版本与许可证。
+- group-item 分支虽然有 database.py，但 README/模型表明它是 Flask 课堂签到系统（学生/考勤/报告），与当前电商 Agent Hub 无关；不据此导入。已向用户询问目标分支，同时继续检查六个小组分支。
+- 用户确认 group_02。该分支的 agent-hub/data 是“星潮电商·智能运营中枢 仿真业务库”，不是生产 MySQL/SQLite 服务。JSON 金额已为分，Excel 为元，不能再次乘 100。
+- 24 FAQ、10 政策、79 订单、38 物流、20 退款、40 用户、60 日销售、80 行行为、12 活动，另有 4 周销售/行为/活动汇总；没有重复订单主键。
+- 首条 R0001 与订单 2025101234 的 customer_id、金额均冲突；订单事实 239700 分（旧平台同 ID 是 69900 分，必须显式切换数据集）。41 个订单无物流；14 个订单状态为“已签收”，需明确映射 delivered。
+- Excel 的说明行称“近 30 天销售”，实际 60 天。周汇总是独立样例，不能冒充由订单明细/日报汇总生成；营销周记录有 cost_amount/gmv_amount，可计算成交额/成本，但不能称利润 ROI。
+## group_02 接入验收补充
+
+- 最终438项离线测试通过，24项联网测试跳过；29项新增测试包含同源事实、冲突、风险审批与跨模块链路。
+- Excel/JSON已按主键核对8张对应业务表、2593字段值，单位及状态翻译后无差异；业务记录自身的问题仍保留并单独报告。
+- 周汇总使用2025-W40～W43；新数据订单2025101234金额239700分，不能回退到旧Fixture的69900分。演示可用2025100003（12900分）或2025100004（109900分）。
+- 资料详细口径、已知问题、启动方式和文件清单见 docs/group02_data_integration.md；源仍是仿真资料，未进行新资料上的真实模型内容验收。

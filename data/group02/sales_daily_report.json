@@ -1,0 +1,482 @@
+[
+  {
+    "report_date": "2025-08-13",
+    "order_count": 10410,
+    "gmv_amount": 269829803,
+    "refund_count": 228,
+    "new_user_count": 882,
+    "atv_amount": 25920
+  },
+  {
+    "report_date": "2025-08-14",
+    "order_count": 10543,
+    "gmv_amount": 194854065,
+    "refund_count": 395,
+    "new_user_count": 401,
+    "atv_amount": 18482
+  },
+  {
+    "report_date": "2025-08-15",
+    "order_count": 8851,
+    "gmv_amount": 203609468,
+    "refund_count": 217,
+    "new_user_count": 383,
+    "atv_amount": 23004
+  },
+  {
+    "report_date": "2025-08-16",
+    "order_count": 11321,
+    "gmv_amount": 225502109,
+    "refund_count": 291,
+    "new_user_count": 376,
+    "atv_amount": 19919
+  },
+  {
+    "report_date": "2025-08-17",
+    "order_count": 11320,
+    "gmv_amount": 204002313,
+    "refund_count": 265,
+    "new_user_count": 781,
+    "atv_amount": 18021
+  },
+  {
+    "report_date": "2025-08-18",
+    "order_count": 9192,
+    "gmv_amount": 167856204,
+    "refund_count": 223,
+    "new_user_count": 589,
+    "atv_amount": 18261
+  },
+  {
+    "report_date": "2025-08-19",
+    "order_count": 10879,
+    "gmv_amount": 270635293,
+    "refund_count": 168,
+    "new_user_count": 539,
+    "atv_amount": 24877
+  },
+  {
+    "report_date": "2025-08-20",
+    "order_count": 9083,
+    "gmv_amount": 220740736,
+    "refund_count": 310,
+    "new_user_count": 502,
+    "atv_amount": 24303
+  },
+  {
+    "report_date": "2025-08-21",
+    "order_count": 9741,
+    "gmv_amount": 184282288,
+    "refund_count": 207,
+    "new_user_count": 452,
+    "atv_amount": 18918
+  },
+  {
+    "report_date": "2025-08-22",
+    "order_count": 9088,
+    "gmv_amount": 223683392,
+    "refund_count": 168,
+    "new_user_count": 361,
+    "atv_amount": 24613
+  },
+  {
+    "report_date": "2025-08-23",
+    "order_count": 11339,
+    "gmv_amount": 276002923,
+    "refund_count": 302,
+    "new_user_count": 882,
+    "atv_amount": 24341
+  },
+  {
+    "report_date": "2025-08-24",
+    "order_count": 12886,
+    "gmv_amount": 261700288,
+    "refund_count": 181,
+    "new_user_count": 779,
+    "atv_amount": 20309
+  },
+  {
+    "report_date": "2025-08-25",
+    "order_count": 10820,
+    "gmv_amount": 221082133,
+    "refund_count": 253,
+    "new_user_count": 578,
+    "atv_amount": 20433
+  },
+  {
+    "report_date": "2025-08-26",
+    "order_count": 10049,
+    "gmv_amount": 224292198,
+    "refund_count": 262,
+    "new_user_count": 382,
+    "atv_amount": 22320
+  },
+  {
+    "report_date": "2025-08-27",
+    "order_count": 10449,
+    "gmv_amount": 191414043,
+    "refund_count": 260,
+    "new_user_count": 630,
+    "atv_amount": 18319
+  },
+  {
+    "report_date": "2025-08-28",
+    "order_count": 10472,
+    "gmv_amount": 209470821,
+    "refund_count": 173,
+    "new_user_count": 534,
+    "atv_amount": 20003
+  },
+  {
+    "report_date": "2025-08-29",
+    "order_count": 10761,
+    "gmv_amount": 265664005,
+    "refund_count": 297,
+    "new_user_count": 321,
+    "atv_amount": 24688
+  },
+  {
+    "report_date": "2025-08-30",
+    "order_count": 12566,
+    "gmv_amount": 293771123,
+    "refund_count": 218,
+    "new_user_count": 890,
+    "atv_amount": 23378
+  },
+  {
+    "report_date": "2025-08-31",
+    "order_count": 11082,
+    "gmv_amount": 267130192,
+    "refund_count": 194,
+    "new_user_count": 781,
+    "atv_amount": 24105
+  },
+  {
+    "report_date": "2025-09-01",
+    "order_count": 10125,
+    "gmv_amount": 235022269,
+    "refund_count": 384,
+    "new_user_count": 584,
+    "atv_amount": 23212
+  },
+  {
+    "report_date": "2025-09-02",
+    "order_count": 8743,
+    "gmv_amount": 227104354,
+    "refund_count": 261,
+    "new_user_count": 803,
+    "atv_amount": 25976
+  },
+  {
+    "report_date": "2025-09-03",
+    "order_count": 8373,
+    "gmv_amount": 182197176,
+    "refund_count": 254,
+    "new_user_count": 641,
+    "atv_amount": 21760
+  },
+  {
+    "report_date": "2025-09-04",
+    "order_count": 9315,
+    "gmv_amount": 217608349,
+    "refund_count": 369,
+    "new_user_count": 464,
+    "atv_amount": 23361
+  },
+  {
+    "report_date": "2025-09-05",
+    "order_count": 9350,
+    "gmv_amount": 199091053,
+    "refund_count": 276,
+    "new_user_count": 595,
+    "atv_amount": 21293
+  },
+  {
+    "report_date": "2025-09-06",
+    "order_count": 12356,
+    "gmv_amount": 315838491,
+    "refund_count": 358,
+    "new_user_count": 863,
+    "atv_amount": 25562
+  },
+  {
+    "report_date": "2025-09-07",
+    "order_count": 11075,
+    "gmv_amount": 239647576,
+    "refund_count": 230,
+    "new_user_count": 558,
+    "atv_amount": 21639
+  },
+  {
+    "report_date": "2025-09-08",
+    "order_count": 9324,
+    "gmv_amount": 176478824,
+    "refund_count": 347,
+    "new_user_count": 713,
+    "atv_amount": 18927
+  },
+  {
+    "report_date": "2025-09-09",
+    "order_count": 10107,
+    "gmv_amount": 248626314,
+    "refund_count": 150,
+    "new_user_count": 855,
+    "atv_amount": 24599
+  },
+  {
+    "report_date": "2025-09-10",
+    "order_count": 9892,
+    "gmv_amount": 210758760,
+    "refund_count": 198,
+    "new_user_count": 830,
+    "atv_amount": 21306
+  },
+  {
+    "report_date": "2025-09-11",
+    "order_count": 9481,
+    "gmv_amount": 217883534,
+    "refund_count": 277,
+    "new_user_count": 752,
+    "atv_amount": 22981
+  },
+  {
+    "report_date": "2025-09-12",
+    "order_count": 8211,
+    "gmv_amount": 161169334,
+    "refund_count": 290,
+    "new_user_count": 434,
+    "atv_amount": 19628
+  },
+  {
+    "report_date": "2025-09-13",
+    "order_count": 12899,
+    "gmv_amount": 261904304,
+    "refund_count": 375,
+    "new_user_count": 796,
+    "atv_amount": 20304
+  },
+  {
+    "report_date": "2025-09-14",
+    "order_count": 11248,
+    "gmv_amount": 205061788,
+    "refund_count": 311,
+    "new_user_count": 545,
+    "atv_amount": 18231
+  },
+  {
+    "report_date": "2025-09-15",
+    "order_count": 10907,
+    "gmv_amount": 210145445,
+    "refund_count": 291,
+    "new_user_count": 314,
+    "atv_amount": 19267
+  },
+  {
+    "report_date": "2025-09-16",
+    "order_count": 10262,
+    "gmv_amount": 218210403,
+    "refund_count": 207,
+    "new_user_count": 416,
+    "atv_amount": 21264
+  },
+  {
+    "report_date": "2025-09-17",
+    "order_count": 9890,
+    "gmv_amount": 252951446,
+    "refund_count": 315,
+    "new_user_count": 457,
+    "atv_amount": 25576
+  },
+  {
+    "report_date": "2025-09-18",
+    "order_count": 10041,
+    "gmv_amount": 255656155,
+    "refund_count": 224,
+    "new_user_count": 821,
+    "atv_amount": 25461
+  },
+  {
+    "report_date": "2025-09-19",
+    "order_count": 10889,
+    "gmv_amount": 219820590,
+    "refund_count": 363,
+    "new_user_count": 794,
+    "atv_amount": 20187
+  },
+  {
+    "report_date": "2025-09-20",
+    "order_count": 11967,
+    "gmv_amount": 238739822,
+    "refund_count": 291,
+    "new_user_count": 448,
+    "atv_amount": 19950
+  },
+  {
+    "report_date": "2025-09-21",
+    "order_count": 11785,
+    "gmv_amount": 230100746,
+    "refund_count": 303,
+    "new_user_count": 820,
+    "atv_amount": 19525
+  },
+  {
+    "report_date": "2025-09-22",
+    "order_count": 8559,
+    "gmv_amount": 213223652,
+    "refund_count": 220,
+    "new_user_count": 724,
+    "atv_amount": 24912
+  },
+  {
+    "report_date": "2025-09-23",
+    "order_count": 9392,
+    "gmv_amount": 239251687,
+    "refund_count": 279,
+    "new_user_count": 573,
+    "atv_amount": 25474
+  },
+  {
+    "report_date": "2025-09-24",
+    "order_count": 8010,
+    "gmv_amount": 162304322,
+    "refund_count": 226,
+    "new_user_count": 893,
+    "atv_amount": 20263
+  },
+  {
+    "report_date": "2025-09-25",
+    "order_count": 10703,
+    "gmv_amount": 234578965,
+    "refund_count": 188,
+    "new_user_count": 757,
+    "atv_amount": 21917
+  },
+  {
+    "report_date": "2025-09-26",
+    "order_count": 10206,
+    "gmv_amount": 223253505,
+    "refund_count": 235,
+    "new_user_count": 865,
+    "atv_amount": 21875
+  },
+  {
+    "report_date": "2025-09-27",
+    "order_count": 12562,
+    "gmv_amount": 280728548,
+    "refund_count": 266,
+    "new_user_count": 629,
+    "atv_amount": 22347
+  },
+  {
+    "report_date": "2025-09-28",
+    "order_count": 12780,
+    "gmv_amount": 249327819,
+    "refund_count": 328,
+    "new_user_count": 544,
+    "atv_amount": 19509
+  },
+  {
+    "report_date": "2025-09-29",
+    "order_count": 10342,
+    "gmv_amount": 217841476,
+    "refund_count": 369,
+    "new_user_count": 720,
+    "atv_amount": 21064
+  },
+  {
+    "report_date": "2025-09-30",
+    "order_count": 8178,
+    "gmv_amount": 168020368,
+    "refund_count": 271,
+    "new_user_count": 690,
+    "atv_amount": 20545
+  },
+  {
+    "report_date": "2025-10-01",
+    "order_count": 9581,
+    "gmv_amount": 248217956,
+    "refund_count": 352,
+    "new_user_count": 455,
+    "atv_amount": 25907
+  },
+  {
+    "report_date": "2025-10-02",
+    "order_count": 10028,
+    "gmv_amount": 257906076,
+    "refund_count": 182,
+    "new_user_count": 814,
+    "atv_amount": 25719
+  },
+  {
+    "report_date": "2025-10-03",
+    "order_count": 10417,
+    "gmv_amount": 215173111,
+    "refund_count": 175,
+    "new_user_count": 750,
+    "atv_amount": 20656
+  },
+  {
+    "report_date": "2025-10-04",
+    "order_count": 11204,
+    "gmv_amount": 248814048,
+    "refund_count": 266,
+    "new_user_count": 315,
+    "atv_amount": 22208
+  },
+  {
+    "report_date": "2025-10-05",
+    "order_count": 12479,
+    "gmv_amount": 239013323,
+    "refund_count": 372,
+    "new_user_count": 458,
+    "atv_amount": 19153
+  },
+  {
+    "report_date": "2025-10-06",
+    "order_count": 8306,
+    "gmv_amount": 180704711,
+    "refund_count": 398,
+    "new_user_count": 571,
+    "atv_amount": 21756
+  },
+  {
+    "report_date": "2025-10-07",
+    "order_count": 9386,
+    "gmv_amount": 215747302,
+    "refund_count": 251,
+    "new_user_count": 382,
+    "atv_amount": 22986
+  },
+  {
+    "report_date": "2025-10-08",
+    "order_count": 9345,
+    "gmv_amount": 231931038,
+    "refund_count": 369,
+    "new_user_count": 846,
+    "atv_amount": 24819
+  },
+  {
+    "report_date": "2025-10-09",
+    "order_count": 9556,
+    "gmv_amount": 244950064,
+    "refund_count": 310,
+    "new_user_count": 799,
+    "atv_amount": 25633
+  },
+  {
+    "report_date": "2025-10-10",
+    "order_count": 10216,
+    "gmv_amount": 186821962,
+    "refund_count": 167,
+    "new_user_count": 540,
+    "atv_amount": 18287
+  },
+  {
+    "report_date": "2025-10-11",
+    "order_count": 12292,
+    "gmv_amount": 288557117,
+    "refund_count": 223,
+    "new_user_count": 532,
+    "atv_amount": 23475
+  }
+]

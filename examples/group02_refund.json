@@ -1,0 +1,12 @@
+{
+  "plan_id": "plan-20261014-022",
+  "goal": "查询 group_02 仿真订单并核验整单退款，不执行打款",
+  "steps": [
+    {"step_id": "s1", "capability_id": "m2.order_tracking",
+     "inputs": {"order_id": {"literal": "2025100003"}}},
+    {"step_id": "s2", "capability_id": "m7.refund_approval", "depends_on": ["s1"],
+     "inputs": {"order_id": {"ref": "s1.data.order_id"},
+                "refund_amount": {"ref": "s1.data.order_amount"},
+                "reason": {"literal": "退货演示"}}}
+  ]
+}

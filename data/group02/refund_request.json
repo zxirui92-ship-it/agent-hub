@@ -1,0 +1,202 @@
+[
+  {
+    "refund_id": "R0001",
+    "order_id": "2025101234",
+    "customer_id": "U10016",
+    "refund_amount": 29900,
+    "refund_reason": "七天无理由",
+    "requested_at": "2025-10-11T00:00+08:00",
+    "approval_status": "pending",
+    "compliance_result": "pending"
+  },
+  {
+    "refund_id": "R0002",
+    "order_id": "2025101235",
+    "customer_id": "U10040",
+    "refund_amount": 129900,
+    "refund_reason": "商品质量问题",
+    "requested_at": "2025-10-10T00:00+08:00",
+    "approval_status": "pending",
+    "compliance_result": "pending"
+  },
+  {
+    "refund_id": "R0003",
+    "order_id": "2025101236",
+    "customer_id": "U10029",
+    "refund_amount": 8900,
+    "refund_reason": "拍错/多拍",
+    "requested_at": "2025-10-09T00:00+08:00",
+    "approval_status": "pending",
+    "compliance_result": "pending"
+  },
+  {
+    "refund_id": "R0004",
+    "order_id": "2025101237",
+    "customer_id": "U10035",
+    "refund_amount": 219900,
+    "refund_reason": "与描述不符",
+    "requested_at": "2025-10-09T00:00+08:00",
+    "approval_status": "pending",
+    "compliance_result": "pending"
+  },
+  {
+    "refund_id": "R0005",
+    "order_id": "2025101238",
+    "customer_id": "U10020",
+    "refund_amount": 45900,
+    "refund_reason": "七天无理由",
+    "requested_at": "2025-10-11T00:00+08:00",
+    "approval_status": "pending",
+    "compliance_result": "pending"
+  },
+  {
+    "refund_id": "R0006",
+    "order_id": "2025101239",
+    "customer_id": "U10013",
+    "refund_amount": 109900,
+    "refund_reason": "物流破损",
+    "requested_at": "2025-10-10T00:00+08:00",
+    "approval_status": "pending",
+    "compliance_result": "pending"
+  },
+  {
+    "refund_id": "R0007",
+    "order_id": "2025101240",
+    "customer_id": "U10037",
+    "refund_amount": 15900,
+    "refund_reason": "未按时发货",
+    "requested_at": "2025-10-11T00:00+08:00",
+    "approval_status": "pending",
+    "compliance_result": "pending"
+  },
+  {
+    "refund_id": "R0008",
+    "order_id": "2025101241",
+    "customer_id": "U10030",
+    "refund_amount": 79900,
+    "refund_reason": "商品质量问题",
+    "requested_at": "2025-10-10T00:00+08:00",
+    "approval_status": "pending",
+    "compliance_result": "pending"
+  },
+  {
+    "refund_id": "R0009",
+    "order_id": "2025101242",
+    "customer_id": "U10025",
+    "refund_amount": 34900,
+    "refund_reason": "七天无理由",
+    "requested_at": "2025-10-12T00:00+08:00",
+    "approval_status": "pending",
+    "compliance_result": "pending"
+  },
+  {
+    "refund_id": "R0010",
+    "order_id": "2025101243",
+    "customer_id": "U10034",
+    "refund_amount": 219900,
+    "refund_reason": "拍错/多拍",
+    "requested_at": "2025-10-11T00:00+08:00",
+    "approval_status": "pending",
+    "compliance_result": "pending"
+  },
+  {
+    "refund_id": "R0011",
+    "order_id": "2025101244",
+    "customer_id": "U10011",
+    "refund_amount": 19900,
+    "refund_reason": "七天无理由",
+    "requested_at": "2025-10-09T00:00+08:00",
+    "approval_status": "pending",
+    "compliance_result": "pending"
+  },
+  {
+    "refund_id": "R0012",
+    "order_id": "2025101245",
+    "customer_id": "U10039",
+    "refund_amount": 159900,
+    "refund_reason": "商品质量问题",
+    "requested_at": "2025-10-09T00:00+08:00",
+    "approval_status": "pending",
+    "compliance_result": "pending"
+  },
+  {
+    "refund_id": "R0013",
+    "order_id": "2025101246",
+    "customer_id": "U10017",
+    "refund_amount": 6900,
+    "refund_reason": "拍错/多拍",
+    "requested_at": "2025-10-08T00:00+08:00",
+    "approval_status": "pending",
+    "compliance_result": "pending"
+  },
+  {
+    "refund_id": "R0014",
+    "order_id": "2025101247",
+    "customer_id": "U10031",
+    "refund_amount": 189900,
+    "refund_reason": "物流破损",
+    "requested_at": "2025-10-10T00:00+08:00",
+    "approval_status": "pending",
+    "compliance_result": "pending"
+  },
+  {
+    "refund_id": "R0015",
+    "order_id": "2025101248",
+    "customer_id": "U10036",
+    "refund_amount": 39900,
+    "refund_reason": "与描述不符",
+    "requested_at": "2025-10-08T00:00+08:00",
+    "approval_status": "pending",
+    "compliance_result": "pending"
+  },
+  {
+    "refund_id": "R0016",
+    "order_id": "2025101249",
+    "customer_id": "U10034",
+    "refund_amount": 89900,
+    "refund_reason": "七天无理由",
+    "requested_at": "2025-10-08T00:00+08:00",
+    "approval_status": "pending",
+    "compliance_result": "pending"
+  },
+  {
+    "refund_id": "R0017",
+    "order_id": "2025101250",
+    "customer_id": "U10019",
+    "refund_amount": 12900,
+    "refund_reason": "未按时发货",
+    "requested_at": "2025-10-08T00:00+08:00",
+    "approval_status": "pending",
+    "compliance_result": "pending"
+  },
+  {
+    "refund_id": "R0018",
+    "order_id": "2025101251",
+    "customer_id": "U10011",
+    "refund_amount": 149900,
+    "refund_reason": "商品质量问题",
+    "requested_at": "2025-10-10T00:00+08:00",
+    "approval_status": "pending",
+    "compliance_result": "pending"
+  },
+  {
+    "refund_id": "R0019",
+    "order_id": "2025101252",
+    "customer_id": "U10029",
+    "refund_amount": 25900,
+    "refund_reason": "拍错/多拍",
+    "requested_at": "2025-10-12T00:00+08:00",
+    "approval_status": "pending",
+    "compliance_result": "pending"
+  },
+  {
+    "refund_id": "R0020",
+    "order_id": "2025101253",
+    "customer_id": "U10010",
+    "refund_amount": 249900,
+    "refund_reason": "与描述不符",
+    "requested_at": "2025-10-11T00:00+08:00",
+    "approval_status": "pending",
+    "compliance_result": "pending"
+  }
+]

@@ -1,0 +1,82 @@
+[
+  {
+    "case": "knowledge",
+    "command": [
+      "python",
+      "-m",
+      "hub_platform",
+      "examples/group02_knowledge.json",
+      "--real-m1",
+      "--real-m4",
+      "--json"
+    ],
+    "exit_code": 0,
+    "status": "completed",
+    "source_kind": "imported_simulation",
+    "sources": [
+      {
+        "entry_id": "F019",
+        "title": "商品保修政策是什么？",
+        "source_file": "faq_knowledge.json"
+      },
+      {
+        "entry_id": "SP001",
+        "title": "七天无理由退货政策",
+        "source_file": "service_policy.json",
+        "effective_date": "2025-01-01"
+      },
+      {
+        "entry_id": "SP006",
+        "title": "价保政策",
+        "source_file": "service_policy.json",
+        "effective_date": "2025-01-01"
+      },
+      {
+        "entry_id": "SP007",
+        "title": "质保与售后维修",
+        "source_file": "service_policy.json",
+        "effective_date": "2025-01-01"
+      }
+    ],
+    "warnings": [
+      "保修口径待确认：F019 小家电保修 2 年；SP007 一般家电保修 1 年，适用范围尚未统一。"
+    ]
+  },
+  {
+    "case": "operations",
+    "command": [
+      "python",
+      "-m",
+      "hub_platform",
+      "examples/group02_operations.json",
+      "--real-m6",
+      "--real-m3",
+      "--json"
+    ],
+    "exit_code": 0,
+    "status": "completed",
+    "fused_data": {
+      "week": "2025-W41",
+      "revenue_amount": 1268000000,
+      "order_count": 66200,
+      "conversion_rate": 0.1402542372881356,
+      "anomaly": "漏斗 UV/详情/加购/下单人数：472000/274000/109000/66200；下单人数/UV 转化率 14.03%。；退款率 2.10%。；同期活动：秋季新品首发、私域社群秒杀、抖音直播带货；仅为同期记录，不证明因果关系。；活动成交额/成本：秋季新品首发：2.4121、私域社群秒杀：2.7308、抖音直播带货：1.6296；不是利润 ROI。活动与周广告成本统计范围不同，不强行对账。"
+    }
+  },
+  {
+    "case": "refund",
+    "command": [
+      "python",
+      "-m",
+      "hub_platform",
+      "examples/group02_refund.json",
+      "--real-m2",
+      "--real-m7",
+      "--json"
+    ],
+    "exit_code": 0,
+    "status": "completed",
+    "order_amount": 12900,
+    "approval_status": "approved"
+  }
+]

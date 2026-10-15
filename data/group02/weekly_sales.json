@@ -1,0 +1,34 @@
+{
+  "2025-W40": {
+    "week": "2025-W40",
+    "gmv_amount": 1392000000,
+    "order_count": 71400,
+    "refund_rate": 0.023,
+    "new_customer_count": 4100,
+    "ad_cost_amount": 286000000
+  },
+  "2025-W41": {
+    "week": "2025-W41",
+    "gmv_amount": 1268000000,
+    "order_count": 66200,
+    "refund_rate": 0.021,
+    "new_customer_count": 3800,
+    "ad_cost_amount": 279000000
+  },
+  "2025-W42": {
+    "week": "2025-W42",
+    "gmv_amount": 1436000000,
+    "order_count": 72800,
+    "refund_rate": 0.024,
+    "new_customer_count": 4500,
+    "ad_cost_amount": 302000000
+  },
+  "2025-W43": {
+    "week": "2025-W43",
+    "gmv_amount": 1512000000,
+    "order_count": 75300,
+    "refund_rate": 0.025,
+    "new_customer_count": 4900,
+    "ad_cost_amount": 318000000
+  }
+}
