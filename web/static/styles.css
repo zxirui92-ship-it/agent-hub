@@ -1474,3 +1474,5 @@ pre.code {
   }
 }
 
+
+.error-message, .error-detail { white-space: pre-wrap; overflow-wrap: anywhere; word-break: break-word; min-width: 0; max-width: 100%; }

@@ -12,6 +12,7 @@ from jsonschema.exceptions import SchemaError, ValidationError
 
 from common.errors import ErrorCode
 from common.iso_week import week_start
+from common.money import is_yuan
 from hub_platform.errors import HubError
 
 _ALLOWED = {
@@ -23,6 +24,8 @@ _TYPES = {"object", "array", "string", "integer", "number", "boolean", "null"}
 
 
 def _iso_week_format(validator, format_name, value, schema):
+    if format_name == 'cny-yuan' and not is_yuan(value):
+        yield ValidationError('金额必须为有限数值（元），最多两位小数且不超过 999999999999.99')
     if format_name == 'iso-week' and isinstance(value, str):
         try:
             week_start(value)
@@ -52,8 +55,8 @@ def check_schema(schema: dict[str, Any], *, root: bool = True) -> None:
     kind = schema.get("type")
     if not isinstance(kind, str) or kind not in _TYPES:
         raise HubError(ErrorCode.UNSUPPORTED_SCHEMA, "Every schema node requires one explicit type")
-    if 'format' in schema and (kind != 'string' or schema['format'] != 'iso-week'):
-        raise HubError(ErrorCode.UNSUPPORTED_SCHEMA, "Only string format=iso-week is supported")
+    if 'format' in schema and (kind, schema['format']) not in {('string', 'iso-week'), ('number', 'cny-yuan')}:
+        raise HubError(ErrorCode.UNSUPPORTED_SCHEMA, "Only string format=iso-week and number format=cny-yuan are supported")
     if root and kind != "object":
         raise HubError(ErrorCode.INVALID_SCHEMA, "Payload and output roots must be objects")
     if kind == "object":

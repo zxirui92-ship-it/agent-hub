@@ -19,7 +19,7 @@ def test_goal_entry_executes_generated_plan(monkeypatch, capsys):
     value = json.loads(capsys.readouterr().out)
     assert value['status'] == 'completed'
     assert value['plan']['steps'][0]['capability_id'] == 'm2.order_tracking'
-    assert value['report']['steps']['s1']['result']['data']['order_amount'] == 69900
+    assert value['report']['steps']['s1']['result']['data']['order_amount'] == 699.0
 
 
 def test_plan_only_prints_plan_without_report(monkeypatch, capsys):

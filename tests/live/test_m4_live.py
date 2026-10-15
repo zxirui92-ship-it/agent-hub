@@ -66,3 +66,41 @@ def test_real_search_through_executor(settings, record_property):
     value = json.loads(data['result'])
     assert value['mode'] == 'live' and value['results']
     assert all(row['source_url'].startswith(('https://', 'http://')) for row in value['results'])
+
+
+@pytest.mark.parametrize('repeat', range(2))
+@pytest.mark.parametrize('query,skill', [
+    ('用 Python 编写一个两数相加的函数。', 'code_gen'),
+    ('请联网搜索阿里云百炼联网搜索的官方文档，并给出网页来源。', 'web_search'),
+])
+def test_reported_m4_requests_end_to_end(settings, query, skill, repeat, record_property):
+    """The reported UI prompts through Router, Skill and platform validation."""
+    from hub_platform.executor import Executor
+    from hub_platform.registry import CapabilityRegistry
+    if not all((settings.llm_api_key, settings.llm_model, settings.llm_base_url)):
+        pytest.skip('LLM service not configured')
+    if skill == 'web_search' and not all((settings.search_api_key, settings.search_url)):
+        pytest.skip('Search not configured')
+    agent = create_agent(settings)
+    registry = CapabilityRegistry()
+    registry.register(agent.manifest, agent)
+    report = Executor(registry).execute({'plan_id': f'plan-20261015-{501+repeat:03d}',
+        'goal': query, 'steps': [{'step_id':'s1', 'capability_id':agent.manifest.capability_id,
+        'inputs': {'query': {'literal': query}}}]})
+    record_property('execution_report', report.model_dump_json())
+    assert report.status == 'completed', report.model_dump_json()
+    data = report.final_results['s1']
+    assert data['skill_name'] == skill
+    result = json.loads(data['result'])
+    assert result['mode'] == 'live'
+    if skill == 'code_gen':
+        assert result['language'].lower() == 'python'
+        # Parsing confirms source syntax without executing generated code.
+        import ast
+        ast.parse(result['code'])
+        assert 'def ' in result['code']
+    else:
+        assert result['results']
+        assert all(row['source_url'].startswith(('https://', 'http://')) for row in result['results'])
+        assert not any(phrase in result['answer'] for phrase in (
+            '无法进行实时联网搜索', '我无法联网', '我不能联网', '无法实时访问互联网'))

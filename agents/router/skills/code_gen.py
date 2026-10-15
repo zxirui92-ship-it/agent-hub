@@ -3,7 +3,8 @@ import json
 
 from agents.router.skills import query_text
 from common.errors import ErrorCode, ServiceError
-from common.llm import TextModel, json_object
+from common.llm import TextModel
+from agents.router.structured import request_object
 
 
 class CodeGenSkill:
@@ -17,9 +18,11 @@ class CodeGenSkill:
                                'code': '# Offline test sample, not model-generated for this request.\nprint("mock")\n'}, ensure_ascii=False)
         if self.model is None:
             raise ServiceError(ErrorCode.TOOL_UNAVAILABLE, 'Code generation service not_configured', retryable=False)
-        value = json_object(self.model.complete(
+        def validate(value):
+            if set(value) != {'language', 'code'} or not all(isinstance(value[k], str) and value[k].strip() for k in value):
+                raise ServiceError(ErrorCode.CONTRACT_MISMATCH, 'Generated code requires exactly language and code, both nonempty strings')
+        value = request_object(self.model,
             'Generate code according to the user request. Return only JSON with exactly language and code, '
-            'both nonempty strings. Explain the language using its conventional name. Do not execute code.', query))
-        if set(value) != {'language', 'code'} or not all(isinstance(value[k], str) and value[k].strip() for k in value):
-            raise ServiceError(ErrorCode.CONTRACT_MISMATCH, 'Generated code requires language and code strings')
+            'both nonempty strings. Escape newlines inside the code JSON string. '
+            'Explain the language using its conventional name. Do not execute code.', query, validate, stage='代码生成')
         return json.dumps({'mode': 'live', **value}, ensure_ascii=False)

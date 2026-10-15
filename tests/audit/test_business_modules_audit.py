@@ -59,7 +59,7 @@ def request(capability, payload, context=None):
 
 
 def fused(week='2026-W41', **overrides):
-    return {'week': week, 'revenue_amount': 125001, 'order_count': 12,
+    return {'week': week, 'revenue_amount': 1250.01, 'order_count': 12,
         'conversion_rate': .03, 'anomaly': 'AUDIT_FACT:源记录不证明因果', **overrides}
 
 
@@ -74,8 +74,8 @@ def registry_of(*modules):
 def source_documents():
     return {
         'order_basic': {'weeks': {
-            '2026-W40': {'gmv_amount': 100001, 'order_count': 10, 'refund_rate': .01},
-            '2026-W41': {'gmv_amount': 125001, 'order_count': 12, 'refund_rate': .02,
+            '2026-W40': {'gmv_amount': 1000.01, 'order_count': 10, 'refund_rate': .01},
+            '2026-W41': {'gmv_amount': 1250.01, 'order_count': 12, 'refund_rate': .02,
                 'anomalies': [{'reason': 'AUDIT_HEAD:' + '事实' * 160 + ':AUDIT_TAIL'}]},
         }},
         'user_behavior': {'weeks': {
@@ -83,8 +83,8 @@ def source_documents():
             '2026-W41': {'conversion_rate': .03, 'uv_count': 100},
         }},
         'marketing_campaign': {'campaigns': [
-            {'week': '2026-W41', 'name': 'AUDIT_CURRENT_CAMPAIGN', 'budget_amount': 101},
-            {'week': '2026-W40', 'name': 'AUDIT_PREVIOUS_CAMPAIGN', 'budget_amount': 99},
+            {'week': '2026-W41', 'name': 'AUDIT_CURRENT_CAMPAIGN', 'budget_amount': 1.01},
+            {'week': '2026-W40', 'name': 'AUDIT_PREVIOUS_CAMPAIGN', 'budget_amount': 0.99},
         ]},
     }
 
@@ -163,7 +163,7 @@ def test_m3_exhaustive_action_order_dependency(actions):
         assert result.status == 'completed'
         assert len(model.calls) == 2
         assert [step['status'] for step in result.data['steps']] == ['completed'] * 4
-        assert '125001 分' in model.calls[1][1]
+        assert '1250.01 元' in model.calls[1][1]
         assert 'AUDIT_FACT' in model.calls[1][1]
     else:
         assert result.status == 'failed' and result.error.code == ErrorCode.CONTRACT_MISMATCH
@@ -188,7 +188,7 @@ def test_m3_analysis_failure_cannot_publish_partial_report(bad, expected_code):
 ])
 def test_m3_valid_adjacent_periods_and_exact_percent_units(current, previous):
     payload = {'fused_data': fused(current), 'previous_fused_data': fused(previous,
-               revenue_amount=100001, order_count=10, conversion_rate=.02)}
+               revenue_amount=1000.01, order_count=10, conversion_rate=.02)}
     before = deepcopy(payload)
     result = WeeklyReportAgent(mode='local').invoke(request('m3.weekly_report', payload))
     assert result.status == 'completed'
@@ -196,7 +196,7 @@ def test_m3_valid_adjacent_periods_and_exact_percent_units(current, previous):
     assert '销售额环比：+25.00%' in report
     assert '订单量环比：+20.00%' in report
     assert '转化率变化：+1.00 个百分点' in report
-    assert '125001 分（1250.01 元）' in report
+    assert '1250.01 元' in report
     assert payload == before
 
 
@@ -228,10 +228,10 @@ def test_m3_nan_metric_must_be_invalid_input(previous_nan):
 
 
 def test_m3_large_integer_cent_display_is_exact():
-    amount = 9007199254740993
+    amount = 999999999999.99
     result = WeeklyReportAgent(mode='local').invoke(request('m3.weekly_report', {'fused_data': fused(revenue_amount=amount)}))
     assert result.status == 'completed'
-    assert f'{amount} 分（90071992547409.93 元）' in result.data['report_markdown']
+    assert '999999999999.99 元' in result.data['report_markdown']
 
 
 # M6: corrupted sources must fail at the source boundary, not produce partial facts.
@@ -240,7 +240,7 @@ def test_m3_large_integer_cent_display_is_exact():
     ('order_basic', 'null_document'), ('user_behavior', 'list_document'),
     ('marketing_campaign', 'null_document'), ('marketing_campaign', 'wrong_collection'),
     ('order_basic', 'missing_required'), ('user_behavior', 'missing_required'),
-    ('order_basic', 'bool_amount'), ('order_basic', 'float_amount'),
+    ('order_basic', 'bool_amount'), ('order_basic', 'excess_precision'),
     ('order_basic', 'negative_orders'), ('order_basic', 'bad_refund_rate'),
     ('order_basic', 'bad_anomalies'), ('order_basic', 'bad_reason'),
     ('user_behavior', 'negative_conversion'), ('user_behavior', 'huge_conversion'),
@@ -264,8 +264,8 @@ def test_m6_corrupted_source_matrix_fails_closed(tmp_path, source_documents, nam
         del current['weeks']['2026-W41']['gmv_amount' if name == 'order_basic' else 'conversion_rate']
     elif mutation == 'bool_amount':
         current['weeks']['2026-W41']['gmv_amount'] = True
-    elif mutation == 'float_amount':
-        current['weeks']['2026-W41']['gmv_amount'] = 125001.0
+    elif mutation == 'excess_precision':
+        current['weeks']['2026-W41']['gmv_amount'] = 1250.001
     elif mutation == 'negative_orders':
         current['weeks']['2026-W41']['order_count'] = -1
     elif mutation == 'bad_refund_rate':
@@ -279,7 +279,7 @@ def test_m6_corrupted_source_matrix_fails_closed(tmp_path, source_documents, nam
     elif mutation == 'huge_conversion':
         current['weeks']['2026-W41']['conversion_rate'] = 1.01
     elif mutation == 'negative_budget':
-        current['campaigns'][0]['budget_amount'] = -1
+        current['campaigns'][0]['budget_amount'] = -0.01
     elif mutation == 'missing_name':
         del current['campaigns'][0]['name']
     elif mutation == 'wrong_campaign_type':
@@ -304,7 +304,7 @@ def test_m6_reactive_updates_coalesce_and_recalculate_without_stale_insights(tmp
     controller.run()
     original_event_count = len(controller.board.update_events)
     orders = controller.board.read('orders')
-    orders['gmv_amount'] = 456
+    orders['gmv_amount'] = 4.56
     orders['refund_rate'] = .25
     controller.board.write('orders', orders, 'audit_update')
     behavior = controller.board.read('behavior')
@@ -314,7 +314,7 @@ def test_m6_reactive_updates_coalesce_and_recalculate_without_stale_insights(tmp
     controller.board.write('behavior', behavior, 'audit_update')
     controller.run()
     view = controller.fused_data()
-    assert view['revenue_amount'] == 456 and view['conversion_rate'] == .5
+    assert view['revenue_amount'] == 4.56 and view['conversion_rate'] == .5
     assert '50.00%' in view['anomaly'] and '25.00%' in view['anomaly']
     assert '3.00%' not in view['anomaly'] and '2.00%' not in view['anomaly']
     new_events = controller.board.update_events[original_event_count:]
@@ -370,8 +370,8 @@ def test_m5_nan_fused_metric_rejected_before_any_model_call():
     assert model.calls == []
 
 
-@pytest.mark.parametrize('amount,decimal', [(0, '0.00'), (1, '0.01'), (99, '0.99'),
-                                           (100, '1.00'), (101, '1.01'), (9007199254740993, '90071992547409.93')])
+@pytest.mark.parametrize('amount,decimal', [(0.0, '0.00'), (0.01, '0.01'), (0.99, '0.99'),
+                                           (1.0, '1.00'), (1.01, '1.01'), (999999999999.99, '999999999999.99')])
 def test_m5_authoritative_budget_cents_exact_in_all_five_prompts(amount, decimal):
     model = FakePromotionLLM()
     req = request('m5.promotion_plan', {'goal': 'audit promotion', 'budget_amount': amount,
@@ -380,8 +380,8 @@ def test_m5_authoritative_budget_cents_exact_in_all_five_prompts(amount, decimal
     result = PromotionAgent(model).invoke(req)
     assert result.status == 'completed' and len(model.calls) == 5
     for prompt, _ in model.calls:
-        assert f'{amount} 分 = {decimal} 元' in prompt
-        assert '125001 分 = 1250.01 元' in prompt
+        assert f'{decimal} 元' in prompt
+        assert '1250.01 元' in prompt
         assert 'TAIL_FACT' in prompt
         assert '角色建议不是事实' in prompt
     aggregate = model.calls[4][0]
@@ -400,7 +400,7 @@ def test_full_business_chain_preserves_facts_and_dependency_order(tmp_path, sour
         'plan_id': 'plan-20261014-901', 'goal': 'audit M6→M3→M5 actual modules',
         'steps': [
             {'step_id': 's4', 'capability_id': 'm5.promotion_plan', 'depends_on': ['s3'], 'inputs': {
-                'goal': {'literal': 'audit next week promotion'}, 'budget_amount': {'literal': 101},
+                'goal': {'literal': 'audit next week promotion'}, 'budget_amount': {'literal': 1.01},
                 'fused_data': {'ref': 's1.data.fused_data'}, 'report_markdown': {'ref': 's3.data.report_markdown'}}},
             {'step_id': 's3', 'capability_id': 'm3.weekly_report', 'depends_on': ['s1', 's2'], 'inputs': {
                 'fused_data': {'ref': 's1.data.fused_data'}, 'previous_fused_data': {'ref': 's2.data.fused_data'}}},
@@ -424,7 +424,7 @@ def test_full_business_chain_preserves_facts_and_dependency_order(tmp_path, sour
     assert report.steps['s4'].inputs['report_markdown'] == markdown
     for prompt, _ in promotion_model.calls:
         assert 'AUDIT_TAIL' in prompt and '无法计算 ROI' in prompt
-        assert '101 分 = 1.01 元' in prompt
+        assert '1.01 元' in prompt
         assert markdown in prompt
     order = [event.step_id for event in report.events if event.status == 'running']
     assert set(order[:2]) == {'s1', 's2'} and order[2:] == ['s3', 's4']
@@ -473,14 +473,14 @@ def test_m5_target_week_survives_into_aggregation():
 
 
 def test_m5_budget_summary_must_not_contradict_exact_budget_fact():
-    amount = 9007199254740993
+    amount = 999999999999.99
     model = FakePromotionLLM()
     result = PromotionAgent(model).invoke(request('m5.promotion_plan', {
         'goal': 'audit budget consistency', 'budget_amount': amount}))
     assert result.status == 'completed'
     for prompt, _ in model.calls[:4]:
-        assert '预算：90071992547409.93 元' in prompt
-        assert '预算：90071992547409.94 元' not in prompt
+        assert '预算：999999999999.99 元' in prompt
+        assert '预算：1000000000000.00 元' not in prompt
 
 
 @pytest.mark.parametrize('token', ['NaN', 'Infinity', '-Infinity', '1e9999', '-1e9999'])

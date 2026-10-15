@@ -15,7 +15,7 @@ from common.llm import ChatModel
 def create_agent(settings: Settings | None = None) -> RouterAgent:
     settings = settings or Settings.from_env()
     mock = settings.mode == 'mock'
-    model = ChatModel(settings.llm_base_url, settings.llm_api_key, settings.llm_model, settings.llm_timeout)
+    model = ChatModel(settings.llm_base_url, settings.llm_api_key, settings.llm_model, settings.llm_timeout, json_mode=True)
     registry = SkillRegistry()
     search = (BailianSearchSkill(settings.search_url, settings.search_api_key, settings.search_model,
               settings.service_timeout, mock=mock) if settings.search_provider == 'bailian' else

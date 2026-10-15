@@ -34,8 +34,9 @@ TRANSLATIONS = {
 
 
 def normalize(value, field, *, excel=False):
-    if excel and field.endswith('_amount'):
-        return Decimal(str(value)) * 100
+    if field.endswith('_amount'):
+        # Excel is yuan; BusinessData.read has already converted archive cents.
+        return Decimal(str(value))
     if field in TRANSLATIONS:
         return TRANSLATIONS[field].get(value, value)
     if field.endswith('_at') or field.endswith('_date'):
@@ -95,7 +96,7 @@ def audit(source, *, workbook=False):
             except ServiceError as exc:
                 report[collection].append({'order_id':oid, 'code':exc.code.value, 'message':str(exc)})
     report['logistics_issue_counts'] = dict(Counter(i['code'] for i in report['logistics_issues']))
-    report['notes'] = ['JSON 金额为整数分；原始 Excel 金额为元。',
+    report['notes'] = ['归档 JSON 金额为整数分；原始 Excel 为元；BusinessData 读取后统一为元进行核对。',
                        '周汇总是独立仿真场景，不能从当前订单和日报明细复算。',
                        '退款历史只用于一致性核对，不导入为可执行审批指令。',
                        '数据库说明写近30天日报，实际文件有60天。']

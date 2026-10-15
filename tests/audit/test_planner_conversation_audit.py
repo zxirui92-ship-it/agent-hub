@@ -48,7 +48,7 @@ def order(order_id="order-low", step_id="s1", depends_on=()):
             "depends_on": list(depends_on), "inputs": {"order_id": {"literal": order_id}}}
 
 
-def refund(order_id="2025101234", amount=69900, step_id="s1"):
+def refund(order_id="2025101234", amount=699.0, step_id="s1"):
     return {"step_id": step_id, "capability_id": "m7.refund_approval", "inputs": {
         "order_id": {"literal": order_id}, "refund_amount": {"literal": amount},
         "reason": {"literal": "Bought by mistake"}}}
@@ -212,9 +212,9 @@ def test_reused_step_id_resolves_current_order_not_history(observed_registry):
     chat.submit("Look up order-low")
     turn = chat.submit("Look up 2025101234 and refund that order")
     assert turn.status == "waiting_approval"
-    assert turn.report.steps["s2"].inputs["refund_amount"] == 69900
-    assert chat.context.history[0].report.steps["s1"].result.data["order_amount"] == 19900
-    assert len(calls) == 3 and calls[-1].payload["refund_amount"] == 69900
+    assert turn.report.steps["s2"].inputs["refund_amount"] == 699.0
+    assert chat.context.history[0].report.steps["s1"].result.data["order_amount"] == 199.0
+    assert len(calls) == 3 and calls[-1].payload["refund_amount"] == 699.0
 
 
 def test_failed_task_history_preserves_partial_results_without_replaying_it(observed_registry):

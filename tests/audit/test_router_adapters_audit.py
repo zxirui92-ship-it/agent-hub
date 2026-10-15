@@ -112,7 +112,7 @@ def test_gateway_requires_exact_payload_fields(payload):
     ('{"skill_name":"kb_qa"}', ErrorCode.CONTRACT_MISMATCH),
     ('{"skill_name":"../../anything","route_reason":"x"}', ErrorCode.UNKNOWN_CAPABILITY),
     ('{"skill_name":"web_search ","route_reason":"x"}', ErrorCode.UNKNOWN_CAPABILITY),
-    ('```json\n{"skill_name":"kb_qa","route_reason":"x"}\n```', ErrorCode.CONTRACT_MISMATCH),
+    ('explanation\n```json\n{"skill_name":"kb_qa","route_reason":"x"}\n```', ErrorCode.CONTRACT_MISMATCH),
     ('{"skill_name":null,"route_reason":"Multiple unrelated tasks"}', ErrorCode.UNKNOWN_CAPABILITY),
 ])
 def test_adversarial_routes_do_not_dispatch(raw, expected):
@@ -384,14 +384,14 @@ def test_real_supplied_png_base64_and_mixed_bailian_text_image_are_preserved():
     "null", "[]", "not json", '"text"', '{}', '{"language":"python"}',
     '{"language":"python","code":true}', '{"language":"python","code":"  "}',
     '{"language":"","code":"print(1)"}', '{"language":"python","code":"pass","execute":true}',
-    '```json\n{"language":"python","code":"pass"}\n```',
+    'explanation\n```json\n{"language":"python","code":"pass"}\n```',
 ])
 def test_code_generator_rejects_incomplete_or_extra_fields(raw):
     model = FakeModel(raw)
     with pytest.raises(ServiceError) as caught:
         CodeGenSkill(model).run({"query": "generate code"})
     assert caught.value.code == ErrorCode.CONTRACT_MISMATCH
-    assert len(model.calls) == 1
+    assert len(model.calls) == 2
 
 
 @pytest.mark.parametrize("language", ["python", "bash", "javascript"])

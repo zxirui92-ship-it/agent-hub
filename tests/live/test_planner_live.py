@@ -28,7 +28,7 @@ def test_real_planner_semantics(registry, case, record_property):
         assert report.status in ('completed', 'waiting_approval'), report.model_dump_json()
         if case['case_id'] == 'operations_promotion':
             promotion = next(item for item in report.steps.values() if item.capability_id == 'm5.promotion_plan')
-            assert promotion.inputs['budget_amount'] == 10000000
+            assert promotion.inputs['budget_amount'] == 100000.0
             assert 'report_markdown' in promotion.inputs
 
 

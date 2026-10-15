@@ -36,7 +36,13 @@ class BailianSearchSkill:
         except ValueError as exc:
             raise ServiceError(ErrorCode.INVALID_INPUT, str(exc), retryable=False) from exc
         response = self.transport(url, {'model': self.model,
-            'input': {'messages': [{'role': 'user', 'content': query}]},
+            'input': {'messages': [
+                {'role': 'system', 'content':
+                 '你是公开网页搜索助手。本次请求已启用服务商联网搜索。请根据本次搜索提供的证据回答，'
+                 '保留来源引用，不要把公开网页称为企业知识库。已获得检索证据时不要声称无法联网。'
+                 '如果结果不足以回答或没有找到指定官方文档，明确说明未找到直接证据；'
+                 '不得编造网址、来源或声称已阅读未提供的网页全文。'},
+                {'role': 'user', 'content': query}]},
             'parameters': {'result_format': 'message', 'enable_search': True,
                 'search_options': {'forced_search': True, 'enable_source': True,
                                    'enable_citation': True, 'citation_format': '[ref_<number>]'}}},

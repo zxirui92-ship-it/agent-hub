@@ -58,9 +58,9 @@ def test_live_examples_use_current_shared_order_and_budget(monkeypatch):
     monkeypatch.setenv('HUB_DATA_DIR', 'data/group02')
     examples = server.build_examples('real')
     assert examples['m7.refund_approval']['order_id'] == '2025100004'
-    assert examples['m7.refund_approval']['refund_amount'] == 109900
-    assert examples['m5.promotion_plan']['budget_amount'] == 1000000
-    assert examples['m3.weekly_report']['fused_data']['revenue_amount'] == 1268000000
+    assert examples['m7.refund_approval']['refund_amount'] == 1099.0
+    assert examples['m5.promotion_plan']['budget_amount'] == 10000.0
+    assert examples['m3.weekly_report']['fused_data']['revenue_amount'] == 12680000.0
 
 
 @pytest.mark.parametrize('http_app', [True], indirect=True)
@@ -68,7 +68,7 @@ def test_live_examples_use_current_shared_order_and_budget(monkeypatch):
 def test_http_real_refund_wait_and_review(http_app, approved):
     _, session = http_app('/api/session', {})
     _, report = http_app('/api/invoke', {**session, 'capability_id':'m7.refund_approval',
-        'payload':{'order_id':'2025100004', 'refund_amount':109900, 'reason':'买错了'}})
+        'payload':{'order_id':'2025100004', 'refund_amount':1099.0, 'reason':'买错了'}})
     assert report['status'] == 'waiting_approval'
     code, final = http_app('/api/invoke/review', {**session, 'task_id':report['task_id'],
         'step_id':'s1', 'approved':approved, 'reviewer':'测试审核员', 'material_complete':True})
@@ -81,7 +81,7 @@ def test_http_real_refund_wait_and_review(http_app, approved):
 def test_http_reset_rotates_session_and_drops_direct_wait(http_app):
     _, session = http_app('/api/session', {})
     _, report = http_app('/api/invoke', {**session, 'capability_id':'m7.refund_approval',
-        'payload':{'order_id':'2025100004', 'refund_amount':109900, 'reason':'买错了'}})
+        'payload':{'order_id':'2025100004', 'refund_amount':1099.0, 'reason':'买错了'}})
     _, context = http_app('/api/reset', session)
     assert context['session_id'] != session['session_id']
     assert http_app('/api/context?session_id=' + session['session_id'])[0] == 404

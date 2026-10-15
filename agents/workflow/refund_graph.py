@@ -22,6 +22,7 @@ from common.order_data import order_fact
 from common.order_policy import RISK_LEVELS
 from common.business_data import configured_data
 from common.refund_contract import refund_manifest
+from common.money import is_yuan
 from hub_platform.errors import HubError
 from hub_platform.schema import validate_data
 
@@ -47,7 +48,7 @@ class RefundWorkflow:
     def _config(thread_id):
         return {'configurable': {'thread_id': thread_id}}
 
-    def run(self, order_id: str, reason: str, *, refund_amount: int,
+    def run(self, order_id: str, reason: str, *, refund_amount: float,
             thread_id: str | None = None) -> dict:
         """Independent local workflow entry; new runs need a fresh thread id."""
         thread_id = thread_id or f'workflow-{uuid4().hex}'
@@ -56,13 +57,13 @@ class RefundWorkflow:
             raise ServiceError(ErrorCode.INVALID_INPUT, 'thread_id 已存在，请通过 resume 恢复', retryable=False)
         fact = deepcopy(self.order_loader(order_id))
         if (not isinstance(fact, dict)
-                or type(fact.get('order_amount')) is not int or fact['order_amount'] <= 0
+                or not is_yuan(fact.get('order_amount')) or fact['order_amount'] <= 0
                 or not isinstance(fact.get('order_status'), str)
                 or fact['order_status'] not in REFUNDABLE_ORDER_STATUS | NON_REFUNDABLE_ORDER_STATUS
                 or not isinstance(fact.get('risk_level', 'normal'), str)
                 or fact.get('risk_level', 'normal') not in RISK_LEVELS):
             raise ServiceError(ErrorCode.CONTRACT_MISMATCH, '订单来源金额、状态或风险等级不符合契约', retryable=False)
-        if type(refund_amount) is not int or refund_amount <= 0 or refund_amount != fact['order_amount']:
+        if not is_yuan(refund_amount) or refund_amount <= 0 or refund_amount != fact['order_amount']:
             raise ServiceError(ErrorCode.INVALID_INPUT, '仅支持整单退款；refund_amount 必须等于订单事实 order_amount', retryable=False)
         state = new_state(order_id, reason, thread_id)
         state.update(order_snapshot=fact, max_reflection=3)
@@ -139,7 +140,7 @@ class RefundWorkflow:
             metadata = {'continuation_token': token,
                         'waiting_reason': state.get('reflection_notes') or (
                             '高风险订单，等待人工审核及完整退货材料。' if state.get('risk_level') == 'high_risk'
-                            else '金额超过 50000 分，等待人工审核。')}
+                            else '金额超过 500 元，等待人工审核。')}
         return result_for(request, status='waiting_approval' if waiting else 'completed', data=data, **metadata)
 
     def _register_pending(self, request: AgentRequest, thread_id: str, result: AgentResult) -> None:
@@ -229,7 +230,7 @@ def submit_decision(continuation_token: str, **decision) -> AgentResult:
 def main(argv=None):
     parser = argparse.ArgumentParser(description='M7 独立本地退款审批图（不执行打款）')
     parser.add_argument('--order-id', default='order-low')
-    parser.add_argument('--refund-amount', type=int, default=19900)
+    parser.add_argument('--refund-amount', type=float, default=199.0)
     parser.add_argument('--reason', default='商品退货')
     parser.add_argument('--manifest', action='store_true')
     args = parser.parse_args(argv)

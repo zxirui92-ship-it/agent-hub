@@ -302,7 +302,7 @@ ErrorDetail 还包含 trace_id、task_id、可选 request_id/step_id。模块失
 | `_id`                        | 业务对象标识           | `order_id`、`customer_id`、`sku_id`         |
 | `_at`                        | 时间点，ISO 8601 含时区 | `created_at`、`paid_at`                    |
 | `_date`                      | 日期，`YYYY-MM-DD`  | `report_date`                             |
-| `_amount`                    | 金额，**整数，单位「分」**  | `refund_amount`、`budget_amount`           |
+| `_amount`                    | 金额，**数值，单位「元」，两位小数**  | `refund_amount`、`budget_amount`           |
 | `_count`                     | 计数，整数            | `order_count`、`retry_count`               |
 | `_status`                    | 状态，取值见 §8        | `order_status`、`approval_status`          |
 | `_url`                       | 链接               | `source_url`、`image_url`                  |
@@ -310,8 +310,9 @@ ErrorDetail 还包含 trace_id、task_id、可选 request_id/step_id。模块失
 
 ### 10.2 金额与时间的强制约定
 
-- **金额一律用整数「分」**，字段名以 `_amount` 结尾。禁止用浮点数表示金额。展示层负责转「元」。  
-  例：退款 500 元写 `50000`，M7 阈值判断写 `refund_amount <= 50000`。
+- **金额一律以人民币「元」传递**，字段名以 `_amount` 结尾，JSON `number`（Python int/float，拒绝 bool）。最多两位小数，页面固定显示两位；例：退款 500 元写 `500.00`，M7 阈值为 `refund_amount <= 500.00`。计算金额使用 Decimal 四舍五入（ROUND_HALF_UP），禁止 int 截断。输入超过两位小数时拒绝，不静默改写订单或退款金额。
+- 当前金额上限为 `999999999999.99` 元；禁止 NaN/Infinity。JSON 数值本身不保留末尾零（500.00 可能序列化为 500.0），展示层统一补足两位。
+- group02 来源归档保留整数分及原始哈希，BusinessData 读取边界显式换算一次；公共接口和维护中的 common/data fixtures 全部为元，不能根据数值大小猜单位。
 - **时间一律用 ISO 8601 字符串并带时区**，如 `2026-10-12T16:05:00+08:00`。禁止 Unix 时间戳裸整数、禁止 `10/12/2026` 之类的本地格式。
 - **周次用 ISO 周字符串**，字段名 `week`，格式 `YYYY-Www`（如 `2026-W41`），周内两位补零。
 
@@ -329,7 +330,7 @@ ErrorDetail 还包含 trace_id、task_id、可选 request_id/step_id。模块失
 
 结果类型统一：M1 两字段为 str；M2 标识/状态/追踪号/终止原因为 str，actions/observations 为 list[str]；M3 week/report_markdown 为 str、steps 为对象数组，每项含 step_id/description/status/result_summary/duration_ms（业务契约 2.0）；M4 三字段均为 str（result 可为 Skill 的 JSON 文本）；M5 plan_markdown 为 str、roles 为四角色数组，每项含 role/contribution/rationale，角色值为 product/operation/data/service；M6 fused_data 为对象、field_definitions/update_events 为 list[str]；M7 request_id/approval_status 为 str、node_trace 为含 node_name 的对象数组、state_view 为对象。
 
-M2 补充 order_amount（整数分）；M7 真实流程和 Mock 都使用本地订单样例，仅支持整单退款，refund_amount 必须等于共享订单事实的 order_amount；部分退款和真实打款不在当前范围。M7.data.request_id 是 refund- 前缀的退款申请 ID，AgentResult.request_id 是 req- 前缀的模块调用 ID，二者不得混用。M7 业务契约 2.0 的 approval_status 为 approved/rejected/waiting_approval，内部尚未审核的状态为 pending；真实模块支持同进程 token 恢复，Mock 不支持。
+M2 补充 order_amount（元（最多两位小数））；M7 真实流程和 Mock 都使用本地订单样例，仅支持整单退款，refund_amount 必须等于共享订单事实的 order_amount；部分退款和真实打款不在当前范围。M7.data.request_id 是 refund- 前缀的退款申请 ID，AgentResult.request_id 是 req- 前缀的模块调用 ID，二者不得混用。M7 业务契约 2.0 的 approval_status 为 approved/rejected/waiting_approval，内部尚未审核的状态为 pending；真实模块支持同进程 token 恢复，Mock 不支持。
 
 各模块 `output_schema` **必须**覆盖上表字段，名字不得改动 —— 这是平台 Plan 中 `ref` 表达式能通过校验的前提。
 
@@ -467,7 +468,7 @@ tests/                      # 测试
 | `pass`、`fail`（作为审核结果） | `approved`、`rejected` |
 | `time`、`timestamp`（日志） | `ts` |
 | `msg`、`message`（日志） | `error_code` + `error.message` |
-| `money`、`price`、`fee` | `{业务}_amount`（整数分） |
+| `money`、`price`、`fee` | `{业务}_amount`（元（最多两位小数）） |
 | `module1`、`agent1`、`m01` | `m1` |
 | `taskId`、`requestId`、`traceId` | `task_id`、`request_id`、`trace_id` |
 | `fetch_`、`do_`、`handle_`、`check_`（工具动词） | `get_` / `query_` / `lookup_` |
@@ -483,7 +484,7 @@ tests/                      # 测试
 - [ ] 模块已暴露 `invoke(request: AgentRequest) -> AgentResult`。
 - [ ] `status` 只返回 `completed` / `failed` / `waiting_approval`，无 `done`。
 - [ ] 输出字段与 §10.3 的必填清单一致，名字未改。
-- [ ] 金额字段是整数分，时间字段是带时区的 ISO 8601。
+- [ ] 金额字段是元（最多两位小数），时间字段是带时区的 ISO 8601。
 - [ ] 错误码全部来自 §9 表，未自定义。
 - [ ] 工具名动词来自 §5.1 白名单。
 - [ ] 日志键名来自 §12 词表。
@@ -509,8 +510,11 @@ tests/                      # 测试
 | 版本 | 日期 | 变更内容 | 负责人 |
 | --- | --- | --- | --- |
 | v1.2 | 2026-10-14 | M1/M2 可选输入和会话 ID 来源、M6 数据口径及 JSON 文本事件；共享业务 Schema 和模块诊断字段说明 | 本轮接入 |
+| v1.2 | 2026-10-15 | 用户协商变更：前后端金额统一为元、两位小数，保留原始来源归档；M4 程序校验后最多修正一次 | 本轮开发 |
 | v1.1 | 2026-10-12 | 本轮用户授权迁移：修正 ICD 事实、关联字段、错误码、无恢复例外、Skill 特例、类型与状态边界、金额事实和日志扩展；候选契约仍待团队冻结 | 本轮开发 |
 | v1.0 | 2026-10-12 | 首版草案：确立模块代号、能力 ID 清单、状态词表、错误码表、字段与日志命名 | 待指定 |
 
 
-2026-10-15 整合补充：M2 Manifest 1.2 保留核心字段，tracking_number 可为空，仅用于明确的物流 unavailable/inconsistent；可选 logistics_availability/warnings 表达物流证据状态与原因。已知订单仍返回实际整数分金额和状态，未知订单/畸形来源仍失败。M7 接受 group02 的 completed、watch，并明确拒绝 pending_payment/refunding 等不可退款状态；枚举集中于 common/order_policy.py。
+2026-10-15 整合补充：M2 Manifest 1.2 保留核心字段，tracking_number 可为空，仅用于明确的物流 unavailable/inconsistent；可选 logistics_availability/warnings 表达物流证据状态与原因。已知订单仍返回实际元（最多两位小数）金额和状态，未知订单/畸形来源仍失败。M7 接受 group02 的 completed、watch，并明确拒绝 pending_payment/refunding 等不可退款状态；枚举集中于 common/order_policy.py。
+
+2026-10-15 金额迁移生效：M2=2.0、M3=3.0、M5=3.0、M6=2.0、M7=3.0；M1/M4 版本不变。此前分单位的示例与验收属于历史记录，当前调用以本节及 interface_contract.md 为准。

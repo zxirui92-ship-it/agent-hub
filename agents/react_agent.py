@@ -13,6 +13,7 @@ from pathlib import Path
 from uuid import uuid4
 
 from dotenv import load_dotenv
+from common.money import yuan_schema
 from common.contracts import AgentRequest, AgentResult
 from common.customer_contract import order_manifest, obj, TEXT, LOGISTICS_FIELDS
 from common.errors import ErrorCode, ServiceError
@@ -24,7 +25,7 @@ from common.business_data import configured_data
 from hub_platform.errors import HubError
 from hub_platform.schema import validate_data
 
-ORDER_FACT = obj(order_amount={'type': 'integer', 'minimum': 0}, order_status=TEXT, tracking_number={'type': 'string'})
+ORDER_FACT = obj(order_amount=yuan_schema(), order_status=TEXT, tracking_number={'type': 'string'})
 
 
 def validate_logistics_evidence(fact):

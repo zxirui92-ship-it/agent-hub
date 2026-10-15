@@ -16,7 +16,7 @@ from tests.contract.test_contracts import request_for
 from tests.integration.test_prd_completion import approval_plan, decision, replacement_registry
 
 DATA = Path(__file__).resolve().parents[2] / 'data/group02'
-ORDERS = json.loads((DATA/'order_basic.json').read_text(encoding='utf-8'))
+ORDERS = BusinessData(DATA).read('order_basic')
 ENTRIES = BusinessData(DATA).knowledge_entries()
 
 
@@ -58,7 +58,7 @@ def test_every_imported_refund_has_a_business_outcome_or_explicit_source_conflic
     assert result.status in ('completed','waiting_approval'), result.model_dump_json()
     if fact['order_status'] in ('pending_payment','refunding','refunded','canceled'):
         assert result.data['approval_status'] == 'rejected'
-    elif fact['order_amount'] > 50000 or fact['risk_level'] == 'high_risk':
+    elif fact['order_amount'] > 500.0 or fact['risk_level'] == 'high_risk':
         assert result.status == 'waiting_approval'
         final = agent.submit_decision(result.continuation_token, approved=True,
                                       reviewer='模拟审核员', material_complete=True)
@@ -97,6 +97,6 @@ def test_unknown_order_remains_not_found(monkeypatch):
 
 def test_refund_trace_preserves_cent_precision_and_large_amounts():
     from agents.workflow.formatting import format_amount
-    assert format_amount(50001, digits=0) == '500.01 元'
-    assert format_amount(50000, digits=0) == '500 元'
-    assert format_amount(9007199254740993) == '90071992547409.93 元'
+    assert format_amount(500.01, digits=0) == '500.01 元'
+    assert format_amount(500.0, digits=0) == '500 元'
+    assert format_amount(999999999999.99) == '999999999999.99 元'

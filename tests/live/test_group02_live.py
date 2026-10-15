@@ -66,10 +66,10 @@ def test_m2_live_good_order_and_source_conflict(configured,record_property,order
     assert result.status=='completed'
     assert result.data['logistics_availability']==expected
     if expected=='available':
-        assert result.data['order_amount']==12900 and result.data['order_status']=='delivered'
+        assert result.data['order_amount']==129.0 and result.data['order_status']=='delivered'
         assert set(result.data['actions'])=={'query_order','query_logistics'}
     else:
-        assert result.data['order_amount']==239700 and result.data['tracking_number']==''
+        assert result.data['order_amount']==2397.0 and result.data['tracking_number']==''
         assert result.data['warnings'] and '早于' in result.data['warnings'][0]
 
 
@@ -99,9 +99,9 @@ def test_dynamic_two_week_report_and_promotion(configured,record_property):
     assert weekly.inputs['previous_fused_data']['week']=='2025-W40'
     assert '-8.91%' in weekly.result.data['report_markdown']
     promotion=next(s for s in steps if s.capability_id=='m5.promotion_plan')
-    assert promotion.inputs['budget_amount']==1000000
+    assert promotion.inputs['budget_amount']==10000.0
     assert len(promotion.result.data['roles'])==4
-    assert '19154 分 = 191.54 元' in promotion.result.data['plan_markdown']
+    assert '191.54 元' in promotion.result.data['plan_markdown']
     assert '2025-10-13（周一）' in promotion.result.data['plan_markdown']
 
 
@@ -127,7 +127,7 @@ def test_live_group02_refund_continues_after_explicit_review(configured, record_
     record_property('waiting_turn', first.model_dump_json())
     assert first.status == 'waiting_approval', first.model_dump_json()
     waiting = next(s for s in first.report.steps.values() if s.capability_id == 'm7.refund_approval')
-    assert waiting.inputs['refund_amount'] == 109900
+    assert waiting.inputs['refund_amount'] == 1099.0
     faq_steps = [s for s in first.report.steps.values() if s.capability_id == 'm1.faq_chat']
     assert faq_steps and all(s.status == 'pending' for s in faq_steps)
     second = chat.review(waiting.step_id, {'approved':True, 'reviewer':'联网验收模拟审核员', 'material_complete':False})

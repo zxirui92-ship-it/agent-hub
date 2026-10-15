@@ -17,6 +17,7 @@ from pathlib import Path
 from uuid import uuid4
 
 from dotenv import load_dotenv
+from common.money import yuan_schema
 from common.contracts import AgentRequest, AgentResult
 from common.business_data import configured_data
 from common.weekly_data import campaign_summary, insight_summary, fused_view
@@ -31,7 +32,7 @@ from hub_platform.schema import validate_data
 FIXTURES = files('common').joinpath('fixtures', 'm3')
 FIELD_DEFINITIONS = [
     'week：ISO 周；输入必须显式指定。本地周汇总样例，非生产实时数据。',
-    'revenue_amount：订单周汇总 gmv_amount，整数分；本视图沿用成交金额口径，不表示会计确认收入。',
+    'revenue_amount：订单周汇总 gmv_amount，元（最多两位小数）；本视图沿用成交金额口径，不表示会计确认收入。',
     'order_count：订单周汇总订单量，整数单。',
     'conversion_rate：行为源已提供的 0–1 比率；缺少购买 UV，不能用订单量/UV 替代。',
     'anomaly：源记录异常与融合洞察、数据缺口；营销预算不是实际支出，不能据此计算 ROI。',
@@ -63,9 +64,9 @@ class WeeklySource:
             if week not in orders or week not in behavior:
                 raise ServiceError(ErrorCode.NOT_FOUND, f'M6 周次 {week} 缺少订单或行为样例', retryable=False)
             order, funnel = orders[week], behavior[week]
-            money = {'type': 'integer', 'minimum': 0}
+            money = yuan_schema()
             validate_data(order, {'type': 'object', 'required': ['gmv_amount', 'order_count', 'refund_rate'],
-                'properties': {'gmv_amount': money, 'order_count': money,
+                'properties': {'gmv_amount': money, 'order_count': {'type': 'integer', 'minimum': 0},
                                'refund_rate': {'type': 'number', 'minimum': 0, 'maximum': 1}}}, ErrorCode.CONTRACT_MISMATCH)
             validate_data(funnel, {'type': 'object', 'required': ['conversion_rate'],
                 'properties': {'conversion_rate': {'type': 'number', 'minimum': 0, 'maximum': 1}}}, ErrorCode.CONTRACT_MISMATCH)

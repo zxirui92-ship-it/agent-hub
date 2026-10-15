@@ -112,12 +112,12 @@ def test_resume_preserves_ids_completed_steps_and_explicit_business_rejection(lo
     assert first.status == 'waiting_approval' and first.steps['s4'].status == 'completed'
     request_id = first.steps['s2'].request_id
     # Returned reports are snapshots, not writable executor state.
-    first.steps['s1'].result.data['order_amount'] = -1
+    first.steps['s1'].result.data['order_amount'] = -0.01
     final = executor.resume(first.task_id,'s2',decision(approved=approved))
     assert final.status == 'completed' and final.steps['s3'].status == 'completed'
     assert final.task_id == first.task_id and final.trace_id == first.trace_id
     assert final.steps['s2'].request_id == request_id
-    assert final.steps['s1'].result.data['order_amount'] == 69900
+    assert final.steps['s1'].result.data['order_amount'] == 699.0
     assert final.steps['s2'].result.data['approval_status'] == ('approved' if approved else 'rejected')
     assert counts == {'m2.order_tracking':1,'m7.refund_approval':1,'m1.faq_chat':2}
     assert any('reviewer=测试审核员' in e.reason for e in final.events)
@@ -233,7 +233,7 @@ def test_history_review_and_reset_have_explicit_lifecycle(load_plan):
 def test_multiple_waiting_branches_resume_independently(load_plan):
     plan=approval_plan(load_plan)
     plan['steps'].append({'step_id':'s5','capability_id':'m7.refund_approval',
-        'inputs':{'order_id':{'literal':'2025101234'},'refund_amount':{'literal':69900},'reason':{'literal':'另一分支'}}})
+        'inputs':{'order_id':{'literal':'2025101234'},'refund_amount':{'literal':699.0},'reason':{'literal':'另一分支'}}})
     executor=Executor(replacement_registry(RefundWorkflow()))
     first=executor.execute(plan)
     second=executor.resume(first.task_id,'s2',decision())

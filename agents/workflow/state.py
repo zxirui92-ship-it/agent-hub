@@ -18,13 +18,13 @@ class RefundState(TypedDict, total=False):
     thread_id: str
     customer_id: str
     customer_name: str
-    refund_amount: int
-    order_amount: int
+    refund_amount: float
+    order_amount: float
     product_name: str
     order_status: str
     risk_level: str
     risk_note: str
-    auto_approve_amount: int
+    auto_approve_amount: float
     amount_branch: str
     requires_manual: bool
     human_decision: str
@@ -44,7 +44,7 @@ class RefundState(TypedDict, total=False):
     rollback_log: Annotated[List[str], operator.add]
 
 def new_state(order_id: str, reason: str, thread_id: str) -> RefundState:
-    return RefundState(order_id=order_id, reason=reason, thread_id=thread_id, refund_amount=0, order_amount=0, auto_approve_amount=50000, amount_branch='', reflection_count=0, compliance_passed=False, material_complete=False, requires_manual=False, human_decision='', approval_status='pending', approval_mode='', decision='pending', history=[f'[受理] 收到退款申请：订单 {order_id}，原因「{reason}」'], node_trace=[], rollback_log=[])
+    return RefundState(order_id=order_id, reason=reason, thread_id=thread_id, refund_amount=0, order_amount=0, auto_approve_amount=500.0, amount_branch='', reflection_count=0, compliance_passed=False, material_complete=False, requires_manual=False, human_decision='', approval_status='pending', approval_mode='', decision='pending', history=[f'[受理] 收到退款申请：订单 {order_id}，原因「{reason}」'], node_trace=[], rollback_log=[])
 
 def summarize(state: Dict[str, Any]) -> str:
     return f"订单={state.get('order_id')} 金额={format_amount(state.get('refund_amount', 0))} 阈值={format_amount(state.get('auto_approve_amount', 0))} 分支={state.get('amount_branch') or '—'} 审核={state.get('approval_status')} 合规={('通过' if state.get('compliance_passed') else '未通过')} 反思次数={state.get('reflection_count')} 决策={state.get('decision') or 'pending'}"

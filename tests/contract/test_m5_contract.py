@@ -16,7 +16,7 @@ CAPABILITY = 'm5.promotion_plan'
 
 def test_real_and_mock_share_manifest_and_result_contract():
     fake = FakeLLM()
-    request = request_for(CAPABILITY, {'goal': '双十一大促', 'budget_amount': 100000})
+    request = request_for(CAPABILITY, {'goal': '双十一大促', 'budget_amount': 1000.0})
     # Context metadata must not override the platform's authoritative ID.
     request.context['trace_id'] = 'old-upstream-trace'
     before = request.model_dump()
@@ -35,7 +35,7 @@ def test_real_and_mock_share_manifest_and_result_contract():
 @pytest.mark.parametrize('payload', [
     {}, {'report': 'old report'}, {'goal': 'x', 'report': 'old report'},
     {'goal': ''}, {'goal': '  '}, {'goal': 12}, {'goal': 'x', 'extra': True},
-    {'goal': 'x', 'budget_amount': -1}, {'goal': 'x', 'budget_amount': 100.0},
+    {'goal': 'x', 'budget_amount': -0.01}, {'goal': 'x', 'budget_amount': 1.001},
     {'goal': 'x', 'budget_amount': True}, {'goal': 'x', 'budget_amount': '100'},
     {'goal': 'x', 'week': '2026-W54'}, {'goal': 'x', 'report_markdown': None},
     {'goal': 'x', 'week': '2025-W53'}, {'goal': 'x', 'week': '0000-W01'},

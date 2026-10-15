@@ -69,7 +69,7 @@ M3/M7 可先离线运行：
 ```powershell
 # 在 D:\模组\agent-hub 执行；不调用外部模型或支付接口
 .\.venv\Scripts\python.exe -m agents.plan_execute --week 2026-W41 --mode local
-.\.venv\Scripts\python.exe -m agents.workflow.refund_graph --order-id order-low --refund-amount 19900
+.\.venv\Scripts\python.exe -m agents.workflow.refund_graph --order-id order-low --refund-amount 199.00
 $env:M3_MODE='local'
 .\.venv\Scripts\python.exe -m hub_platform tests/fixtures/operations.json --real-m3 --json
 .\.venv\Scripts\python.exe -m hub_platform tests/fixtures/refund_waiting.json --real-m7 --json
@@ -151,14 +151,14 @@ $env:M4_MODE='mock'
 ## 契约要点
 
 - 七个规定 ID 从 `m1.faq_chat` 到 `m7.refund_approval`，无旧 ID 映射。
-- 金额用整数分；M2/M7 共用订单 Fixture，整单退款必须与订单金额一致，50000 分为普通风险订单自动审批边界；高风险订单一律人工审核。
+- 金额用元（最多两位小数）；M2/M7 共用订单 Fixture，整单退款必须与订单金额一致，500.00元为普通风险订单自动审批边界；高风险订单一律人工审核。
 - task/request/trace ID 使用规定前缀与小写 hex；step_id=s1 等。Fixture 的经营链仍故意打乱数组顺序。
 - waiting_approval 不是完成或失败。无恢复能力时 token 必须为空；相关下游等待，无关分支继续。
 - M4 data 为 `skill_name`、`result`、`route_reason` 三个字符串；result 内 JSON 文本表示 Skill 业务结果。
 
 ## M5 本地接口统一
 
-来源、字段迁移与验证记录见 `docs/m5_interface_alignment.md`。M5 与 M5 Mock 共用 `common/promotion_contract.py`：必填 `goal`，可选 `week`、`budget_amount`（整数分）、`report_markdown`、`fused_data`；返回 `plan_markdown` 和四角色 `roles` 数组。旧版 `report` 入参及 `source_report` 输出已移除，现有经营链 Fixture 已迁移。
+来源、字段迁移与验证记录见 `docs/m5_interface_alignment.md`。M5 与 M5 Mock 共用 `common/promotion_contract.py`：必填 `goal`，可选 `week`、`budget_amount`（元（最多两位小数））、`report_markdown`、`fused_data`；返回 `plan_markdown` 和四角色 `roles` 数组。旧版 `report` 入参及 `source_report` 输出已移除，现有经营链 Fixture 已迁移。
 
 以下命令在本项目根目录 `D:\模组\agent-hub` 执行：
 
@@ -228,7 +228,7 @@ check_wheel.py 会在源码目录外安装 wheel，测试平台能力清单和 M
 
 成员本机变量名不一致：使用 [.env.team.example](.env.team.example) 和 [团队配置说明](docs/team_configuration.md)，通过 `标准字段_ENV=现有变量名` 统一读取，无需修改模块。`python -m scripts.check_live_config` 可离线检查，不显示密钥。
 
-本地开发分支整合 group02 数据接入、平台审批续跑和 Dots 审计修复。M2 1.2 可返回已知订单及明确的物流缺失/冲突提示；M7 统一 completed/watch 等来源枚举，审批响应失败可用原决定恢复；Planner 对明确预算增加整数分换算校验并启用 JSON 输出。
+本地开发分支整合 group02 数据接入、平台审批续跑和 Dots 审计修复。M2 1.2 可返回已知订单及明确的物流缺失/冲突提示；M7 统一 completed/watch 等来源枚举，审批响应失败可用原决定恢复；Planner 对明确预算增加元（最多两位小数）换算校验并启用 JSON 输出。
 
 本机文本配置现使用百炼 qwen-plus（DeepSeek 本轮文本请求超时），不是运行时自动 fallback；密钥仍在本机环境。实际测试记录见 [可靠性验收](docs/reliability_acceptance.md)，会话/状态/审核接入方式见 [前端接入说明](docs/frontend_handoff.md)。
 
@@ -245,8 +245,12 @@ check_wheel.py 会在源码目录外安装 wheel，测试平台能力清单和 M
 .\.venv\Scripts\python.exe -m web --port 8765
 ```
 
-启动后访问 http://127.0.0.1:8000/ 。每个浏览器会话保留一个 `Conversation` 实例，同一会话请求串行；界面严格区分 `needs_clarification / ready / unsupported / completed / waiting_approval / failed` 六种状态，金额按整数分展示并换算为元，M4 结果按 JSON 或纯文本回退渲染，M7 读取 `data.approval_status`（而非仅 `AgentResult.status`）并内嵌审批表单。
+启动后访问 http://127.0.0.1:8000/ 。每个浏览器会话保留一个 `Conversation` 实例，同一会话请求串行；界面严格区分 `needs_clarification / ready / unsupported / completed / waiting_approval / failed` 六种状态，金额按元输入与传递、固定显示两位小数，M4 结果按 JSON 或纯文本回退渲染，M7 读取 `data.approval_status`（而非仅 `AgentResult.status`）并内嵌审批表单。
 
-业务工作台提供左侧七助手导航、智能任务输入、助手卡片和中文表单；窄屏使用“切换助手”下拉框。直调绕过 Planner，通过同一 Executor 调用能力；M1 提供多轮聊天，M4 提供搜索、知识问答、代码与图片快捷入口。表单根据 `/api/capabilities` 的 `input_schema` 生成，示例与当前后端资料一致，金额输入单位为分。切换助手保留本页的输入与结果；人工审核后更新原报告，技术轨迹与原始 JSON 可展开查看。[工作台使用与验收说明](docs/workspace_frontend.md)。
+业务工作台提供左侧七助手导航、智能任务输入、助手卡片和中文表单；窄屏使用“切换助手”下拉框。直调绕过 Planner，通过同一 Executor 调用能力；M1 提供多轮聊天，M4 提供搜索、知识问答、代码与图片快捷入口。表单根据 `/api/capabilities` 的 `input_schema` 生成，示例与当前后端资料一致，金额输入单位为元，最多两位小数。切换助手保留本页的输入与结果；人工审核后更新原报告，技术轨迹与原始 JSON 可展开查看。[工作台使用与验收说明](docs/workspace_frontend.md)。
 
 Web 默认启用 M1/M2/M3/M4 的 live 模式及真实 M5/M6/M7；环境中的旧 mock/local 值不会把 Web 偷偷切回演示。`--offline` 才使用确定性 Planner 和七个 Mock，不能与 `--real-m*` 组合。历史 CLI 的显式 `--real-m*` 方式保持不变。搜索、图片未配置时对应功能明确失败。最新修复、联网与日志记录见 [前端验收记录](docs/frontend_acceptance.md)。
+
+### 2026-10-15 元金额与 M4 修复
+
+前后端金额已统一为元，页面固定两位小数，计算使用 Decimal 四舍五入；M4 已启用 JSON 输出和一次有界格式修复。1434 项离线回归、13 项前端测试及本轮真实 API 抽样通过。前后端须一起升级并重启/刷新，新建会话；详见 [本轮验收与日志](docs/yuan_m4_acceptance.md)。

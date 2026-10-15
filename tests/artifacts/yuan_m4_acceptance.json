@@ -1,0 +1,63 @@
+{
+  "date": "2026-10-15",
+  "money_unit": "CNY_yuan",
+  "display_decimal_places": 2,
+  "calculation_rounding": "Decimal ROUND_HALF_UP",
+  "input_policy": "reject more than 2 decimal places; never truncate",
+  "api_migration": "M2 2.0, M3 3.0, M5 3.0, M6 2.0, M7 3.0",
+  "offline": {
+    "passed": 1434,
+    "skipped_paid": 36,
+    "failed": 0
+  },
+  "frontend": {
+    "passed": 13
+  },
+  "wheel": {
+    "smoke_checks": 7,
+    "packaged_resource_tests": 3
+  },
+  "live_runs": [
+    {
+      "name": "yuan-m4-live",
+      "passed": 4,
+      "failed": 0,
+      "requests": 8,
+      "responses": 8,
+      "log_directory": "audit_artifacts/yuan-m4-live"
+    },
+    {
+      "name": "yuan-business-live",
+      "passed": 2,
+      "failed": 0,
+      "requests": 13,
+      "responses": 13,
+      "log_directory": "audit_artifacts/yuan-business-live"
+    },
+    {
+      "name": "yuan-search-recheck",
+      "passed": 2,
+      "failed": 0,
+      "requests": 4,
+      "responses": 4,
+      "log_directory": "audit_artifacts/yuan-search-recheck"
+    }
+  ],
+  "source_audit": {
+    "hash_mismatches": [],
+    "workbook_sheets": 8,
+    "checked_cells": 2593,
+    "value_mismatches": 0
+  },
+  "browser": {
+    "refund": "1099.00 yuan reaches waiting_approval",
+    "code_gen": "reported prompt completed with live Python code",
+    "web_search": "completed with actual provider source URLs; a contradictory model summary was captured and fixed via dedicated grounding prompt",
+    "console_errors": []
+  },
+  "not_retested_live": [
+    "M1 chat",
+    "image generation",
+    "all other semantic scenarios"
+  ]
+}

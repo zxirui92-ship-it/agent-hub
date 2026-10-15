@@ -17,7 +17,7 @@ def test_three_sources_reactive_writers_and_complete_audit():
     result = invoke()
     assert result.status == 'completed'
     fused = result.data['fused_data']
-    assert fused['revenue_amount'] == 1268430000 and fused['conversion_rate'] == 0.0242
+    assert fused['revenue_amount'] == 12684300.0 and fused['conversion_rate'] == 0.0242
     assert '秋日焕新季' in fused['anomaly'] and '无法计算 ROI' in fused['anomaly']
     events = [json.loads(event) for event in result.data['update_events']]
     writes = [(i, e) for i, e in enumerate(events) if e['event'] == 'write']
@@ -54,9 +54,9 @@ def test_board_copies_all_read_write_and_callback_boundaries():
 def test_calls_have_private_boards_and_no_stale_week():
     module = DataFusionModule()
     first = module.invoke(request_for('m6.data_fusion', {'week': '2026-W41'}))
-    first.data['fused_data']['revenue_amount'] = 1
+    first.data['fused_data']['revenue_amount'] = 0.01
     second = module.invoke(request_for('m6.data_fusion', {'week': '2026-W40'}))
-    assert second.data['fused_data']['revenue_amount'] == 1173465000
+    assert second.data['fused_data']['revenue_amount'] == 11734650.0
     assert '未记录本周活动' in second.data['fused_data']['anomaly']
 
 
@@ -76,7 +76,7 @@ def test_source_unavailable(tmp_path):
     assert invoke(source=WeeklySource(tmp_path)).error.code == ErrorCode.TOOL_UNAVAILABLE
 
 
-@pytest.mark.parametrize('bad', [True, 123.0, -1])
+@pytest.mark.parametrize('bad', [True, 123.001, -1])
 def test_source_amounts_are_strict_integer_cents(tmp_path, bad):
     for file in FIXTURES.glob('*.json'):
         shutil.copyfile(file, tmp_path / file.name)

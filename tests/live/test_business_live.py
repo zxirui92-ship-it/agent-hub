@@ -65,7 +65,7 @@ def test_m2_live_react(model, order_id, record_property):
     else:
         assert result.status == 'completed', result.model_dump_json()
         validate_data(result.data, agent.manifest.output_schema, ErrorCode.CONTRACT_MISMATCH)
-        assert result.data['order_amount'] == 69900
+        assert result.data['order_amount'] == 699.0
         assert set(result.data['actions']) == {'query_order', 'query_logistics'}
         assert len(result.data['actions']) <= 3
 
@@ -74,7 +74,7 @@ def test_m3_live_plan_execute(model, record_property):
     result = completed(WeeklyReportAgent(model, mode='live'),
         {'fused_data': load_sample_view('2026-W41'), 'previous_fused_data': load_sample_view('2026-W40')}, record_property)
     assert len(result.data['steps']) == 4
-    assert '1268430000' in result.data['report_markdown']
+    assert '12684300.00' in result.data['report_markdown']
 
 
 def test_m2_live_amount_query_still_completes_contract(model, record_property):
@@ -86,7 +86,7 @@ def test_m2_live_amount_query_still_completes_contract(model, record_property):
 def test_m5_live_role_collaboration(model, record_property):
     # model fixture validates configuration; M5 retains its own timeout adapter.
     result = completed(PromotionAgent(), {'goal': '为样例店铺制定下周优惠券试投方案，说明四个角色的分工和取舍。',
-        'week': '2026-W42', 'budget_amount': 10000000, 'fused_data': load_sample_view('2026-W41')}, record_property)
+        'week': '2026-W42', 'budget_amount': 100000.0, 'fused_data': load_sample_view('2026-W41')}, record_property)
     assert {row['role'] for row in result.data['roles']} == {'product', 'operation', 'data', 'service'}
 
 
@@ -118,8 +118,8 @@ def test_end_to_end_real_planner_and_business_models(model, case, record_propert
     steps = {step.capability_id: step for step in report.steps.values()}
     if case == 'operations':
         assert steps['m3.weekly_report'].inputs['fused_data'] == steps['m6.data_fusion'].result.data['fused_data']
-        assert steps['m5.promotion_plan'].inputs['budget_amount'] == 10000000
+        assert steps['m5.promotion_plan'].inputs['budget_amount'] == 100000.0
         assert steps['m5.promotion_plan'].inputs['report_markdown'] == steps['m3.weekly_report'].result.data['report_markdown']
     else:
-        assert steps['m7.refund_approval'].inputs['refund_amount'] == steps['m2.order_tracking'].result.data['order_amount'] == 69900
+        assert steps['m7.refund_approval'].inputs['refund_amount'] == steps['m2.order_tracking'].result.data['order_amount'] == 699.0
         assert steps['m7.refund_approval'].result.continuation_token

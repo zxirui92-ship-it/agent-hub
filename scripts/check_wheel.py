@@ -40,8 +40,8 @@ def main(argv=None):
             ('agents.react_agent', ['--order-id', 'order-low', '--mode', 'local'], 0, 'completed'),
             ('agents.blackboard', ['--week', '2026-W41'], 0, 'completed'),
             ('agents.plan_execute', ['--week', '2026-W41', '--mode', 'local'], 0, 'completed'),
-            ('agents.workflow.refund_graph', ['--order-id', 'order-low', '--refund-amount', '19900'], 0, 'completed'),
-            ('agents.workflow.refund_graph', ['--order-id', '2025101234', '--refund-amount', '69900'], 0, 'waiting_approval'),
+            ('agents.workflow.refund_graph', ['--order-id', 'order-low', '--refund-amount', '199.00'], 0, 'completed'),
+            ('agents.workflow.refund_graph', ['--order-id', '2025101234', '--refund-amount', '699.00'], 0, 'waiting_approval'),
         ]
         for module, arguments, expected_exit, expected_status in checks:
             code = (

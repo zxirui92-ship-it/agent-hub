@@ -19,7 +19,7 @@ LOGGER = logging.getLogger('agent_hub.m4')
 def public_message(message: str) -> str:
     for value in secret_values():
         message = message.replace(value, '[redacted]')
-    return message[:1000]
+    return message
 
 
 class RouterAgent:
@@ -50,7 +50,8 @@ class RouterAgent:
             return AgentResult(**correlation, status='completed', data={
                 'skill_name': decision.skill_name, 'result': value, 'route_reason': public_message(decision.route_reason)})
         except ServiceError as exc:
-            return self._failure(request, correlation, decision, exc.code, str(exc), exc.retryable)
+            stage = f'Skill {decision.skill_name}' if isinstance(decision, RouteDecision) else 'M4 意图路由'
+            return self._failure(request, correlation, decision, exc.code, f'{stage}：{exc}', exc.retryable)
         except Exception as exc:
             # Only the injected router/Skill boundary: expose type + public message, no traceback.
             return self._failure(request, correlation, decision, ErrorCode.INTERNAL_ERROR,

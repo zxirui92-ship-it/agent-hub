@@ -6,6 +6,7 @@ import logging
 from agents.workflow.formatting import ORDER_STATUS_LABELS, format_amount, label
 logger = logging.getLogger('agents.workflow.nodes')
 from common.order_policy import NON_REFUNDABLE_ORDER_STATUS, REFUNDABLE_ORDER_STATUS
+from decimal import Decimal
 BRANCH_AUTO = 'auto'
 BRANCH_MANUAL = 'manual'
 BRANCH_REJECT = 'reject'
@@ -14,8 +15,8 @@ def route_by_amount(state: RefundState) -> str:
     status = state.get('order_status')
     if not isinstance(status, str) or status not in REFUNDABLE_ORDER_STATUS:
         return BRANCH_REJECT
-    refund_amount = int(state.get('refund_amount', 0))
-    threshold = int(state.get('auto_approve_amount') or 50000)
+    refund_amount = Decimal(str(state.get('refund_amount', 0)))
+    threshold = Decimal(str(state.get('auto_approve_amount', 500)))
     return BRANCH_MANUAL if refund_amount > threshold or state.get('risk_level') == 'high_risk' else BRANCH_AUTO
 
 def auto_approve_node(state: RefundState) -> Dict[str, Any]:
@@ -26,9 +27,9 @@ def route_after_review(state: RefundState) -> str:
     return 'rejected' if state.get('approval_status') == 'rejected' else 'continue'
 
 def compliance_check_node(state: RefundState) -> Dict[str, Any]:
-    threshold = int(state.get('auto_approve_amount') or 50000)
-    refund_amount = int(state.get('refund_amount', 0))
-    order_amount = int(state.get('order_amount', refund_amount))
+    threshold = state.get('auto_approve_amount', 500)
+    refund_amount = state.get('refund_amount', 0)
+    order_amount = state.get('order_amount', refund_amount)
     material_complete = bool(state.get('material_complete', False))
     risk_level = str(state.get('risk_level', 'normal'))
     approved = state.get('approval_status') == 'approved'

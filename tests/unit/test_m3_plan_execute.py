@@ -33,7 +33,7 @@ def test_real_computations_and_structured_steps():
     assert result.status == 'completed'
     report = result.data['report_markdown']
     assert '+8.09%' in report and '-0.02 个百分点' in report
-    assert '1268430000 分' in report and '84562' in report
+    assert '12684300.00 元' in report and '84562' in report
     assert all(s['status'] == 'completed' and s['result_summary'] for s in result.data['steps'])
     assert [s['step_id'] for s in result.data['steps']] == ['s1', 's2', 's3', 's4']
     assert payload == before
@@ -42,19 +42,19 @@ def test_real_computations_and_structured_steps():
 def test_m6_data_never_mixes_with_unrelated_local_history():
     result = invoke()
     report = result.data['report_markdown']
-    assert '12000000 分' in report and '未提供上一周' in report
+    assert '120000.00 元' in report and '未提供上一周' in report
     assert '1173465000' not in report and '+8.09%' not in report
 
 
 def test_zero_previous_denominator_is_explicit():
     payload = deepcopy(SAMPLES[2])
-    payload['previous_fused_data'] = {**payload['fused_data'], 'week': '2026-W40', 'revenue_amount': 0, 'order_count': 0}
+    payload['previous_fused_data'] = {**payload['fused_data'], 'week': '2026-W40', 'revenue_amount': 0.0, 'order_count': 0}
     assert '上周为零' in invoke(payload).data['report_markdown']
 
 
 @pytest.mark.parametrize('payload', [{}, {'week': '2026-W41'}, {'fused_data': {'week': '2026-W41'}},
     {'fused_data': {**SAMPLES[2]['fused_data'], 'revenue_amount': True}},
-    {'fused_data': {**SAMPLES[2]['fused_data'], 'revenue_amount': 100.0}},
+    {'fused_data': {**SAMPLES[2]['fused_data'], 'revenue_amount': 1.001}},
     {'fused_data': {**SAMPLES[2]['fused_data'], 'week': '2025-W53'}},
     {**SAMPLES[2], 'previous_fused_data': {**SAMPLES[2]['fused_data'], 'week': '2026-W39'}}])
 def test_invalid_payloads_fail_before_model(payload):
@@ -80,8 +80,8 @@ def test_model_plan_is_executed_and_facts_remain_in_report():
     result = invoke(model=model)
     assert result.status == 'completed' and len(model.calls) == 2
     assert result.data['steps'][1]['description'] == '分析输入异常'
-    assert '12000000 分' in model.calls[1][1]
-    assert '12000000 分' in result.data['report_markdown']
+    assert '120000.00 元' in model.calls[1][1]
+    assert '120000.00 元' in result.data['report_markdown']
     assert '模型建议（待验证）' in result.data['report_markdown']
 
 

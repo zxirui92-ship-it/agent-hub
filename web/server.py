@@ -47,7 +47,7 @@ def build_examples(mode):
     previous = '2025-W40' if data else '2026-W40'
     # Offline examples are explicitly illustrative; live views use shared data.
     weekly = ({'fused_data': load_sample_view(week), 'previous_fused_data': load_sample_view(previous)}
-              if mode == 'real' else {'fused_data': {'week':week, 'revenue_amount':1268430000,
+              if mode == 'real' else {'fused_data': {'week':week, 'revenue_amount':12684300.0,
                   'order_count':84562, 'conversion_rate':.0242, 'anomaly':'离线演示样例'}})
     return {
         'm1.faq_chat': {'question':'小家电保修几年？请说明不同条目差异。'},
@@ -55,7 +55,7 @@ def build_examples(mode):
         'm3.weekly_report': weekly,
         'm4.capability_gateway': {'query':'联网搜索近期电商新闻，提供来源。'},
         'm5.promotion_plan': {'goal':'制定下周预算10000元的大促方案',
-            'week':week[:4] + '-W42', 'budget_amount':1000000},
+            'week':week[:4] + '-W42', 'budget_amount':10000.0},
         'm6.data_fusion': {'week':week},
         'm7.refund_approval': {'order_id':order_id, 'refund_amount':amount, 'reason':'买错了，申请整单退款'},
     }

@@ -19,9 +19,9 @@ def test_catalog_fields_owners_and_old_id_removed(registry):
     for cls, expected in zip(MOCK_TYPES, fields):
         spec = registry.get_manifest(cls.manifest.capability_id)
         assert expected <= set(spec.output_schema['required'])
-        versions = {'m1.faq_chat': '1.1', 'm2.order_tracking': '1.2', 'm3.weekly_report': '2.0',
-                    'm4.capability_gateway': '1.0', 'm5.promotion_plan': '2.0', 'm6.data_fusion': '1.0',
-                    'm7.refund_approval': '2.0'}
+        versions = {'m1.faq_chat': '1.1', 'm2.order_tracking': '2.0', 'm3.weekly_report': '3.0',
+                    'm4.capability_gateway': '1.0', 'm5.promotion_plan': '3.0', 'm6.data_fusion': '2.0',
+                    'm7.refund_approval': '3.0'}
         assert spec.version == versions[spec.capability_id]
         assert 'pending' not in spec.owner
     with pytest.raises(HubError) as exc:
@@ -29,7 +29,7 @@ def test_catalog_fields_owners_and_old_id_removed(registry):
     assert exc.value.code == ErrorCode.UNKNOWN_CAPABILITY
 
 
-@pytest.mark.parametrize('amount', [1, 50000, 69899, 69901, 69900.0, True, '69900'])
+@pytest.mark.parametrize('amount', [0.01, 500.0, 698.99, 699.01, 699.001, True, '69900'])
 def test_refund_cannot_override_order_fact(amount):
     req = request_for('m7.refund_approval', {'order_id': '2025101234', 'refund_amount': amount, 'reason': '退货'})
     value = RefundApprovalMock().invoke(req)
@@ -37,10 +37,10 @@ def test_refund_cannot_override_order_fact(amount):
     assert not value.error.retryable and value.error.request_id == req.request_id
 
 
-@pytest.mark.parametrize('order_id,amount,status', [('order-below',49999,'completed'),('order-boundary',50000,'completed'),('order-above',50001,'waiting_approval')])
+@pytest.mark.parametrize('order_id,amount,status', [('order-below',499.99,'completed'),('order-boundary',500.0,'completed'),('order-above',500.01,'waiting_approval')])
 def test_order_and_refund_share_boundary_facts(order_id, amount, status):
     order = OrderTrackingMock().invoke(request_for('m2.order_tracking', {'order_id': order_id}))
-    assert order.data['order_amount'] == amount and type(order.data['order_amount']) is int
+    assert order.data['order_amount'] == amount and type(order.data['order_amount']) is float
     refund = RefundApprovalMock().invoke(request_for('m7.refund_approval', {'order_id': order_id, 'refund_amount': order.data['order_amount'], 'reason': '退货'}))
     assert refund.status == status
     assert refund.data['request_id'].startswith('refund-') and refund.request_id.startswith('req-')

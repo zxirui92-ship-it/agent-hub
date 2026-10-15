@@ -5,7 +5,8 @@ from typing import Protocol
 
 from agents.router.registry import SkillDescription
 from common.errors import ErrorCode, ServiceError
-from common.llm import TextModel, json_object
+from common.llm import TextModel
+from agents.router.structured import request_object
 
 
 @dataclass(frozen=True)
@@ -30,13 +31,15 @@ class LlmRouter:
                   'Return only JSON with exactly skill_name (string or null) and route_reason '
                   '(short public explanation, no hidden reasoning). Never invent a Skill. Catalog:\n'
                   + json.dumps([asdict(skill) for skill in skills], ensure_ascii=False))
-        value = json_object(self.model.complete(prompt, query))
-        name, reason = value.get('skill_name'), value.get('route_reason')
-        if set(value) != {'skill_name', 'route_reason'} or (name is not None and not isinstance(name, str)) or not isinstance(reason, str) or not reason.strip():
-            raise ServiceError(ErrorCode.CONTRACT_MISMATCH, 'Invalid routing decision fields')
-        if name is not None and name not in {skill.name for skill in skills}:
-            raise ServiceError(ErrorCode.UNKNOWN_CAPABILITY, f'LLM selected unregistered Skill: {name}')
-        return RouteDecision(name, reason)
+        def validate(value):
+            name, reason = value.get('skill_name'), value.get('route_reason')
+            if set(value) != {'skill_name', 'route_reason'} or (name is not None and not isinstance(name, str)) or not isinstance(reason, str) or not reason.strip():
+                raise ServiceError(ErrorCode.CONTRACT_MISMATCH,
+                    'Expected exactly skill_name (registered string or null) and route_reason (nonempty string)')
+            if name is not None and name not in {skill.name for skill in skills}:
+                raise ServiceError(ErrorCode.UNKNOWN_CAPABILITY, f'LLM selected unregistered Skill: {name}')
+        value = request_object(self.model, prompt, query, validate, stage='M4 意图路由')
+        return RouteDecision(value['skill_name'], value['route_reason'])
 
 
 class ExplicitMockRouter:

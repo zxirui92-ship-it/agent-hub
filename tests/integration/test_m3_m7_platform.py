@@ -35,9 +35,9 @@ def test_mock_and_real_share_contracts():
 
 
 @pytest.mark.parametrize('module,payload', [
-    (WeeklyReportAgent(mode='local'), {'fused_data': {'week': '2026-W41', 'revenue_amount': 100,
+    (WeeklyReportAgent(mode='local'), {'fused_data': {'week': '2026-W41', 'revenue_amount': 1.0,
         'order_count': 1, 'conversion_rate': 0.1, 'anomaly': '无'}}),
-    (RefundWorkflow(), {'order_id': 'order-low', 'refund_amount': 19900, 'reason': '退货'})])
+    (RefundWorkflow(), {'order_id': 'order-low', 'refund_amount': 199.0, 'reason': '退货'})])
 def test_module_logs_keep_top_level_correlation(module, payload, caplog):
     from tests.contract.test_contracts import request_for
     request = request_for(module.manifest.capability_id, payload)
@@ -58,7 +58,7 @@ def test_operations_chain_m6_mock_real_m3_real_m5(load_plan):
     assert report.steps['s2'].inputs['fused_data'] == report.steps['s1'].result.data['fused_data']
     assert report.steps['s3'].inputs['report_markdown'] == report.steps['s2'].result.data['report_markdown']
     assert all(step['status'] == 'completed' for step in report.steps['s2'].result.data['steps'])
-    assert len(llm.prompts) == 5 and '12000000' in llm.prompts[0]
+    assert len(llm.prompts) == 5 and '120000.00' in llm.prompts[0]
 
 
 def test_real_refund_wait_keeps_descendants_pending_and_independent_steps_run(load_plan):
@@ -91,7 +91,7 @@ def test_cli_flags_can_replace_all_four_modules(monkeypatch, capsys):
     assert cli.main(['--list-capabilities', '--real-m3', '--real-m4', '--real-m5', '--real-m7']) == 0
     catalog = {m['capability_id']: m for m in json.loads(capsys.readouterr().out)}
     assert len(catalog) == 7 and catalog['m7.refund_approval']['supports_resume'] is True
-    assert catalog['m3.weekly_report']['version'] == '2.0'
+    assert catalog['m3.weekly_report']['version'] == '3.0'
     assert cli.main(['tests/fixtures/operations.json', '--real-m3', '--json']) == 0
     report = json.loads(capsys.readouterr().out)
     assert report['status'] == 'completed' and len(report['steps']['s2']['result']['data']['steps']) == 4
@@ -100,7 +100,7 @@ def test_cli_flags_can_replace_all_four_modules(monkeypatch, capsys):
 @pytest.mark.parametrize('module,args,status', [
     ('agents.plan_execute', ['--week', '2026-W41', '--mode', 'local'], 'completed'),
     ('agents.workflow.refund_graph', [], 'completed'),
-    ('agents.workflow.refund_graph', ['--order-id', '2025101234', '--refund-amount', '69900'], 'waiting_approval')])
+    ('agents.workflow.refund_graph', ['--order-id', '2025101234', '--refund-amount', '699.00'], 'waiting_approval')])
 def test_standalone_entrypoints_are_json(module, args, status):
     run = subprocess.run([sys.executable, '-m', module, *args], capture_output=True, text=True, encoding='utf-8',
                          env={**__import__('os').environ, 'PYTHONIOENCODING': 'utf-8'})

@@ -9,7 +9,7 @@ from common.errors import ErrorCode, ServiceError
 from tests.unit.test_m7_workflow import request
 
 
-def workflow(amount=69900, **fields):
+def workflow(amount=699.0, **fields):
     fact = {'order_amount': amount, 'order_status': 'paid', **fields}
     return RefundWorkflow(order_loader=lambda _: deepcopy(fact))
 
@@ -19,7 +19,7 @@ def decide(agent, token, *, approved=True, material_complete=True):
                                  material_complete=material_complete)
 
 
-@pytest.mark.parametrize('amount', [1, 19900, 50000])
+@pytest.mark.parametrize('amount', [0.01, 199.0, 500.0])
 def test_small_high_risk_refund_requires_explicit_review_and_materials(amount):
     agent = workflow(amount, risk_level='high_risk')
     first = agent.invoke(request(amount=amount))
@@ -42,7 +42,7 @@ def test_small_high_risk_refund_requires_explicit_review_and_materials(amount):
     assert 'auto_approve' not in [node['node_name'] for node in final.data['node_trace']]
 
 
-@pytest.mark.parametrize('amount', [19900, 50000, 50001])
+@pytest.mark.parametrize('amount', [199.0, 500.0, 500.01])
 def test_high_risk_refund_can_be_rejected_without_documents(amount):
     agent = workflow(amount, risk_level='high_risk')
     waiting = agent.invoke(request(amount=amount))
@@ -54,20 +54,20 @@ def test_high_risk_refund_can_be_rejected_without_documents(amount):
 
 @pytest.mark.parametrize('material_complete', [False, True])
 def test_auto_approval_does_not_rewrite_material_evidence(material_complete):
-    update = auto_approve_node({'refund_amount': 19900, 'material_complete': material_complete})
+    update = auto_approve_node({'refund_amount': 199.0, 'material_complete': material_complete})
     assert 'material_complete' not in update
-    agent = workflow(19900)
-    result = agent.invoke(request(amount=19900))
+    agent = workflow(199.0)
+    result = agent.invoke(request(amount=199.0))
     assert result.data['approval_status'] == 'approved'
     assert agent.get_request_trace(result.request_id)[0]['state']['material_complete'] is False
 
 
 @pytest.mark.parametrize('status', ['paid', 'shipped', 'delivered'])
-@pytest.mark.parametrize('amount', [19900, 50000, 50001])
+@pytest.mark.parametrize('amount', [199.0, 500.0, 500.01])
 def test_known_refundable_statuses_keep_valid_workflows(status, amount):
     agent = workflow(amount, order_status=status)
     result = agent.invoke(request(amount=amount))
-    if amount > 50000:
+    if amount > 500.0:
         assert result.status == 'waiting_approval'
         result = decide(agent, result.continuation_token)
     assert result.status == 'completed' and result.data['approval_status'] == 'approved'
@@ -75,40 +75,40 @@ def test_known_refundable_statuses_keep_valid_workflows(status, amount):
 
 @pytest.mark.parametrize('status', [None, '', 'unknown', 'CANCELED', 123, [], {}, True])
 def test_untrusted_provider_status_fails_before_any_checkpoint(status):
-    agent = workflow(19900, order_status=status)
-    result = agent.invoke(request(amount=19900))
+    agent = workflow(199.0, order_status=status)
+    result = agent.invoke(request(amount=199.0))
     assert result.status == 'failed' and result.error.code == ErrorCode.CONTRACT_MISMATCH
     assert result.error.retryable is False
     assert not agent._requests and not agent._pending
     # The graph's routing and compliance checks also fail closed in isolation.
-    state = {'order_status': status, 'refund_amount': 19900, 'order_amount': 19900}
+    state = {'order_status': status, 'refund_amount': 199.0, 'order_amount': 199.0}
     assert route_by_amount(state) == 'reject'
     assert 'R2' in compliance_check_node(state)['failed_rules']
 
 
-@pytest.mark.parametrize('fact', [None, [], {}, {'order_amount': 19900},
-    {'order_amount': 19900.0, 'order_status': 'paid'},
+@pytest.mark.parametrize('fact', [None, [], {}, {'order_amount': 199.0},
+    {'order_amount': 199.001, 'order_status': 'paid'},
     {'order_amount': True, 'order_status': 'paid'},
-    {'order_amount': 0, 'order_status': 'paid'}])
+    {'order_amount': 0.0, 'order_status': 'paid'}])
 def test_invalid_order_fact_is_a_source_contract_error(fact):
     agent = RefundWorkflow(order_loader=lambda _: fact)
-    result = agent.invoke(request(amount=19900))
+    result = agent.invoke(request(amount=199.0))
     assert result.status == 'failed' and result.error.code == ErrorCode.CONTRACT_MISMATCH
     assert not agent._requests and not agent._pending
 
 
 @pytest.mark.parametrize('risk_level', [None, '', 'unknown', 'HIGH_RISK', 123, [], {}, True])
 def test_invalid_supplied_risk_never_defaults_to_normal(risk_level):
-    agent = workflow(19900, risk_level=risk_level)
-    result = agent.invoke(request(amount=19900))
+    agent = workflow(199.0, risk_level=risk_level)
+    result = agent.invoke(request(amount=199.0))
     assert result.status == 'failed' and result.error.code == ErrorCode.CONTRACT_MISMATCH
     assert not agent._requests and not agent._pending
 
 
 @pytest.mark.parametrize('fields', [{}, {'risk_level': 'normal'}])
 def test_missing_or_explicit_normal_risk_keeps_small_refund_behavior(fields):
-    agent = workflow(19900, **fields)
-    result = agent.invoke(request(amount=19900))
+    agent = workflow(199.0, **fields)
+    result = agent.invoke(request(amount=199.0))
     assert result.status == 'completed' and result.data['approval_status'] == 'approved'
 
 

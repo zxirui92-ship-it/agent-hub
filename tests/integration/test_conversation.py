@@ -28,7 +28,7 @@ def test_two_different_composite_tasks_execute_different_graphs(registry, load_p
 
 def test_clarification_retains_original_goal_and_user_correction(registry, load_plan):
     steps = load_plan('operations')['steps']
-    steps[0]['inputs']['budget_amount'] = {'literal': 10000000}
+    steps[0]['inputs']['budget_amount'] = {'literal': 100000.0}
     model = ScriptedModel({'status': 'needs_clarification', 'message': '请提供统计周次。'}, ready(steps))
     chat = Conversation(DynamicPlanner(registry, model))
     question = chat.submit('分析经营数据并制定大促，预算8万元')
@@ -40,7 +40,7 @@ def test_clarification_retains_original_goal_and_user_correction(registry, load_
     assert [m['role'] for m in prompt_context['messages']] == ['user', 'assistant', 'user']
     assert '预算8万元' in prompt_context['messages'][0]['content']
     assert '改成10万元' in prompt_context['messages'][2]['content']
-    assert answer.report.steps['s3'].inputs['budget_amount'] == 10000000
+    assert answer.report.steps['s3'].inputs['budget_amount'] == 100000.0
 
 
 def test_only_session_metadata_reaches_modules(registry):
@@ -62,14 +62,14 @@ def test_prior_results_are_available_without_reexecuting_completed_steps(registr
     first_step = [{'step_id': 's1', 'capability_id': 'm2.order_tracking',
                    'inputs': {'order_id': {'literal': 'order-low'}}}]
     next_step = [{'step_id': 's1', 'capability_id': 'm7.refund_approval', 'inputs': {
-        'order_id': {'literal': 'order-low'}, 'refund_amount': {'literal': 19900},
+        'order_id': {'literal': 'order-low'}, 'refund_amount': {'literal': 199.0},
         'reason': {'literal': '不再需要'}}}]
     model = ScriptedModel(ready(first_step), ready(next_step))
     chat = Conversation(DynamicPlanner(registry, model))
     chat.submit('查询订单 order-low')
     response = chat.submit('给刚查的订单申请整单退款，原因是不再需要')
     history = model.calls[1][1]['context']['history']
-    assert history[0]['report']['steps']['s1']['result']['data']['order_amount'] == 19900
+    assert history[0]['report']['steps']['s1']['result']['data']['order_amount'] == 199.0
     assert response.status == 'completed' and len(response.report.steps) == 1
     assert response.report.steps['s1'].capability_id == 'm7.refund_approval'
 
@@ -78,11 +78,11 @@ def test_session_copies_and_reset_do_not_share_module_or_history_state(registry)
     chat = Conversation(DynamicPlanner(registry, ScriptedModel(ready(order_steps()))))
     other = Conversation(DynamicPlanner(registry, ScriptedModel()))
     response = chat.submit('查订单2025101234')
-    response.report.steps['s1'].result.data['order_amount'] = -1
+    response.report.steps['s1'].result.data['order_amount'] = -0.01
     snapshot = chat.context
     snapshot.active_task.messages.clear()
     assert chat.context.active_task.messages
-    assert chat.context.active_task.report.steps['s1'].result.data['order_amount'] == 69900
+    assert chat.context.active_task.report.steps['s1'].result.data['order_amount'] == 699.0
     assert other.context.active_task is None and not other.context.history
     old_id = chat.context.session_id
     chat.reset()

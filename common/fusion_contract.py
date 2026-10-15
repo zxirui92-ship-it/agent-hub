@@ -1,4 +1,5 @@
 """M6's exported view shared with report/promotion consumers."""
+from common.money import yuan_schema
 from common.contracts import CapabilityManifest
 from common.iso_week import week_schema
 
@@ -6,7 +7,7 @@ from common.iso_week import week_schema
 def fused_schema():
     properties = {
         'week': week_schema(),
-        'revenue_amount': {'type': 'integer', 'minimum': 0},
+        'revenue_amount': yuan_schema(),
         'order_count': {'type': 'integer', 'minimum': 0},
         'conversion_rate': {'type': 'number', 'minimum': 0, 'maximum': 1},
         'anomaly': {'type': 'string', 'minLength': 1},
@@ -18,7 +19,7 @@ def fused_schema():
 def fusion_manifest():
     fused = fused_schema()
     strings = {'type': 'array', 'items': {'type': 'string', 'minLength': 1}}
-    return CapabilityManifest(capability_id='m6.data_fusion', version='1.0', name='经营数据融合',
+    return CapabilityManifest(capability_id='m6.data_fusion', version='2.0', name='经营数据融合',
         description='私有黑板融合订单周汇总、行为、营销样例，输出同口径经营视图及来源/缺口；非实时数据。',
         input_schema={'type': 'object', 'additionalProperties': False, 'required': ['week'],
                       'properties': {'week': fused['properties']['week']}},

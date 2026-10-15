@@ -23,7 +23,7 @@ from common.llm import ChatModel, TextModel, json_object
 from common.module_boundary import result_for, failure
 from common.iso_week import week_start
 from common.json_data import strict_json_loads
-from common.money import format_cents
+from common.money import format_yuan
 from common.weekly_contract import weekly_manifest, validate_periods, previous_week as _previous_week
 from hub_platform.errors import HubError
 from hub_platform.schema import validate_data
@@ -97,7 +97,7 @@ class WeeklyReportExecutor:
         return self.report
 
     def _step_fetch(self):
-        return f"已读取 {self.data['week']} 融合数据；订单 {self.data['order_count']}，销售额 {self.data['revenue_amount']} 分"
+        return f"已读取 {self.data['week']} 融合数据；订单 {self.data['order_count']}，销售额 {format_yuan(self.data['revenue_amount'])} 元"
 
     def _step_compare(self):
         if self.previous is None:
@@ -122,13 +122,13 @@ class WeeklyReportExecutor:
         self.report = (
             f"# {data['week']} 运营周报\n\n运行方式：{mode}；数据来自调用方提供的经营视图。\n\n"
             f"## 核心指标\n| 指标 | 数值 |\n|---|---:|\n"
-            f"| 销售额 | {data['revenue_amount']} 分（{format_cents(data['revenue_amount'])} 元） |\n"
+            f"| 销售额 | {format_yuan(data['revenue_amount'])} 元 |\n"
             f"| 订单量 | {data['order_count']} |\n| 转化率 | {data['conversion_rate']:.2%} |\n\n"
             f"## 环比\n{self.comparison}\n\n## 异常与待核查项\n{self.anomaly}\n")
         if self.previous is not None:
             prior = self.previous
             self.report += (f"\n## 上周同口径依据（{prior['week']}）\n"
-                f"销售额 {prior['revenue_amount']} 分；订单量 {prior['order_count']}；"
+                f"销售额 {format_yuan(prior['revenue_amount'])} 元；订单量 {prior['order_count']}；"
                 f"转化率 {prior['conversion_rate']:.2%}。\n{prior['anomaly']}\n")
         if self.model is not None:
             analysis = self.model.complete(

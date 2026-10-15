@@ -23,7 +23,7 @@ function ui() {
   assert.ok(offset > 0);
   vm.runInContext(source.slice(0, offset) + `
     globalThis.testUi = {renderGateway,renderPromotion,miniMarkdown,sendFaqMessage,
-      submitReview,resetSession,state,faqChats,fieldHtml,collectForm,renderReport,renderFusion};
+      submitReview,resetSession,state,faqChats,fieldHtml,collectForm,renderReport,renderFusion,moneyYuan,fillDefaults};
   })();`, sandbox);
   return { ...sandbox.testUi, sandbox, element };
 }
@@ -79,22 +79,23 @@ test('session reset uses the new server session and clears old FAQ memory view',
   assert.equal(app.faqChats.old, undefined);
 });
 
-test('business forms use accessible Chinese labels and integer cents', () => {
-  const html = ui().fieldHtml('refund_amount', {type:'integer'}, 'refund_amount', true);
-  assert.match(html, /退款金额（分）/);
+test('business forms use accessible Chinese labels and decimal yuan', () => {
+  const html = ui().fieldHtml('refund_amount', {type:'number'}, 'refund_amount', true);
+  assert.match(html, /退款金额（元）/);
   assert.match(html, /for="field-refund_amount"/);
   assert.match(html, /id="field-refund_amount"/);
   const text = ui().fieldHtml('goal', {type:'string'}, 'goal', true);
   assert.match(text, /textarea/);
 });
 
-test('form keeps cents unchanged and rejects fractional integer input', () => {
+test('form keeps decimal yuan unchanged and rejects excess precision', () => {
   const app = ui();
-  const el = {tagName:'INPUT', type:'number', value:'109900',
-    getAttribute(name) {return name === 'data-field' ? 'refund_amount' : 'integer';}};
+  const el = {tagName:'INPUT', type:'number', value:'1099.00',
+    getAttribute(name) {return name === 'data-field' ? 'refund_amount' : 'number';}};
   const card = {querySelectorAll:()=>[el]};
-  assert.equal(app.collectForm(card).refund_amount, 109900);
-  el.value='1099.5'; assert.throws(()=>app.collectForm(card), /整数/);
+  assert.equal(app.collectForm(card).refund_amount, 1099.00);
+  el.value='1099.5'; assert.equal(app.collectForm(card).refund_amount,1099.5);
+  el.value='1099.501'; assert.throws(()=>app.collectForm(card), /两位小数/);
   el.value='Infinity'; assert.throws(()=>app.collectForm(card), /合法数字/);
 });
 
@@ -129,4 +130,26 @@ test('failed empty business output does not show misleading blank order facts', 
     error:{code:'NOT_FOUND',message:'订单不存在'},result:{data:{}}}}});
   assert.match(html,/订单不存在/);
   assert.doesNotMatch(html,/<dt>订单号<\/dt>/);
+});
+
+
+test('yuan display and defaults preserve cents and show two places', () => {
+  const app=ui();
+  assert.match(app.moneyYuan(500.01), /500.01 元/);
+  assert.match(app.moneyYuan(1.2), /1.20 元/);
+  assert.doesNotMatch(app.moneyYuan(500.01), /分/);
+  const el={tagName:'INPUT',type:'number',value:'',getAttribute:()=> 'refund_amount'};
+  app.fillDefaults({querySelectorAll:()=>[el]}, {refund_amount:500.01});
+  assert.equal(el.value,'500.01');
+});
+
+test('full multiline errors preserve diagnostic IDs and escape markup', () => {
+  const message='M4 意图路由：字段校验失败\n'+'x'.repeat(2000)+'<script>alert(1)</script>';
+  const html=ui().renderReport({status:'failed',steps:{s1:{step_id:'s1',
+    capability_id:'m4.capability_gateway',status:'failed',
+    error:{code:'CONTRACT_MISMATCH',message,request_id:'req-debug',trace_id:'trace-debug',retryable:false}}}});
+  assert.match(html, /完整错误详情/);
+  assert.ok(html.includes('x'.repeat(2000)));
+  assert.match(html,/trace-debug/);
+  assert.doesNotMatch(html,/<script>/);
 });

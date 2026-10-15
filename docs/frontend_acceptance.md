@@ -1,5 +1,7 @@
 # 成员前端整合与真实服务验收（2026-10-15）
 
+> 历史验收记录：2026-10-15 后金额公共接口已改为元（最多两位小数）。本文旧分单位的调用示例不再适用于当前版本；最新契约见 [interface_contract.md](interface_contract.md)。原始验收证据保留。
+
 源仓库：`zxy258455/agent-hub`，基线 `4760d44`，包含此前 `8a300a5` 与 Dots 修复。本地目录 `D:/模组/agent-hub-frontend`，分支 `fix/frontend-live-defaults-20261015`。原 `D:/模组/agent-hub` 保留；本轮没有推送成员仓库。
 
 ## 已修复

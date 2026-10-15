@@ -72,10 +72,10 @@
     return html;
   }
 
-  function moneyFen(fen) {
-    if (typeof fen !== "number") return escapeHtml(fen);
-    const yuan = (fen / 100).toLocaleString("zh-CN", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-    return `<span class="money">${yuan} 元</span> <span class="evt">(${fen} 分)</span>`;
+  function moneyYuan(amount) {
+    if (typeof amount !== "number") return escapeHtml(amount);
+    const yuan = amount.toLocaleString("zh-CN", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    return `<span class="money">${yuan} 元</span>`;
   }
 
   function toast(msg) {
@@ -363,14 +363,14 @@
   }
 
   function fieldHtml(key, prop, path, isRequired) {
-    const label = escapeHtml(FIELD_LABELS[key] || key) + (key.endsWith('_amount') ? '（分）' : '') + (isRequired ? ' <span class="req">*</span>' : '');
+    const label = escapeHtml(FIELD_LABELS[key] || key) + (key.endsWith('_amount') ? '（元）' : '') + (isRequired ? ' <span class="req">*</span>' : '');
     const type = prop.type;
     let control;
     if (type === "string" && Array.isArray(prop.enum)) {
       control = `<select data-field="${escapeHtml(path)}" data-type="enum">` +
         prop.enum.map((o) => `<option value="${escapeHtml(o)}">${escapeHtml(o)}</option>`).join("") + `</select>`;
     } else if (type === "integer" || type === "number") {
-      const step = type === "number" ? "0.001" : "1";
+      const step = key.endsWith("_amount") ? "0.01" : type === "number" ? "0.001" : "1";
       control = `<input type="number" data-field="${escapeHtml(path)}" data-type="${type}" step="${step}" />`;
     } else if (type === "boolean") {
       control = `<input type="checkbox" data-field="${escapeHtml(path)}" data-type="boolean" />`;
@@ -396,7 +396,7 @@
       if (val === undefined || val === null || val === "") return;
       if (el.tagName === "SELECT") el.value = val;
       else if (el.type === "checkbox") el.checked = !!val;
-      else el.value = (typeof val === "object") ? "" : String(val);
+      else el.value = (typeof val === "object") ? "" : path.split(".").pop().endsWith("_amount") && typeof val === "number" ? val.toFixed(2) : String(val);
     });
   }
 
@@ -419,7 +419,8 @@
         if (raw === "") return;
         val = Number(raw);
         if (!Number.isFinite(val)) throw new Error(`字段 ${path} 不是合法数字`);
-        if (type === 'integer' && !Number.isInteger(val)) throw new Error('金额与数量必须填写整数；金额单位为分。');
+        if (path.split('.').pop().endsWith('_amount') && (!/^\d+(?:\.\d{1,2})?$/.test(raw) || val > 999999999999.99)) throw new Error('金额单位为元，请填写最多两位小数且不超过 999999999999.99。');
+        if (type === 'integer' && !Number.isInteger(val)) throw new Error('数量必须填写整数。');
       } else if (type === "array") {
         const raw = el.value.trim();
         if (raw === "") return;
@@ -660,7 +661,8 @@
 
     if (step.error) {
       html += `<div class="kv"><dt>错误码</dt><dd>${escapeHtml(step.error.code)}</dd>` +
-        `<dt>消息</dt><dd>${escapeHtml(step.error.message)}</dd></div>`;
+        `<dt>消息</dt><dd class="error-message">${escapeHtml(step.error.message)}</dd></div>` +
+        `<details class="diagnostics"><summary>完整错误详情（可选中复制）</summary><pre class="error-detail">${escapeHtml(JSON.stringify(step.error, null, 2))}</pre></details>`;
     }
     if (step.reason && st !== "failed") html += `<div class="turn-message">${escapeHtml(step.reason)}</div>`;
     if (step.result && step.result.data && Object.keys(step.result.data).length) {
@@ -707,7 +709,7 @@
   function renderOrder(d) {
     let html = "";
     html += kvRow("订单号", escapeHtml(d.order_id));
-    if (typeof d.order_amount === "number") html += kvRow("订单金额", moneyFen(d.order_amount));
+    if (typeof d.order_amount === "number") html += kvRow("订单金额", moneyYuan(d.order_amount));
     const statusNames = {delivered:'已送达',completed:'已完成',paid:'已付款',shipped:'已发货',pending:'待处理',cancelled:'已取消',processing:'处理中',refunded:'已退款'};
     html += kvRow("订单状态", escapeHtml(statusNames[d.order_status] || d.order_status));
     const avail = d.logistics_availability;
@@ -738,8 +740,8 @@
     html += kvRow("申请号", escapeHtml(d.request_id));
     if (d.state_view) {
       const sv = d.state_view;
-      if (typeof sv.order_amount === "number") html += kvRow("订单金额", moneyFen(sv.order_amount));
-      if (typeof sv.refund_amount === "number") html += kvRow("退款金额", moneyFen(sv.refund_amount));
+      if (typeof sv.order_amount === "number") html += kvRow("订单金额", moneyYuan(sv.order_amount));
+      if (typeof sv.refund_amount === "number") html += kvRow("退款金额", moneyYuan(sv.refund_amount));
     }
     if (Array.isArray(d.node_trace)) {
       html += kvRow("节点轨迹", d.node_trace.map((n) => escapeHtml(typeof n === 'string' ? n : n.node_name || n.node || JSON.stringify(n))).join(" → "));
@@ -829,7 +831,7 @@
     if (d.fused_data) {
       const f = d.fused_data;
       html += kvRow("周次", escapeHtml(f.week));
-      if (typeof f.revenue_amount === "number") html += kvRow("成交额", moneyFen(f.revenue_amount));
+      if (typeof f.revenue_amount === "number") html += kvRow("成交额", moneyYuan(f.revenue_amount));
       html += kvRow("订单数", escapeHtml(f.order_count));
       html += kvRow("转化率", typeof f.conversion_rate === 'number' ? `${(f.conversion_rate*100).toFixed(2)}%` : escapeHtml(f.conversion_rate));
       html += kvRow("异常", escapeHtml(f.anomaly));

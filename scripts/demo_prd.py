@@ -32,7 +32,7 @@ def run_demo():
     knowledge=json.loads((ROOT/'examples/group02_knowledge.json').read_text(encoding='utf-8'))
     operations=json.loads((ROOT/'examples/group02_operations.json').read_text(encoding='utf-8'))
     operations['steps'].append({'step_id':'s4','capability_id':'m5.promotion_plan','depends_on':['s2'],
-        'inputs':{'goal':{'literal':'课堂离线演示：根据周报制定大促方案'},'budget_amount':{'literal':1000000},
+        'inputs':{'goal':{'literal':'课堂离线演示：根据周报制定大促方案'},'budget_amount':{'literal':10000.0},
                   'fused_data':{'ref':'s1.data.fused_data'},'report_markdown':{'ref':'s2.data.report_markdown'}}})
     refund=json.loads((ROOT/'examples/group02_refund.json').read_text(encoding='utf-8'))
     refund['steps'][0]['inputs']['order_id']['literal']='2025100004'
@@ -47,7 +47,7 @@ def run_demo():
         {'approved':True,'reviewer':'课堂演示决定（模拟）','material_complete':True})
     workflow=modules[-1]
     thread_id='demo-rollback'
-    workflow.run('2025100003','课堂回滚演示',refund_amount=12900,thread_id=thread_id)
+    workflow.run('2025100003','课堂回滚演示',refund_amount=129.0,thread_id=thread_id)
     before=workflow.get_trace(thread_id)
     restored=workflow.rollback(thread_id,1)
     resumed=workflow.resume(thread_id)

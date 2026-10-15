@@ -67,16 +67,16 @@ def test_real_fusion_report_promotion_chain_in_topological_order(load_plan):
     registry = all_real_registry()
     report = Executor(registry).execute(load_plan('operations'))
     assert report.status == 'completed'
-    assert report.steps['s1'].result.data['fused_data']['revenue_amount'] == 1268430000
+    assert report.steps['s1'].result.data['fused_data']['revenue_amount'] == 12684300.0
     assert report.steps['s2'].inputs['fused_data'] == report.steps['s1'].result.data['fused_data']
-    assert '1268430000' in report.steps['s2'].result.data['report_markdown']
+    assert '12684300.00' in report.steps['s2'].result.data['report_markdown']
     assert report.steps['s3'].inputs['report_markdown'] == report.steps['s2'].result.data['report_markdown']
     assert [e.step_id for e in report.events if e.status == 'running'] == ['s1', 's2', 's3']
 
 
-@pytest.mark.parametrize('order_id,amount,status', [('order-below', 49999, 'completed'),
-    ('order-boundary', 50000, 'completed'), ('order-above', 50001, 'waiting_approval'),
-    ('2025101234', 69900, 'waiting_approval')])
+@pytest.mark.parametrize('order_id,amount,status', [('order-below', 499.99, 'completed'),
+    ('order-boundary', 500.0, 'completed'), ('order-above', 500.01, 'waiting_approval'),
+    ('2025101234', 699.0, 'waiting_approval')])
 def test_real_m2_real_m7_share_order_amount_and_waiting(order_id, amount, status, load_plan):
     plan = load_plan('refund_waiting')
     next(s for s in plan['steps'] if s['step_id'] == 's1')['inputs']['order_id']['literal'] = order_id
@@ -128,7 +128,7 @@ def test_cli_all_seven_flags_and_local_chains(monkeypatch, capsys):
     assert cli.main(['tests/fixtures/refund_waiting.json', '--real-m2', '--real-m7', '--json']) == 3
     assert json.loads(capsys.readouterr().out)['status'] == 'waiting_approval'
     assert cli.main(['tests/fixtures/operations.json', '--real-m6', '--real-m3', '--json']) == 0
-    assert json.loads(capsys.readouterr().out)['steps']['s1']['result']['data']['fused_data']['revenue_amount'] == 1268430000
+    assert json.loads(capsys.readouterr().out)['steps']['s1']['result']['data']['fused_data']['revenue_amount'] == 12684300.0
 
 
 @pytest.mark.parametrize('module,args,code', [

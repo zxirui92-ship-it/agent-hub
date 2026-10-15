@@ -1,5 +1,7 @@
 # 接口迁移与 M4 交付记录
 
+> 历史验收记录：2026-10-15 后金额公共接口已改为元（最多两位小数）。本文旧分单位的调用示例不再适用于当前版本；最新契约见 [interface_contract.md](interface_contract.md)。原始验收证据保留。
+
 日期：2026-10-12。工作目录：`D:\模组\agent-hub`；本地分支：`feat/naming-migration-m4`。未推送、未合并 PR、未改写 main。
 
 ## 来源与阶段门禁

@@ -9,10 +9,10 @@ from hub_platform.planner import DynamicPlanner, PlanningError
 from tests.unit.test_planner import ScriptedModel, ready
 
 
-@pytest.mark.parametrize('text,amount', [('预算10万元',10000000),('预算10000元',1000000),
-    ('总预算为1.25万元',1250000),('预算：2,000.05元',200005),('预算不超过50000分',50000),
-    ('预算10万\n补充：预算改为2万元',2000000),('预算10万\n补充：预算改成2万元',2000000),
-    ('预算100元\n补充：下周开展',10000)])
+@pytest.mark.parametrize('text,amount', [('预算10万元',100000.0),('预算10000元',10000.0),
+    ('总预算为1.25万元',12500.0),('预算：2,000.05元',2000.05),('预算不超过50000分',500.0),
+    ('预算10万\n补充：预算改为2万元',20000.0),('预算10万\n补充：预算改成2万元',20000.0),
+    ('预算100元\n补充：下周开展',100.0)])
 def test_explicit_budget_units_and_latest_correction(text,amount):
     assert explicit_budget(text)['budget_amount'] == amount
 
@@ -30,16 +30,16 @@ def promotion(amount):
 
 
 def test_wrong_unit_is_repaired_before_execution(registry):
-    model=ScriptedModel(promotion(1000000),promotion(10000000))
+    model=ScriptedModel(promotion(10000.0),promotion(100000.0))
     result=DynamicPlanner(registry,model).plan('制定大促方案，预算10万元')
-    assert result.plan.steps[0].inputs['budget_amount'].literal == 10000000
+    assert result.plan.steps[0].inputs['budget_amount'].literal == 100000.0
     assert [a.status for a in result.attempts] == ['invalid','accepted']
-    assert model.calls[0][1]['monetary_facts']['budget_amount'] == 10000000
+    assert model.calls[0][1]['monetary_facts']['budget_amount'] == 100000.0
 
 
 def test_wrong_unit_cannot_pass_without_repair_budget(registry):
     with pytest.raises(PlanningError) as exc:
-        DynamicPlanner(registry,ScriptedModel(promotion(10000)),max_repairs=0).plan('大促预算10000元')
+        DynamicPlanner(registry,ScriptedModel(promotion(100.0)),max_repairs=0).plan('大促预算10000元')
     assert exc.value.code == ErrorCode.INVALID_PLAN
 
 

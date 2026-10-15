@@ -1,6 +1,7 @@
 """Read the group_02 simulation dataset without merging it with legacy fixtures.
 
-JSON amounts already use integer cents. The Excel workbook is an original source
+Archived JSON amounts use integer cents; read() explicitly converts them to yuan.
+The Excel workbook is an original source
 for inspection, not a runtime dependency. Invalid joins fail instead of guessing.
 """
 from copy import deepcopy
@@ -15,6 +16,7 @@ from dotenv import load_dotenv
 from common.errors import ErrorCode, ServiceError
 from common.json_data import strict_json_loads
 from common.order_policy import ORDER_STATUSES, RISK_LEVELS
+from common.money import cents_to_yuan, is_yuan
 
 ROOT = Path(__file__).resolve().parents[1]
 SOURCE = 'imported_simulation'
@@ -35,7 +37,22 @@ def require(condition, message):
 
 
 def integer(value, field):
-    require(type(value) is int and value >= 0, f'{field} 必须为非负整数（金额单位为分）')
+    require(type(value) is int and value >= 0, f'{field} 必须为非负整数')
+    return value
+
+
+def money(value, field):
+    require(is_yuan(value) and value >= 0, f'{field} 必须为非负金额（元，最多两位小数）')
+    return value
+
+
+def archived_cents_to_yuan(value):
+    """Only the imported group02 archive has this known source unit."""
+    if isinstance(value, dict):
+        return {key: cents_to_yuan(item) if key.endswith('_amount') else archived_cents_to_yuan(item)
+                for key, item in value.items()}
+    if isinstance(value, list):
+        return [archived_cents_to_yuan(item) for item in value]
     return value
 
 
@@ -60,7 +77,7 @@ class BusinessData:
     field_definitions = [
         'source：group_02 星潮电商仿真业务库；非生产业务系统。',
         'week：ISO 周，使用 weekly_sales/user_behavior_weekly/marketing_campaign_weekly 的独立周样例。',
-        'revenue_amount：weekly_sales.gmv_amount，整数分；不表示会计确认收入。',
+        'revenue_amount：weekly_sales.gmv_amount，元（最多两位小数）；不表示会计确认收入。',
         'order_count：周汇总订单数；不由演示订单明细推算。',
         'conversion_rate：user_behavior_weekly.order_uv / uv，0–1 比率；不是订单数 / UV。',
         'anomaly：来源限制、漏斗与活动成交额/成本；后者不是利润 ROI，不与日报/明细强行对账。',
@@ -71,11 +88,11 @@ class BusinessData:
 
     def read(self, name):
         try:
-            return strict_json_loads((self.path / f'{name}.json').read_text(encoding='utf-8-sig'))
+            return archived_cents_to_yuan(strict_json_loads((self.path / f'{name}.json').read_text(encoding='utf-8-sig')))
         except OSError as exc:
             raise ServiceError(ErrorCode.TOOL_UNAVAILABLE, f'业务资料不可读取：{name}', retryable=False) from exc
         except (ValueError, UnicodeError) as exc:
-            raise ServiceError(ErrorCode.CONTRACT_MISMATCH, f'业务资料不是有效 JSON：{name}', retryable=False) from exc
+            raise ServiceError(ErrorCode.CONTRACT_MISMATCH, f'业务资料 JSON 或归档金额无效：{name}', retryable=False) from exc
 
     def rows(self, name, key):
         data = self.read(name)
@@ -92,7 +109,7 @@ class BusinessData:
         row = self.rows('order_basic', 'order_id').get(order_id)
         if row is None:
             raise ServiceError(ErrorCode.NOT_FOUND, f'仿真业务库订单不存在：{order_id}', retryable=False)
-        amount = integer(row.get('order_amount'), 'order_amount')
+        amount = money(row.get('order_amount'), 'order_amount')
         require(isinstance(row.get('order_status'), str), '订单状态必须为字符串')
         status = STATUS_MAP.get(row.get('order_status'), row.get('order_status'))
         require(status in STATUSES, f'订单 {order_id} 的状态不受支持')
@@ -125,8 +142,8 @@ class BusinessData:
     def refund_policy(self):
         policy = self.read('refund_compliance_policy')
         require(isinstance(policy, dict), '退款策略必须为对象')
-        require(type(policy.get('auto_approve_amount')) is int and policy['auto_approve_amount'] == 50000,
-                '退款阈值必须与公共契约一致：50000 分')
+        require(is_yuan(policy.get('auto_approve_amount')) and policy['auto_approve_amount'] == 500,
+                '退款阈值必须与公共契约一致：500 元')
         require(type(policy.get('max_reflection')) is int and 1 <= policy['max_reflection'] <= 10,
                 'max_reflection 必须为 1–10 的整数')
         risks = policy.get('risk_users')
@@ -143,7 +160,7 @@ class BusinessData:
         for row in self.rows('refund_request', 'refund_id').values():
             if row.get('order_id') != order_id:
                 continue
-            amount = integer(row.get('refund_amount'), 'refund_amount')
+            amount = money(row.get('refund_amount'), 'refund_amount')
             require(row.get('customer_id') == fact['customer_id'], f'退款 {row["refund_id"]} 与订单客户不一致')
             require(amount == fact['order_amount'], f'退款 {row["refund_id"]} 与整单实付金额不一致')
             require(timestamp(row.get('requested_at'), 'requested_at') >= timestamp(fact['created_at'], 'created_at'),
@@ -193,7 +210,7 @@ class BusinessData:
         require(isinstance(sales, dict) and isinstance(behavior, dict) and isinstance(campaigns, list), '周数据结构错误')
         require(sales.get('week') == behavior.get('week') == week, '周索引与记录 week 不一致')
         for key in ('gmv_amount', 'order_count', 'ad_cost_amount', 'new_customer_count'):
-            integer(sales.get(key), key)
+            (money if key.endswith('_amount') else integer)(sales.get(key), key)
         rate = sales.get('refund_rate')
         require(type(rate) in (int, float) and math.isfinite(rate) and 0 <= rate <= 1, '退款率必须为 0–1')
         for key in ('uv', 'detail_uv', 'cart_uv', 'order_uv'):
@@ -202,8 +219,8 @@ class BusinessData:
                 '周漏斗人数必须有效且逐层不增加，UV 不可为零')
         for item in campaigns:
             require(isinstance(item, dict) and isinstance(item.get('name'), str) and bool(item['name'].strip()), '周活动缺少名称')
-            integer(item.get('gmv_amount'), 'campaign.gmv_amount')
-            integer(item.get('cost_amount'), 'campaign.cost_amount')
+            money(item.get('gmv_amount'), 'campaign.gmv_amount')
+            money(item.get('cost_amount'), 'campaign.cost_amount')
         return deepcopy({'orders': sales, 'behavior': {**behavior, 'conversion_rate': behavior['order_uv']/behavior['uv']},
                          'campaigns': campaigns})
 

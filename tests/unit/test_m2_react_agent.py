@@ -19,7 +19,7 @@ def decision(action):
 def test_semantic_protocol_observations_drive_next_decision():
     model = Model(decision('query_logistics'), decision('query_order'))
     result = ReActAgent(model).invoke(request())
-    assert result.status == 'completed' and result.data['order_amount'] == 69900
+    assert result.status == 'completed' and result.data['order_amount'] == 699.0
     assert result.data['actions'] == ['query_logistics', 'query_order']
     second_prompt = json.loads(model.calls[1][1])
     assert second_prompt['remaining_actions'] == ['query_order']
@@ -60,7 +60,7 @@ def test_tool_errors_are_failed_not_empty_success(order_id, code):
     assert result.data['actions'] == ['query_order']
 
 
-@pytest.mark.parametrize('value', [True, 69900.0, -1])
+@pytest.mark.parametrize('value', [True, 699.001, -1])
 def test_malformed_order_fact_rejected(value):
     tools = {'query_order': lambda oid: {**query_order(oid), 'order_amount': value}, 'query_logistics': query_logistics}
     assert ReActAgent(mode='local', tools=tools).invoke(request()).error.code == ErrorCode.CONTRACT_MISMATCH

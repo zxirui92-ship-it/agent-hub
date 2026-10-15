@@ -1,5 +1,6 @@
 """Minimal chat-completions adapter shared by the Planner and model-using modules."""
 from typing import Protocol
+import re
 
 from common.errors import ErrorCode, ServiceError
 from common.http_client import post_json
@@ -32,10 +33,20 @@ class ChatModel:
         return text
 
 
-def json_object(text: str) -> dict:
+def json_object(text: str, *, allow_fence: bool = False) -> dict:
+    # Some compatible providers wrap otherwise valid JSON. Accept exactly one
+    # complete JSON fence only when the caller opts in; never extract a substring
+    # from prose, repair broken JSON, or discard trailing output.
+    if allow_fence and isinstance(text, str):
+        match = re.fullmatch(r'\s*```(?:json)?[ \t]*\r?\n(.*?)\r?\n```\s*', text, re.DOTALL | re.IGNORECASE)
+        if match:
+            text = match.group(1)
     try:
         value = strict_json_loads(text)
     except (ValueError, TypeError) as exc:
+        if allow_fence:
+            location = f'（第 {exc.lineno} 行，第 {exc.colno} 列）' if hasattr(exc, 'lineno') else ''
+            raise ServiceError(ErrorCode.CONTRACT_MISMATCH, f'模型响应不是完整有效的 JSON 对象{location}') from exc
         raise ServiceError(ErrorCode.CONTRACT_MISMATCH, 'Model must return a JSON object without Markdown fences') from exc
     if not isinstance(value, dict):
         raise ServiceError(ErrorCode.CONTRACT_MISMATCH, 'Model output must be a JSON object')

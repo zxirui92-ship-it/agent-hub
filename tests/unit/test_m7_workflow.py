@@ -5,14 +5,14 @@ from common.errors import ErrorCode, ServiceError
 from tests.contract.test_contracts import request_for
 
 
-def request(order='2025101234', amount=69900, **updates):
+def request(order='2025101234', amount=699.0, **updates):
     value = request_for('m7.refund_approval', {'order_id': order, 'refund_amount': amount, 'reason': '退货'})
     return value.model_copy(update=updates)
 
 
-@pytest.mark.parametrize('order,amount,status', [('order-low', 19900, 'completed'),
-    ('order-below', 49999, 'completed'), ('order-boundary', 50000, 'completed'),
-    ('order-above', 50001, 'waiting_approval')])
+@pytest.mark.parametrize('order,amount,status', [('order-low', 199.0, 'completed'),
+    ('order-below', 499.99, 'completed'), ('order-boundary', 500.0, 'completed'),
+    ('order-above', 500.01, 'waiting_approval')])
 def test_real_graph_amount_boundaries(order, amount, status):
     agent = RefundWorkflow()
     value = agent.invoke(request(order, amount))
@@ -26,7 +26,7 @@ def test_real_graph_amount_boundaries(order, amount, status):
     assert value.data['state_view']['refund_amount'] == amount
 
 
-@pytest.mark.parametrize('amount', [1, 69901, 69900.0, True, '69900', -1])
+@pytest.mark.parametrize('amount', [0.01, 699.01, 699.001, True, '69900', -0.01])
 def test_amount_cannot_override_order_fact(amount):
     result = RefundWorkflow().invoke(request(amount=amount))
     assert result.status == 'failed' and result.error.code == ErrorCode.INVALID_INPUT
@@ -104,7 +104,7 @@ def test_pending_requests_are_isolated():
 
 @pytest.mark.parametrize('status', ['canceled', 'refunded'])
 def test_non_refundable_order_is_rejected_before_manual_gate(status):
-    agent = RefundWorkflow(order_loader=lambda _: {'order_amount': 69900, 'order_status': status})
+    agent = RefundWorkflow(order_loader=lambda _: {'order_amount': 699.0, 'order_status': status})
     result = agent.invoke(request())
     assert result.status == 'completed' and result.data['approval_status'] == 'rejected'
     assert [node['node_name'] for node in result.data['node_trace']] == ['receive', 'finalize']
@@ -112,7 +112,7 @@ def test_non_refundable_order_is_rejected_before_manual_gate(status):
 
 def test_checkpoint_rollback_preserves_history_without_duplicate_reducers():
     agent = RefundWorkflow()
-    state = agent.run('order-low', '退货', refund_amount=19900, thread_id='rollback-test')
+    state = agent.run('order-low', '退货', refund_amount=199.0, thread_id='rollback-test')
     history = agent.get_trace('rollback-test')
     restored = agent.rollback('rollback-test', steps_back=1)
     assert restored['node_trace'] == history[1]['state']['node_trace']

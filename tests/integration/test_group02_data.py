@@ -46,7 +46,7 @@ def test_provenance_and_original_files():
 def test_config_is_relative_to_project_not_cwd(source, monkeypatch, tmp_path):
     monkeypatch.setenv('HUB_DATA_DIR', 'data/group02')
     monkeypatch.chdir(tmp_path)
-    assert configured_data().order('2025101234')['order_amount'] == 239700
+    assert configured_data().order('2025101234')['order_amount'] == 2397.0
     with pytest.raises(ServiceError) as exc:
         configured_data().order('order-low')
     assert exc.value.code == ErrorCode.NOT_FOUND  # no silent old-fixture fallback
@@ -87,7 +87,7 @@ def test_custom_m4_knowledge_overrides_dataset(source, tmp_path):
 def test_order_money_status_and_logistics(source):
     result = invoke(ReActAgent(mode='local'), order_id='2025100003')
     assert result.status == 'completed'
-    assert result.data['order_amount'] == 12900 and result.data['order_status'] == 'delivered'
+    assert result.data['order_amount'] == 129.0 and result.data['order_status'] == 'delivered'
     observations = [json.loads(o) for o in result.data['observations']]
     assert all(o['result']['source'] == 'imported_simulation' for o in observations)
     assert observations[1]['result']['tracking_history'] == source.logistics('2025100003')['tracking_history']
@@ -96,10 +96,10 @@ def test_order_money_status_and_logistics(source):
 
 def test_source_conflicts_are_reported_without_repairing_facts(source):
     bad = invoke(ReActAgent(mode='local'), order_id='2025101234')
-    assert bad.status == 'completed' and bad.data['order_amount'] == 239700
+    assert bad.status == 'completed' and bad.data['order_amount'] == 2397.0
     assert bad.data['logistics_availability'] == 'inconsistent' and bad.data['tracking_number'] == ''
     assert '早于' in bad.data['warnings'][0]
-    bad_refund = invoke(RefundWorkflow(), order_id='2025101234', refund_amount=239700, reason='退款')
+    bad_refund = invoke(RefundWorkflow(), order_id='2025101234', refund_amount=2397.0, reason='退款')
     assert bad_refund.error.code == ErrorCode.CONTRACT_MISMATCH and '客户不一致' in bad_refund.error.message
     missing = next(oid for oid in source.rows('order_basic', 'order_id') if oid not in source.rows('logistics_status', 'order_id'))
     result = invoke(ReActAgent(mode='local'), order_id=missing)
@@ -114,7 +114,7 @@ def test_weekly_fusion_uses_uv_ratio_and_integer_cents(source, week):
     view = result.data['fused_data']
     behavior = source.read('user_behavior_weekly')[week]
     assert view['revenue_amount'] == source.read('weekly_sales')[week]['gmv_amount']
-    assert type(view['revenue_amount']) is int
+    assert type(view['revenue_amount']) is float
     assert view['conversion_rate'] == behavior['order_uv']/behavior['uv']
     assert '不是利润 ROI' in view['anomaly'] and '漏斗' in view['anomaly']
     assert load_sample_view(week) == view
@@ -131,14 +131,14 @@ def test_real_seven_module_chain_uses_imported_week(source, load_plan):
     assert len(registry.list_capabilities()) == 7
     report = Executor(registry).execute(plan)
     assert report.status == 'completed', report.model_dump_json()
-    assert report.steps['s1'].result.data['fused_data']['revenue_amount'] == 1268000000
-    assert '1268000000' in report.steps['s2'].result.data['report_markdown']
+    assert report.steps['s1'].result.data['fused_data']['revenue_amount'] == 12680000.0
+    assert '12680000.00' in report.steps['s2'].result.data['report_markdown']
     assert report.steps['s3'].inputs['fused_data'] == report.steps['s1'].result.data['fused_data']
     assert json.loads(report.steps['s5'].result.data['result'])['source_kind'] == 'imported_simulation'
     assert [e.step_id for e in report.events if e.status == 'running' and e.step_id in ('s1', 's2', 's3')] == ['s1', 's2', 's3']
 
 
-@pytest.mark.parametrize('order_id,amount,status', [('2025100003',12900,'completed'), ('2025100004',109900,'waiting_approval')])
+@pytest.mark.parametrize('order_id,amount,status', [('2025100003',129.0,'completed'), ('2025100004',1099.0,'waiting_approval')])
 def test_real_order_refund_chain_and_waiting(source, load_plan, order_id, amount, status):
     plan = load_plan('refund_waiting')
     plan['steps'][0]['inputs']['order_id']['literal'] = order_id
@@ -147,7 +147,7 @@ def test_real_order_refund_chain_and_waiting(source, load_plan, order_id, amount
     assert report.status == status, report.model_dump_json()
     assert report.steps['s2'].inputs['refund_amount'] == amount
     assert report.steps['s3'].status == ('completed' if status == 'completed' else 'pending')
-    assert invoke(RefundWorkflow(), order_id=order_id, refund_amount=1, reason='退款').error.code == ErrorCode.INVALID_INPUT
+    assert invoke(RefundWorkflow(), order_id=order_id, refund_amount=0.01, reason='退款').error.code == ErrorCode.INVALID_INPUT
 
 
 def test_bad_order_blocks_downstream_while_faq_continues(source, load_plan):
@@ -168,7 +168,7 @@ def editable(source, tmp_path):
 
 
 def change(source, name, transform):
-    data = source.read(name)
+    data = json.loads((source.path / f'{name}.json').read_text(encoding='utf-8'))
     transform(data)
     (source.path / f'{name}.json').write_text(json.dumps(data, ensure_ascii=False), encoding='utf-8')
 
@@ -185,8 +185,8 @@ def test_funnel_uses_people_not_order_count_and_returns_deep_copy(editable):
     change(editable, 'weekly_sales', lambda rows: rows['2025-W41'].update(order_count=999))
     loaded = editable.load('2025-W41')
     assert loaded['behavior']['conversion_rate'] == 66200 / 472000
-    loaded['orders']['gmv_amount'] = 0
-    assert editable.load('2025-W41')['orders']['gmv_amount'] == 1268000000
+    loaded['orders']['gmv_amount'] = 0.0
+    assert editable.load('2025-W41')['orders']['gmv_amount'] == 12680000.0
 
 
 def test_duplicate_keys_and_invalid_week_fail_explicitly(editable):
@@ -205,19 +205,19 @@ def test_imported_refund_policy_routes_high_risk_small_amount_to_manual(editable
     change(editable, 'refund_compliance_policy', lambda p: p['risk_users'].update({customer:{'risk_level':'high_risk','note':'测试风险'}}))
     monkeypatch.setenv('HUB_DATA_DIR', str(editable.path))
     module = RefundWorkflow()
-    result = invoke(module, order_id='2025100003', refund_amount=12900, reason='退货')
+    result = invoke(module, order_id='2025100003', refund_amount=129.0, reason='退货')
     assert result.status == 'waiting_approval' and '高风险' in result.waiting_reason
     assert 'auto_approve' not in [n['node_name'] for n in result.data['node_trace']]
     state = module.get_request_trace(result.request_id)[0]['state']
-    assert state['max_reflection'] == 2 and state['auto_approve_amount'] == 50000
+    assert state['max_reflection'] == 2 and state['auto_approve_amount'] == 500.0
     completed = module.submit_decision(result.continuation_token, approved=True, reviewer='测试审核员', material_complete=True)
     assert completed.status == 'completed' and completed.data['approval_status'] == 'approved'
 
 
 @pytest.mark.parametrize('status', ['pending_payment', 'refunding', 'refunded', 'canceled'])
 def test_nonrefundable_status_cannot_autoapprove(source, status):
-    module = RefundWorkflow(order_loader=lambda _: {'order_amount':100, 'order_status':status})
-    result = invoke(module, order_id='test', refund_amount=100, reason='测试')
+    module = RefundWorkflow(order_loader=lambda _: {'order_amount':1.0, 'order_status':status})
+    result = invoke(module, order_id='test', refund_amount=1.0, reason='测试')
     assert result.status == 'completed' and result.data['approval_status'] == 'rejected'
 
 
@@ -226,7 +226,7 @@ def test_refund_history_contradictions_cannot_be_approved(editable, change_field
     fact = editable.order('2025100003')
     record = {'refund_id':'test-refund', 'order_id':'2025100003', 'customer_id':fact['customer_id'],
               'refund_amount':fact['order_amount'], 'requested_at':fact['created_at']}
-    record[change_field] = {'refund_amount':1, 'requested_at':'2000-01-01T00:00:00+08:00', 'customer_id':'wrong'}[change_field]
+    record[change_field] = {'refund_amount':0.01, 'requested_at':'2000-01-01T00:00:00+08:00', 'customer_id':'wrong'}[change_field]
     change(editable, 'refund_request', lambda rows: rows.append(record))
     with pytest.raises(ServiceError) as exc:
         editable.refund_order('2025100003')
@@ -234,7 +234,7 @@ def test_refund_history_contradictions_cannot_be_approved(editable, change_field
 
 
 def test_refund_threshold_cannot_silently_change(editable):
-    change(editable, 'refund_compliance_policy', lambda policy: policy.update(auto_approve_amount=500))
+    change(editable, 'refund_compliance_policy', lambda policy: policy.update(auto_approve_amount=5.0))
     with pytest.raises(ServiceError) as exc:
         editable.refund_policy()
     assert exc.value.code == ErrorCode.CONTRACT_MISMATCH

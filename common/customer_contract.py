@@ -1,4 +1,5 @@
 """Shared M1/M2 manifests for implementations and deterministic mocks."""
+from common.money import yuan_schema
 from common.contracts import CapabilityManifest
 
 TEXT = {'type': 'string', 'minLength': 1, 'pattern': r'\S'}
@@ -29,11 +30,11 @@ def order_manifest():
     inputs = obj(order_id=TEXT, query=TEXT)
     inputs['required'] = ['order_id']
     outputs = obj(order_id=TEXT,
-            order_amount={'type': 'integer', 'minimum': 0}, order_status=TEXT,
+            order_amount=yuan_schema(), order_status=TEXT,
             tracking_number={'type': 'string'}, actions=STRINGS, observations=STRINGS, stop_reason=TEXT)
     outputs['properties'].update(LOGISTICS_FIELDS)
-    return CapabilityManifest(capability_id='m2.order_tracking', version='1.2', name='订单物流查询',
-        description='通过有界 ReAct 查询订单和物流，金额为整数分；物流缺失或冲突时仍返回已核实订单事实，运单为空并明确给出物流状态与提示。',
+    return CapabilityManifest(capability_id='m2.order_tracking', version='2.0', name='订单物流查询',
+        description='通过有界 ReAct 查询订单和物流，金额为元（最多两位小数）；物流缺失或冲突时仍返回已核实订单事实，运单为空并明确给出物流状态与提示。',
         input_schema=inputs, output_schema=outputs,
         preconditions=['order_id 必填；query 可补充查询意图，不能覆盖 order_id'],
         side_effects='read_only', execution_mode='immediate', owner='董超')

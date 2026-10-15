@@ -18,7 +18,8 @@ def test_native_request_and_actual_source_metadata():
     def transport(url, body, key, timeout):
         assert url == 'https://workspace.cn-beijing.maas.aliyuncs.com/api/v1/services/aigc/text-generation/generation'
         assert body['model'] == 'qwen-plus' and key == 'test-key' and timeout == 60
-        assert body['input']['messages'][0]['content'] == '搜索公开文档'
+        assert body['input']['messages'][-1] == {'role': 'user', 'content': '搜索公开文档'}
+        assert body['input']['messages'][0]['role'] == 'system'
         assert body['parameters']['enable_search'] is True
         assert body['parameters']['search_options']['forced_search'] is True
         assert body['parameters']['search_options']['enable_source'] is True

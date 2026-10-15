@@ -30,7 +30,7 @@ from common.errors import ErrorCode, ServiceError
 from common.llm import ChatModel
 from common.model_config import text_config
 from common.config_env import secret_values
-from common.money import format_cents
+from common.money import format_yuan, average_yuan
 from common.iso_week import week_start
 from common.promotion_contract import promotion_manifest
 from hub_platform.schema import DataValidator
@@ -117,22 +117,22 @@ def calculated_facts(context: dict[str, Any]) -> list[str]:
         lines.append(f"活动周 {context['week']} 日历：" + '、'.join(days) + '。')
     if 'budget_amount' in context:
         amount = context['budget_amount']
-        lines.append(f'总预算：{amount} 分 = {format_cents(amount)} 元。')
+        lines.append(f'总预算：{format_yuan(amount)} 元。')
     fused = context.get('fused_data')
     if fused:
         amount, count = fused['revenue_amount'], fused['order_count']
-        lines.append(f"历史统计周 {fused['week']}：成交金额 {amount} 分 = {format_cents(amount)} 元；订单数 {count}。")
+        lines.append(f"历史统计周 {fused['week']}：成交金额 {format_yuan(amount)} 元；订单数 {count}。")
         if count:
-            # Exact half-up rounding to integer cents without float/Decimal limits.
-            average = (2 * amount + count) // (2 * count)
-            lines.append(f'客单价（成交金额÷订单数，四舍五入到分）：{average} 分 = {format_cents(average)} 元。')
+            # Decimal half-up rounding to two yuan decimal places.
+            average = average_yuan(amount, count)
+            lines.append(f'客单价（成交金额÷订单数，四舍五入到分）：{format_yuan(average)} 元。')
         else:
             lines.append('客单价：无订单，不可计算，不能填零或推测。')
     return lines
 
 
 def facts_for_prompt(context: dict[str, Any]) -> str:
-    lines = ['金额口径：所有 _amount 原始字段单位都是分，100 分=1 元；禁止把分数值直接当元。',
+    lines = ['金额口径：所有 _amount 字段单位都是人民币元，最多两位小数；不再除以100。',
              '只把下列输入当作事实；角色建议不是事实。未知库存、人力、峰值、成本和 ROI 须标记待确认，建议目标须标记假设。']
     lines.extend(calculated_facts(context))
     lines.append('日历、预算、客单价使用上述程序计算值，不得自行重算或采用角色建议中的矛盾值。'
@@ -141,12 +141,12 @@ def facts_for_prompt(context: dict[str, Any]) -> str:
         lines.append(f"目标活动周（以此安排方案时间线）：{context['week']}。")
     if 'budget_amount' in context:
         amount = context['budget_amount']
-        lines.append(f'预算：{amount} 分 = {format_cents(amount)} 元。')
+        lines.append(f'预算：{format_yuan(amount)} 元。')
     fused = context.get('fused_data')
     if fused:
         amount = fused['revenue_amount']
         lines.append(f"融合数据统计周：{fused['week']}（历史依据，不替代目标活动周）。")
-        lines.append(f"成交金额：{amount} 分 = {format_cents(amount)} 元（不是会计收入）。")
+        lines.append(f"成交金额：{format_yuan(amount)} 元（不是会计收入）。")
         lines.append('完整融合事实：' + json.dumps(fused, ensure_ascii=False))
     if context.get('report_markdown'):
         lines.append('输入周报：' + context['report_markdown'])
@@ -180,8 +180,8 @@ class BaseRoleAgent:
         if context.get("week"):
             background.append(f"周期：{context['week']}")
         if context.get("budget_amount") is not None:
-            # 入参单位是「分」，展示时换算成元，避免四个人各写各的单位
-            background.append(f"预算：{format_cents(context['budget_amount'])} 元")
+            # 入参单位是「元」，展示时统一保留两位小数，避免四个人各写各的单位
+            background.append(f"预算：{format_yuan(context['budget_amount'])} 元")
         if context.get("report_markdown"):
             background.append(f"运营周报摘要：{_clip(str(context['report_markdown']), 200)}")
         if context.get("fused_data"):
@@ -497,7 +497,7 @@ def main(argv=None) -> int:
     parser = argparse.ArgumentParser(description='M5 four-role promotion planning')
     parser.add_argument('goal', nargs='?')
     parser.add_argument('--week')
-    parser.add_argument('--budget-amount', type=int, help='Budget in integer cents')
+    parser.add_argument('--budget-amount', type=float, help='Budget in CNY yuan, at most two decimal places')
     parser.add_argument('--report-file', type=Path, help='UTF-8 Markdown report')
     parser.add_argument('--manifest', action='store_true', help='Print contract without invoking the model')
     args = parser.parse_args(argv)

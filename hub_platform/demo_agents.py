@@ -2,6 +2,7 @@
 from hashlib import sha256
 from typing import Any
 
+from common.money import is_yuan
 from common.contracts import AgentRequest, AgentResult, CapabilityManifest, ErrorDetail
 from common.errors import ErrorCode, ServiceError
 from common.order_data import order_fact as shared_order_fact
@@ -89,7 +90,7 @@ class OrderTrackingMock(ValidatedMock):
         order_id = request.payload["order_id"]
         fact = order_fact(order_id)
         return result(request, {"order_id": order_id, **fact, "actions": ["query_order", "query_logistics"],
-            "observations": [f"Mock 订单金额 {fact['order_amount']} 分", "Mock 物流运输中"], "stop_reason": "查询完成"})
+            "observations": [f"Mock 订单金额 {fact['order_amount']:.2f} 元", "Mock 物流运输中"], "stop_reason": "查询完成"})
 
 
 class WeeklyReportMock(ValidatedMock):
@@ -134,9 +135,9 @@ class DataFusionMock(ValidatedMock):
     manifest = fusion_manifest()
 
     def _invoke(self, request):
-        return result(request, {"fused_data": {"week": request.payload["week"], "revenue_amount": 12000000,
+        return result(request, {"fused_data": {"week": request.payload["week"], "revenue_amount": 120000.0,
             "order_count": 800, "conversion_rate": 0.032, "anomaly": "转化率环比下降 0.5 个百分点"},
-            "field_definitions": ["revenue_amount：销售额，整数分", "order_count：订单数量", "conversion_rate：转化率"],
+            "field_definitions": ["revenue_amount：销售额，元（最多两位小数）", "order_count：订单数量", "conversion_rate：转化率"],
             "update_events": ["Mock 订单读取", "Mock 行为与营销数据融合"]})
 
 
@@ -146,16 +147,16 @@ class RefundApprovalMock(ValidatedMock):
     def _invoke(self, request):
         payload = request.payload
         fact = order_fact(payload["order_id"])
-        if type(payload["refund_amount"]) is not int or payload["refund_amount"] != fact["order_amount"]:
+        if not is_yuan(payload["refund_amount"]) or payload["refund_amount"] != fact["order_amount"]:
             raise HubError(ErrorCode.INVALID_INPUT, "Mock 仅支持整单退款；refund_amount 必须等于共享订单事实 order_amount")
         rejected = fact['order_status'] in ('canceled', 'refunded', 'not_found')
-        waiting = fact["order_amount"] > 50000 and not rejected
+        waiting = fact["order_amount"] > 500 and not rejected
         data = {"request_id": "refund-" + sha256(request.request_id.encode()).hexdigest()[:12],
                 "approval_status": "rejected" if rejected else "waiting_approval" if waiting else "approved",
                 "node_trace": [{"node_name": "accept"}, {"node_name": "manual_review" if waiting else "auto_approve"}],
                 "state_view": {"order_id": payload["order_id"], "order_amount": fact["order_amount"], "refund_amount": payload["refund_amount"]}}
         return result(request, data, status="waiting_approval" if waiting else "completed",
-                      waiting_reason="金额超过 50000 分，等待人工审核；本阶段不支持恢复。" if waiting else None)
+                      waiting_reason="金额超过 500 元，等待人工审核；本阶段不支持恢复。" if waiting else None)
 
 
 MOCK_TYPES = (FAQMock, OrderTrackingMock, WeeklyReportMock, GatewayMock, PromotionPlanMock, DataFusionMock, RefundApprovalMock)

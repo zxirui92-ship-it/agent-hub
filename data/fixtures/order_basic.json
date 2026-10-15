@@ -1,7 +1,7 @@
 {
-  "2025101234": {"order_amount": 69900, "order_status": "paid", "tracking_number": "mock-track-001"},
-  "order-low": {"order_amount": 19900, "order_status": "paid", "tracking_number": "mock-track-002"},
-  "order-below": {"order_amount": 49999, "order_status": "paid", "tracking_number": "mock-track-003"},
-  "order-boundary": {"order_amount": 50000, "order_status": "paid", "tracking_number": "mock-track-004"},
-  "order-above": {"order_amount": 50001, "order_status": "paid", "tracking_number": "mock-track-005"}
+  "2025101234": {"order_amount": 699.0, "order_status": "paid", "tracking_number": "mock-track-001"},
+  "order-low": {"order_amount": 199.0, "order_status": "paid", "tracking_number": "mock-track-002"},
+  "order-below": {"order_amount": 499.99, "order_status": "paid", "tracking_number": "mock-track-003"},
+  "order-boundary": {"order_amount": 500.0, "order_status": "paid", "tracking_number": "mock-track-004"},
+  "order-above": {"order_amount": 500.01, "order_status": "paid", "tracking_number": "mock-track-005"}
 }

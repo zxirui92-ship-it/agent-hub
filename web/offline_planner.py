@@ -42,14 +42,10 @@ def _detect_week(goal):
     return None
 
 
-def _detect_budget_fen(goal):
-    m = _BUDGET_YUAN.search(goal)
-    if m:
-        return int(float(m.group(1)) * 1000000)
-    m = _BUDGET_FEN.search(goal)
-    if m:
-        return int(float(m.group(1)) * 100)
-    return None
+def _detect_budget_yuan(goal):
+    from hub_platform.amounts import explicit_budget
+    fact = explicit_budget(goal)
+    return fact['budget_amount'] if fact else None
 
 
 class FakePlannerModel:
@@ -99,7 +95,7 @@ class FakePlannerModel:
         if ("周报" in goal or "经营" in goal) and ("大促" in goal or "促销" in goal or "方案" in goal):
             if not week:
                 return self._clarify("请指明要融合的 ISO 周（例如 2025-W41）。")
-            budget = _detect_budget_fen(goal)
+            budget = _detect_budget_yuan(goal)
             m5_inputs = {"goal": _literal(goal),
                          "report_markdown": _ref("s2.data.report_markdown")}
             if week:

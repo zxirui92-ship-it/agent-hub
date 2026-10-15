@@ -33,10 +33,10 @@ def test_waiting_preserved_without_fake_continuation(registry, load_plan):
     assert report.final_results == {}
 
 
-@pytest.mark.parametrize("amount,expected", [(49999, "completed"), (50000, "completed"), (50001, "waiting_approval")])
+@pytest.mark.parametrize("amount,expected", [(499.99, "completed"), (500.0, "completed"), (500.01, "waiting_approval")])
 def test_refund_threshold(registry, amount, expected):
     plan = {"plan_id": "plan-20261012-001", "goal": "s2", "steps": [{"step_id": "s1", "capability_id": "m7.refund_approval",
-            "inputs": {"order_id": {"literal": {49999: "order-below", 50000: "order-boundary", 50001: "order-above"}[amount]}, "refund_amount": {"literal": amount}, "reason": {"literal": "退货"}}}]}
+            "inputs": {"order_id": {"literal": {499.99: "order-below", 500.0: "order-boundary", 500.01: "order-above"}[amount]}, "refund_amount": {"literal": amount}, "reason": {"literal": "退货"}}}]}
     assert Executor(registry).execute(plan).status == expected
 
 

@@ -2,6 +2,7 @@
 
 Version 2.0 replaces the local draft's report input and roles object.
 """
+from common.money import yuan_schema
 from common.contracts import CapabilityManifest
 from common.fusion_contract import fused_schema
 from common.iso_week import week_schema
@@ -10,10 +11,10 @@ from common.iso_week import week_schema
 def promotion_manifest() -> CapabilityManifest:
     text = {"type": "string", "minLength": 1, "pattern": r"\S"}
     week = week_schema()
-    money = {"type": "integer", "minimum": 0}
+    money = yuan_schema()
     fused = fused_schema()
     return CapabilityManifest(
-        capability_id="m5.promotion_plan", version="2.0", name="大促方案协同",
+        capability_id="m5.promotion_plan", version="3.0", name="大促方案协同",
         description="根据大促目标及可选周报、融合数据和预算，由产品、运营、数据、客服四角色形成统一方案。",
         input_schema={
             "type": "object", "additionalProperties": False, "required": ["goal"],

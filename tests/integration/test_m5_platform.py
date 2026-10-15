@@ -74,7 +74,7 @@ def test_platform_cli_can_select_real_m4_and_m5_together(monkeypatch, capsys):
     assert cli.main(['--list-capabilities', '--real-m4', '--real-m5']) == 0
     manifests = json.loads(capsys.readouterr().out)
     assert len(manifests) == 7
-    assert next(item for item in manifests if item['capability_id'] == m5.M5_CAPABILITY_ID)['version'] == '2.0'
+    assert next(item for item in manifests if item['capability_id'] == m5.M5_CAPABILITY_ID)['version'] == '3.0'
 
 
 def test_m4_and_m5_execute_in_one_registry(load_plan):
@@ -103,7 +103,7 @@ def test_standalone_manifest_and_missing_configuration(entry):
     manifest = subprocess.run([sys.executable, *entry, '--manifest'], cwd=cwd, env=env,
                               capture_output=True, text=True, encoding='utf-8')
     assert manifest.returncode == 0, manifest.stderr
-    assert json.loads(manifest.stdout)['version'] == '2.0'
+    assert json.loads(manifest.stdout)['version'] == '3.0'
     run = subprocess.run([sys.executable, *entry, '本地接口测试'], cwd=cwd, env=env,
                          capture_output=True, text=True, encoding='utf-8')
     assert run.returncode == 1, run.stderr

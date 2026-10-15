@@ -28,7 +28,7 @@ def weekly_manifest() -> CapabilityManifest:
     fused = deepcopy(promotion_manifest().input_schema['properties']['fused_data'])
     text = {'type': 'string', 'minLength': 1}
     return CapabilityManifest(
-        capability_id='m3.weekly_report', version='2.0', name='运营周报生成',
+        capability_id='m3.weekly_report', version='3.0', name='运营周报生成',
         description='先规划再执行，根据 M6 融合数据生成周报；可提供上一周同口径数据计算环比，否则明确标记缺失。',
         input_schema={'type': 'object', 'additionalProperties': False, 'required': ['fused_data'],
                       'properties': {'fused_data': fused, 'previous_fused_data': deepcopy(fused)}},
@@ -41,6 +41,6 @@ def weekly_manifest() -> CapabilityManifest:
                     'properties': {'step_id': {'type': 'string', 'pattern': '^s[1-9][0-9]*$'},
                         'description': text, 'status': {'type': 'string', 'enum': ['completed']},
                         'result_summary': text, 'duration_ms': {'type': 'integer', 'minimum': 0}}}}}},
-        preconditions=['fused_data 为当前平台的完整经营视图，金额为整数分',
+        preconditions=['fused_data 为当前平台的完整经营视图，金额为元（最多两位小数）',
                        'previous_fused_data 如提供，必须是相邻上一 ISO 周且使用相同统计口径'],
         side_effects='read_only', execution_mode='immediate', supports_resume=False, owner='邵子谦')

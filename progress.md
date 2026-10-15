@@ -165,3 +165,6 @@
 最终前端11项通过，7项安装包入口通过；桌面/手机截图及workspace_acceptance.json已保存，浏览器console无error。本机密钥扫描通过；个人main仍8a300a5且是HEAD祖先，正常快进，不强推；完整运行日志留在audit_artifacts/workspace-ui本地。
 
 推送完成：personal main从8a300a5快进到d46f049，包含成员前端、CI来源哈希/真实默认服务修复及业务工作台。原成员origin保持不变；无强推、无PR合并、无密钥上传。本记录随后随文档提交同步。
+
+## 2026-10-15 元金额与 M4 修复
+金额 API 统一 CNY yuan，Decimal 半入、两位小数、不截断；group02 来源原字节保留并在读取边界转换。M4 JSON mode + 严格字段校验 + 一次修复重试；搜索专用证据提示，完整错误可复制。最终离线1434通过/36跳过、前端13通过、真实M4四次/业务两链/搜索复验两次通过，25次外部请求响应日志脱敏留本机。14文件哈希和2593个Excel字段核对无差异。详见 docs/yuan_m4_acceptance.md。
