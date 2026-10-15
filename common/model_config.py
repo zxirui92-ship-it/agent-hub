@@ -1,6 +1,6 @@
 """Resolve local text-model settings without copying credentials into files."""
 from dataclasses import dataclass, field
-import os
+from common.config_env import TEXT_SETTINGS, resolve_env
 
 
 @dataclass(frozen=True)
@@ -12,7 +12,7 @@ class TextConfig:
 
 
 def text_config(env=None):
-    env = os.environ if env is None else env
+    env = resolve_env(env, TEXT_SETTINGS)
     values = [env.get(key, '').strip() for key in ('LLM_BASE_URL', 'LLM_API_KEY', 'LLM_MODEL')]
     if any(values):
         return TextConfig(*values, 'LLM_*')

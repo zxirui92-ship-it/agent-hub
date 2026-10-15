@@ -4,6 +4,8 @@
 
 ## 本机启动
 
+小组成员变量名不一致时，使用 [本机变量映射说明](team_configuration.md) 和 `.env.team.example`；只映射名称，不复制或共享密钥。先运行 `python -m scripts.check_live_config` 做不联网的配置检查。
+
 在仓库根运行。密钥仅从本机环境读取；本机 `.env` 已显式选择 `LLM_PROVIDER=bailian`、`BAILIAN_TEXT_MODEL=qwen-plus`、`HUB_DATA_DIR=data/group02`。所有文本模块共用千问；搜索、生图共用百炼配置，图片模型独立。DeepSeek 本轮文本请求超时，因此不作为本机验收默认服务；没有自动降级到 Mock。
 
 ```powershell

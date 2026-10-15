@@ -226,6 +226,8 @@ check_wheel.py 会在源码目录外安装 wheel，测试平台能力清单和 M
 
 ## 2026-10-15 可靠性整合与前端准备
 
+成员本机变量名不一致：使用 [.env.team.example](.env.team.example) 和 [团队配置说明](docs/team_configuration.md)，通过 `标准字段_ENV=现有变量名` 统一读取，无需修改模块。`python -m scripts.check_live_config` 可离线检查，不显示密钥。
+
 本地开发分支整合 group02 数据接入、平台审批续跑和 Dots 审计修复。M2 1.2 可返回已知订单及明确的物流缺失/冲突提示；M7 统一 completed/watch 等来源枚举，审批响应失败可用原决定恢复；Planner 对明确预算增加整数分换算校验并启用 JSON 输出。
 
 本机文本配置现使用百炼 qwen-plus（DeepSeek 本轮文本请求超时），不是运行时自动 fallback；密钥仍在本机环境。实际测试记录见 [可靠性验收](docs/reliability_acceptance.md)，下一步的会话/状态/审核接入方式见 [前端接入说明](docs/frontend_handoff.md)。本轮尚未建立 HTTP API 或前端页面。

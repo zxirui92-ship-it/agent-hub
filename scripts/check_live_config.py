@@ -4,6 +4,7 @@ import os
 from pathlib import Path
 from dotenv import load_dotenv
 from common.model_config import text_config
+from common.config_env import MAPPED_SETTINGS, resolve_env
 from agents.router.config import search_source
 
 GROUPS = {
@@ -14,6 +15,8 @@ GROUPS = {
 
 
 def check_config(env):
+    mapped = [name for name in MAPPED_SETTINGS if env.get(name + '_ENV', '').strip()]
+    env = resolve_env(env)
     def group(names):
         missing = [name for name in names if not env.get(name, '').strip()]
         return {'configured': not missing, 'missing': missing}
@@ -40,13 +43,20 @@ def check_config(env):
     else:
         result['image']['source'] = 'M4_IMAGE_*'
     return {'network_called': False, 'note': 'Presence only; endpoint compatibility and credentials are unverified.',
+            'mapped_settings': mapped,
             'services': result}
 
 
 def main():
     load_dotenv(Path(__file__).resolve().parents[1] / '.env', override=False)
-    print(json.dumps(check_config(os.environ), ensure_ascii=False, indent=2))
+    try:
+        result = check_config(os.environ)
+    except ValueError as exc:
+        print(json.dumps({'network_called': False, 'configuration_error': str(exc)}, ensure_ascii=False))
+        return 2
+    print(json.dumps(result, ensure_ascii=False, indent=2))
+    return 0 if all(group['configured'] for group in result['services'].values()) else 1
 
 
 if __name__ == '__main__':
-    main()
+    raise SystemExit(main())

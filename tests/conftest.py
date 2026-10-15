@@ -4,6 +4,7 @@ from pathlib import Path
 import pytest
 import os
 import socket
+from common.config_env import MAPPED_SETTINGS, secret_values
 
 from tests.mocks.agents import create_mock_registry
 
@@ -51,9 +52,8 @@ def pytest_collection_modifyitems(config, items):
 
 
 def redact_report(text):
-    for name, value in os.environ.items():
-        if name.endswith('API_KEY') and value:
-            text = text.replace(value, '[redacted]')
+    for value in secret_values():
+        text = text.replace(value, '[redacted]')
     return text
 
 
@@ -76,6 +76,8 @@ def offline_network_guard(request, monkeypatch):
     # change the historical fixtures used by contract and regression tests.
     monkeypatch.setenv('HUB_DATA_DIR', '')
     if 'live' not in request.keywords:
+        for name in MAPPED_SETTINGS:
+            monkeypatch.setenv(name + '_ENV', '')
         # Child CLI processes inherit these empty keys too; socket monkeypatches
         # alone do not protect subprocesses from the user's local credentials.
         for name in ('LLM_API_KEY', 'DEEPSEEK_API_KEY', 'BAILIAN_API_KEY',

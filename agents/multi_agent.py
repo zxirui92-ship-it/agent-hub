@@ -29,6 +29,7 @@ from common.contracts import AgentRequest, AgentResult, ErrorDetail
 from common.errors import ErrorCode, ServiceError
 from common.llm import ChatModel
 from common.model_config import text_config
+from common.config_env import secret_values
 from common.money import format_cents
 from common.iso_week import week_start
 from common.promotion_contract import promotion_manifest
@@ -49,9 +50,8 @@ StrictValidator = DataValidator
 
 
 def _public_message(message: str) -> str:
-    for name, value in os.environ.items():
-        if name.endswith('API_KEY') and value:
-            message = message.replace(value, '[redacted]')
+    for value in secret_values():
+        message = message.replace(value, '[redacted]')
     return message[:1000]
 
 

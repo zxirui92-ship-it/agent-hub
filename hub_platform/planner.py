@@ -16,6 +16,7 @@ from common.contracts import Contract, ExecutionPlan, ExecutionStep
 from common.errors import ErrorCode, ServiceError
 from common.llm import ChatModel, TextModel, json_object
 from common.model_config import text_config
+from common.config_env import resolve_env, secret_values
 from hub_platform.errors import HubError
 from hub_platform.registry import CapabilityRegistry
 from hub_platform.validator import PlanValidator
@@ -90,14 +91,13 @@ def configured_model() -> ChatModel:
     """Shared local provider selection, with a Planner-only model override."""
     load_dotenv(Path(__file__).resolve().parents[1] / '.env', override=False)
     config = text_config()
-    model = os.getenv('HUB_PLANNER_MODEL', '').strip() or config.model
+    model = resolve_env(names=('HUB_PLANNER_MODEL',)).get('HUB_PLANNER_MODEL', '').strip() or config.model
     return ChatModel(config.base_url, config.api_key, model, float(os.getenv('LLM_TIMEOUT_SECONDS') or '120'), json_mode=True)
 
 
 def public_diagnostic(text: str) -> str:
-    for name, value in os.environ.items():
-        if name.endswith('API_KEY') and value:
-            text = text.replace(value, '[redacted]')
+    for value in secret_values():
+        text = text.replace(value, '[redacted]')
     return text
 
 

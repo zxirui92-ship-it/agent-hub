@@ -5,7 +5,7 @@ The Router chooses internal plugins only; the platform owns cross-module plans.
 from datetime import datetime, timezone
 import json
 import logging
-import os
+from common.config_env import secret_values
 
 from agents.router.registry import SkillRegistry
 from agents.router.routing import IntentRouter, RouteDecision
@@ -17,9 +17,8 @@ LOGGER = logging.getLogger('agent_hub.m4')
 
 
 def public_message(message: str) -> str:
-    for name, value in os.environ.items():
-        if name.endswith('API_KEY') and value:
-            message = message.replace(value, '[redacted]')
+    for value in secret_values():
+        message = message.replace(value, '[redacted]')
     return message[:1000]
 
 

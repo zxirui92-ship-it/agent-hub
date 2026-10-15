@@ -18,7 +18,11 @@ def main(argv=None):
     parser.add_argument('wheel', type=Path)
     args = parser.parse_args(argv)
     wheel = args.wheel.resolve(strict=True)
-    env = {key: value for key, value in os.environ.items() if not key.endswith('API_KEY')}
+    aliases = {key for key in os.environ if key.endswith('_ENV') and
+               key.startswith(('LLM_', 'DEEPSEEK_', 'BAILIAN_', 'M4_', 'HUB_PLANNER_'))}
+    credential_sources = {os.environ[key].strip() for key in aliases if key.endswith('API_KEY_ENV')}
+    env = {key: value for key, value in os.environ.items()
+           if not key.endswith('API_KEY') and key not in aliases | credential_sources}
     with tempfile.TemporaryDirectory(prefix='agent-hub-wheel-') as temp:
         root = Path(temp)
         target = root / 'installed'

@@ -135,3 +135,10 @@ resolver 无命名计划，按脚本约定继续使用根目录 legacy 计划。
 3. 本机真实联网、内容检查及针对性修复：complete。31个不同live场景均有通过记录；预算/JSON失败修复后复验，M5日期及客单价再次修复并实测。
 4. 完整离线、安装包和前端交付说明：complete。1368 passed/31 skipped；7项wheel检查通过；docs/reliability_acceptance.md与docs/frontend_handoff.md。
 结论：可进入模拟项目的前端集成。M5自由文本仍会推演错误，报告明确实例；未声明任意回答无误。HTTP、跨进程持久化、实际支付和前端未实现。
+
+## 2026-10-15 小组本机配置适配
+用户选择各自在本地运行后端、首次映射变量名。
+1. 统一标准字段_ENV读取本机任意变量名：complete。文本/Planner/搜索/图片均支持，不修改模块接口或系统环境。
+2. 模板、离线检查、映射错误与脱敏：complete。新增.env.team.example及docs/team_configuration.md。
+3. 验证：complete。1376项全量离线通过，3项包内测试补跑通过，安装后7项检查通过；真实本机配置改名诊断成功，无API费用。
+4. 随团队交接同步远端main：准备提交并正常快进推送，不强制覆盖其他成员工作。
