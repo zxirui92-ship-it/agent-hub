@@ -94,13 +94,17 @@ def test_order_money_status_and_logistics(source):
     assert not any(k in observations[0]['result'] for k in ('customer_name', 'phone', 'shipping_address'))
 
 
-def test_source_conflicts_are_failures_not_repaired_facts(source):
+def test_source_conflicts_are_reported_without_repairing_facts(source):
     bad = invoke(ReActAgent(mode='local'), order_id='2025101234')
-    assert bad.error.code == ErrorCode.CONTRACT_MISMATCH and '早于' in bad.error.message
+    assert bad.status == 'completed' and bad.data['order_amount'] == 239700
+    assert bad.data['logistics_availability'] == 'inconsistent' and bad.data['tracking_number'] == ''
+    assert '早于' in bad.data['warnings'][0]
     bad_refund = invoke(RefundWorkflow(), order_id='2025101234', refund_amount=239700, reason='退款')
     assert bad_refund.error.code == ErrorCode.CONTRACT_MISMATCH and '客户不一致' in bad_refund.error.message
     missing = next(oid for oid in source.rows('order_basic', 'order_id') if oid not in source.rows('logistics_status', 'order_id'))
-    assert invoke(ReActAgent(mode='local'), order_id=missing).error.code == ErrorCode.NOT_FOUND
+    result = invoke(ReActAgent(mode='local'), order_id=missing)
+    assert result.status == 'completed' and result.data['logistics_availability'] == 'unavailable'
+    assert result.data['tracking_number'] == '' and result.data['warnings']
 
 
 @pytest.mark.parametrize('week', ['2025-W40', '2025-W41', '2025-W42', '2025-W43'])
@@ -151,8 +155,10 @@ def test_bad_order_blocks_downstream_while_faq_continues(source, load_plan):
     plan['steps'].append({'step_id':'s3', 'capability_id':'m1.faq_chat', 'inputs':{'question':{'literal':'发票'}}})
     report = Executor(all_real_registry()).execute(plan)
     assert report.status == 'failed'
-    assert report.steps['s1'].error.code == ErrorCode.CONTRACT_MISMATCH
-    assert report.steps['s2'].status == 'skipped' and report.steps['s3'].status == 'completed'
+    assert report.steps['s1'].status == 'completed'
+    assert report.steps['s1'].result.data['logistics_availability'] == 'inconsistent'
+    assert report.steps['s2'].error.code == ErrorCode.CONTRACT_MISMATCH
+    assert report.steps['s3'].status == 'completed'
 
 
 @pytest.fixture

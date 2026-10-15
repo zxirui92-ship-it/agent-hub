@@ -59,16 +59,18 @@ def test_m1_live_greeting_memory_and_policy_conflict(configured,record_property)
     assert any(w in answer for w in ('确认','冲突','不一致','差异'))
 
 
-@pytest.mark.parametrize('order_id,expected',[('2025100003','completed'),('2025101234','failed')])
+@pytest.mark.parametrize('order_id,expected',[('2025100003','available'),('2025101234','inconsistent')])
 def test_m2_live_good_order_and_source_conflict(configured,record_property,order_id,expected):
     result=ReActAgent(configured).invoke(request_for('m2.order_tracking',{'order_id':order_id}))
     record_property('m2_result',result.model_dump_json())
-    assert result.status==expected
-    if expected=='completed':
+    assert result.status=='completed'
+    assert result.data['logistics_availability']==expected
+    if expected=='available':
         assert result.data['order_amount']==12900 and result.data['order_status']=='delivered'
         assert set(result.data['actions'])=={'query_order','query_logistics'}
     else:
-        assert result.error.code==ErrorCode.CONTRACT_MISMATCH
+        assert result.data['order_amount']==239700 and result.data['tracking_number']==''
+        assert result.data['warnings'] and '早于' in result.data['warnings'][0]
 
 
 def test_m4_live_semantic_kb_route(configured,record_property):
@@ -99,6 +101,8 @@ def test_dynamic_two_week_report_and_promotion(configured,record_property):
     promotion=next(s for s in steps if s.capability_id=='m5.promotion_plan')
     assert promotion.inputs['budget_amount']==1000000
     assert len(promotion.result.data['roles'])==4
+    assert '19154 分 = 191.54 元' in promotion.result.data['plan_markdown']
+    assert '2025-10-13（周一）' in promotion.result.data['plan_markdown']
 
 
 def test_m3_live_sees_both_week_funnels(configured,record_property):
@@ -109,3 +113,29 @@ def test_m3_live_sees_both_week_funnels(configured,record_property):
     report=result.data['report_markdown']
     assert '-8.91%' in report and '498000/287000/118000/71400' in report
     assert '472000/274000/109000/66200' in report
+
+
+def test_live_group02_refund_continues_after_explicit_review(configured, record_property):
+    from agents.workflow.refund_graph import RefundWorkflow
+    from hub_platform.conversation import Conversation
+    registry = CapabilityRegistry()
+    for module in (ReActAgent(configured), RefundWorkflow(), SingleAgent(configured)):
+        registry.register(module.manifest, module)
+    chat = Conversation(DynamicPlanner(registry, configured_model()))
+    first = chat.submit('先查询订单2025100004，按查到的实际订单金额申请整单退款，原因是买错了。'
+                        '退款审核结束后，再回答七天无理由退货需要哪些条件。')
+    record_property('waiting_turn', first.model_dump_json())
+    assert first.status == 'waiting_approval', first.model_dump_json()
+    waiting = next(s for s in first.report.steps.values() if s.capability_id == 'm7.refund_approval')
+    assert waiting.inputs['refund_amount'] == 109900
+    faq_steps = [s for s in first.report.steps.values() if s.capability_id == 'm1.faq_chat']
+    assert faq_steps and all(s.status == 'pending' for s in faq_steps)
+    second = chat.review(waiting.step_id, {'approved':True, 'reviewer':'联网验收模拟审核员', 'material_complete':False})
+    assert second.status == 'waiting_approval'
+    final = chat.review(waiting.step_id, {'approved':True, 'reviewer':'联网验收模拟审核员', 'material_complete':True})
+    record_property('final_turn', final.model_dump_json())
+    assert final.status == 'completed', final.model_dump_json()
+    assert final.report.steps[waiting.step_id].result.data['approval_status'] == 'approved'
+    assert all(final.report.steps[s.step_id].status == 'completed' for s in faq_steps)
+    order = next(s for s in final.report.steps.values() if s.capability_id == 'm2.order_tracking')
+    assert sum(e.step_id == order.step_id and e.status == 'running' for e in final.report.events) == 1

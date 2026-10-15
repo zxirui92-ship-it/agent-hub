@@ -19,6 +19,7 @@ from common.model_config import text_config
 from hub_platform.errors import HubError
 from hub_platform.registry import CapabilityRegistry
 from hub_platform.validator import PlanValidator
+from hub_platform.amounts import explicit_budget, validate_budget
 
 
 class PlannerDecision(Contract):
@@ -73,7 +74,8 @@ status:
    字段名、类型、必填项、额外字段约束必须与能力 Schema 一致。
 3. step_id 使用 s1、s2 等；仅真正依赖前序结果的步骤才串联，独立步骤可以没有依赖。
 4. 不编造订单号、日期、金额、业务结果或缺失数据。可由上游获取的数据用 ref 绑定，不向用户重复索要。
-   金额字段若以分计，按用户金额换算为整数分。用户修正优先于旧信息。
+   金额字段全部以分计：1元=100分，1万元=1000000分，10万元=10000000分。
+   若提供 monetary_facts，使用其中程序精确换算的金额；不要重新心算。用户修正优先于旧信息。
 5. 当前任务中的补充回答要结合原目标和之前的澄清问题理解，不能当成独立任务。
    先前任务仅作参考：不能自动重做已完成步骤，也不能把先前计划中的 s1 当成本计划的引用。
    确需复用已完成结果时，从 history 的真实 report 中取值作为 literal；失败/待审批不等于已完成。
@@ -89,7 +91,7 @@ def configured_model() -> ChatModel:
     load_dotenv(Path(__file__).resolve().parents[1] / '.env', override=False)
     config = text_config()
     model = os.getenv('HUB_PLANNER_MODEL', '').strip() or config.model
-    return ChatModel(config.base_url, config.api_key, model, float(os.getenv('LLM_TIMEOUT_SECONDS') or '120'))
+    return ChatModel(config.base_url, config.api_key, model, float(os.getenv('LLM_TIMEOUT_SECONDS') or '120'), json_mode=True)
 
 
 def public_diagnostic(text: str) -> str:
@@ -116,10 +118,15 @@ class DynamicPlanner:
             return PlanningResult(decision=PlannerDecision(status='unsupported',
                                   message='当前没有已注册的能力。'), attempts=[])
         today = datetime.now(timezone.utc).date().isoformat()
+        # Minimum width only: keep the full, instance-local monotonic sequence.
+        # Never wrap at 999 or reset on date changes, which could reuse an ID.
         plan_id = f"plan-{today.replace('-', '')}-{next(self._sequence):03d}"
         prompt = SYSTEM_PROMPT + '\nOutput schema:\n' + json.dumps(PlannerDecision.model_json_schema(), ensure_ascii=False)
         data = {'current_date_utc': today, 'goal': goal, 'context': context or {},
                 'catalog': catalog, 'max_steps': self.validator.max_steps}
+        budget = explicit_budget(goal)
+        if budget is not None:
+            data['monetary_facts'] = budget
         attempts = []
         for number in range(1, self.max_repairs + 2):
             try:
@@ -139,6 +146,7 @@ class DynamicPlanner:
                 plan = None
                 if decision.status == 'ready':
                     plan = self.validator.validate(ExecutionPlan(plan_id=plan_id, goal=goal, steps=decision.steps))
+                    validate_budget(plan, self.registry, budget)
                 attempts.append(PlanningAttempt(number=number, status='accepted'))
                 return PlanningResult(decision=decision, plan=plan, attempts=attempts)
             except (ValidationError, HubError, ServiceError) as exc:

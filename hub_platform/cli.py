@@ -1,5 +1,6 @@
+"""Demo composition root. Core registry/validator/executor never import mocks."""
 from common.errors import ErrorCode
-"""Mock demo composition root. Core registry/validator/executor never import mocks."""
+from common.json_data import strict_json_loads
 import argparse
 import json
 from pathlib import Path
@@ -59,8 +60,8 @@ def main(argv: list[str] | None = None) -> int:
         parser.error("请选择计划文件、--goal、--chat 或 --list-capabilities 中的一项")
     if args.plan_only and not (args.goal is not None or args.chat):
         parser.error("--plan-only 需要 --goal 或 --chat")
-    # Test fixtures are intentionally not production package dependencies.
-    from tests.mocks.agents import create_mock_registry
+    # Demo adapters are runtime resources, independent of the test package.
+    from hub_platform.demo_agents import create_mock_registry
 
     registry = create_mock_registry()
     if any((args.real_m1, args.real_m2, args.real_m3, args.real_m4, args.real_m5, args.real_m6, args.real_m7)):
@@ -128,9 +129,9 @@ def main(argv: list[str] | None = None) -> int:
         return turn_exit_code(turn.status)
     task_id, trace_id = f"task-{uuid4().hex[:12]}", f"trace-{uuid4().hex[:16]}"
     try:
-        plan = json.loads(args.plan.read_text(encoding="utf-8-sig"))
+        plan = strict_json_loads(args.plan.read_text(encoding="utf-8-sig"))
         report = Executor(registry, args.max_steps).execute(plan, task_id=task_id, trace_id=trace_id)
-    except (OSError, UnicodeError, json.JSONDecodeError) as exc:
+    except (OSError, UnicodeError, ValueError) as exc:
         error = HubError(ErrorCode.INVALID_PLAN_FILE, str(exc)).detail(trace_id, task_id)
         print(error.model_dump_json(indent=2))
         return 2

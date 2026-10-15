@@ -56,9 +56,9 @@ $env:M3_MODE='live'
 
 ## M7 等待与恢复
 
-金额不超过 50000 分走自动审批，超过则停在 manual_review 前。node_trace 只包含已经执行的节点，等待时不会虚构 manual_review 已完成。人工拒绝是 completed + data.approval_status=rejected；输入错误是 failed。
+普通订单金额不超过 50000 分走自动审批，超过或 risk_level=high_risk 则停在 manual_review 前。来源省略 risk_level 时兼容样例默认 normal；显式提供时只接受 normal/watch/high_risk（watch 为观察标记，沿用金额审批规则），未知或格式错误值返回 CONTRACT_MISMATCH。自动审批不补造材料齐全的事实；高风险订单需明确人工决定及完整材料才能通过 R3。只有 paid/shipped/delivered/completed 状态可退款；canceled/refunded/not_found/pending_payment/refunding 直接驳回，未知或格式错误的来源状态返回 CONTRACT_MISMATCH。node_trace 只包含已经执行的节点，等待时不会虚构 manual_review 已完成。人工拒绝是 completed + data.approval_status=rejected；输入错误是 failed。
 
-检查点和 token 只保存在当前模块实例的内存中。一次 CLI 退出后 token 失效；当前顶层 Conversation/Executor 没有统一 resume，不会自动继续等待任务的后继步骤。要演示恢复，应在同一 Python 进程保留 agent：
+检查点和 token 只保存在当前模块实例的内存中。一次 CLI 退出后 token 失效；顶层 Conversation.review/Executor.resume 已支持显式恢复，并继续等待任务的就绪后继步骤。要演示恢复，应在同一 Python 进程保留 agent：
 
 ```python
 from agents.workflow.refund_graph import RefundWorkflow
@@ -80,7 +80,7 @@ assert result.data['approval_status'] == 'approved'
 trace = agent.get_request_trace(request.request_id)
 ```
 
-上例只演示样例订单审批，不调用支付接口。material_complete=False 会进入原合规反思路径，清空先前人工决定，返回新 token 等待再次审核；不能自动假定用户已补齐材料。低层 run/get_trace/rollback/resume 可用于检查点演示，rollback 从历史检查点分叉且不会重复追加 reducer 列表；低层 API 不负责更新平台报告。
+上例只演示样例订单审批，不调用支付接口。大额或高风险订单的 material_complete=False 会进入原合规反思路径，清空先前人工决定，返回新 token 等待再次审核；不能自动假定用户已补齐材料。若决定已经提交但读取或构造结果失败，原 token 保留，同一决定重试只读取已提交状态，不再次执行审核；尝试换用其他决定会失败。成功返回才消费旧 token，再次等待则发放新 token。低层 run/get_trace/rollback/resume 可用于检查点演示，rollback 从历史检查点分叉且不会重复追加 reducer 列表；低层 API 不负责更新平台报告，也不应与待恢复的模块级提交混用。
 
 保留上游静态断点方案并依据官方 [检查点与恢复说明](https://docs.langchain.com/oss/python/langgraph/interrupts) 和 [历史分叉说明](https://docs.langchain.com/oss/python/langgraph/use-time-travel) 校对恢复与回滚 API；对应行为由本地测试验证。
 

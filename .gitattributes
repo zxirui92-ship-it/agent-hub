@@ -1,0 +1,6 @@
+common/fixtures/*.json text eol=lf
+common/fixtures/m3/*.json text eol=lf
+data/fixtures/*.json text eol=lf
+data/fixtures/m3/*.json text eol=lf
+# Imported provenance hashes describe bytes, not platform line endings.
+data/group02/* -text

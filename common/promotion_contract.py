@@ -4,11 +4,12 @@ Version 2.0 replaces the local draft's report input and roles object.
 """
 from common.contracts import CapabilityManifest
 from common.fusion_contract import fused_schema
+from common.iso_week import week_schema
 
 
 def promotion_manifest() -> CapabilityManifest:
     text = {"type": "string", "minLength": 1, "pattern": r"\S"}
-    week = {"type": "string", "pattern": r"^[0-9]{4}-W(0[1-9]|[1-4][0-9]|5[0-3])$"}
+    week = week_schema()
     money = {"type": "integer", "minimum": 0}
     fused = fused_schema()
     return CapabilityManifest(

@@ -1,0 +1,27 @@
+{
+  "description": "用户行为数据 Mock（按周汇总）",
+  "weeks": {
+    "2026-W40": {
+      "pv_count": 1250000,
+      "uv_count": 320000,
+      "conversion_rate": 0.0244,
+      "avg_stay_seconds": 185,
+      "top_channels": [
+        {"channel": "自然搜索", "uv_count": 120000},
+        {"channel": "直通车", "uv_count": 80000},
+        {"channel": "短视频", "uv_count": 60000}
+      ]
+    },
+    "2026-W41": {
+      "pv_count": 1380000,
+      "uv_count": 350000,
+      "conversion_rate": 0.0242,
+      "avg_stay_seconds": 192,
+      "top_channels": [
+        {"channel": "自然搜索", "uv_count": 125000},
+        {"channel": "直通车", "uv_count": 90000},
+        {"channel": "短视频", "uv_count": 75000}
+      ]
+    }
+  }
+}

@@ -14,7 +14,7 @@ from uuid import uuid4
 
 from dotenv import load_dotenv
 from common.contracts import AgentRequest, AgentResult
-from common.customer_contract import order_manifest, obj, TEXT
+from common.customer_contract import order_manifest, obj, TEXT, LOGISTICS_FIELDS
 from common.errors import ErrorCode, ServiceError
 from common.model_config import text_config
 from common.llm import ChatModel, TextModel, json_object
@@ -24,15 +24,25 @@ from common.business_data import configured_data
 from hub_platform.errors import HubError
 from hub_platform.schema import validate_data
 
-ORDER_FACT = obj(order_amount={'type': 'integer', 'minimum': 0}, order_status=TEXT, tracking_number=TEXT)
+ORDER_FACT = obj(order_amount={'type': 'integer', 'minimum': 0}, order_status=TEXT, tracking_number={'type': 'string'})
+
+
+def validate_logistics_evidence(fact):
+    availability = fact.get('logistics_availability', 'available')
+    if availability == 'available':
+        if not fact['tracking_number'].strip():
+            raise ServiceError(ErrorCode.CONTRACT_MISMATCH, '可用物流必须提供有效运单', retryable=False)
+    elif fact['tracking_number'] or not fact.get('warnings'):
+        raise ServiceError(ErrorCode.CONTRACT_MISMATCH, '缺失或冲突物流必须清空运单并说明原因', retryable=False)
 
 
 def query_order(order_id: str) -> dict:
     data = configured_data()
     if data is not None:
-        fact, logistics = data.order(order_id), data.logistics(order_id)
+        fact, logistics = data.order(order_id), data.logistics_summary(order_id)
         return {'order_id': order_id, 'order_amount': fact['order_amount'], 'order_status': fact['order_status'],
-                'tracking_number': logistics['tracking_number'], 'source': data.source_kind}
+                'tracking_number': logistics['tracking_number'], 'source': data.source_kind,
+                **{k:logistics[k] for k in LOGISTICS_FIELDS}}
     fact = order_fact(order_id)
     validate_data(fact, ORDER_FACT, ErrorCode.CONTRACT_MISMATCH)
     return {'order_id': order_id, **fact, 'source': 'local_fixture'}
@@ -41,7 +51,7 @@ def query_order(order_id: str) -> dict:
 def query_logistics(order_id: str) -> dict:
     data = configured_data()
     if data is not None:
-        return {**data.logistics(order_id), 'source': data.source_kind}
+        return {**data.logistics_summary(order_id), 'source': data.source_kind}
     fact = query_order(order_id)
     return {'order_id': order_id, 'tracking_number': fact['tracking_number'], 'source': 'local_fixture'}
 
@@ -55,7 +65,10 @@ def evaluate_goal(observations: list[dict], order_id: str) -> tuple[bool, str]:
         raise ServiceError(ErrorCode.CONTRACT_MISMATCH, '工具返回其他订单', retryable=False)
     if order['tracking_number'] != logistics['tracking_number']:
         raise ServiceError(ErrorCode.CONTRACT_MISMATCH, '订单与物流运单不一致', retryable=False)
-    return True, 'goal_achieved'
+    if order.get('logistics_availability', 'available') != logistics.get('logistics_availability', 'available'):
+        raise ServiceError(ErrorCode.CONTRACT_MISMATCH, '两次工具观察的物流可用状态不一致', retryable=False)
+    return True, ('goal_achieved' if order.get('logistics_availability', 'available') == 'available'
+                  else 'order_found_logistics_' + order['logistics_availability'])
 
 
 class LocalDecisionModel:
@@ -108,11 +121,13 @@ class ReActAgent:
                 fact = self.tools[action](order_id)
                 schema = obj(order_id=TEXT, source={'type': 'string', 'enum': ['local_fixture', 'imported_simulation']},
                     **ORDER_FACT['properties']) if action == 'query_order' else obj(
-                        order_id=TEXT, tracking_number=TEXT, source={'type': 'string', 'enum': ['local_fixture', 'imported_simulation']})
+                        order_id=TEXT, tracking_number={'type': 'string'}, source={'type': 'string', 'enum': ['local_fixture', 'imported_simulation']})
+                schema['properties'].update(LOGISTICS_FIELDS)
                 if action == 'query_logistics':
                     schema['properties'].update({key: TEXT for key in
                         ('carrier', 'logistics_status', 'current_location', 'updated_at', 'tracking_history')})
                 validate_data(fact, schema, ErrorCode.CONTRACT_MISMATCH)
+                validate_logistics_evidence(fact)
                 if fact['order_id'] != order_id:
                     raise ServiceError(ErrorCode.CONTRACT_MISMATCH, '工具返回其他订单', retryable=False)
                 observation = {'round': round_no, **choice, 'result': fact, 'mode': self.mode}
@@ -126,6 +141,7 @@ class ReActAgent:
                     data = {'order_id': order_id, **{k: order[k] for k in ORDER_FACT['properties']},
                             'actions': actions, 'observations': [json.dumps(o, ensure_ascii=False) for o in observations],
                             'stop_reason': reason}
+                    data.update({k:order[k] for k in LOGISTICS_FIELDS if k in order})
                     validate_data(data, self.manifest.output_schema, ErrorCode.CONTRACT_MISMATCH)
                     return result_for(request, status='completed', data=data)
             raise ServiceError(ErrorCode.EXECUTION_LIMIT, f'M2 达到 {self.max_rounds} 轮仍未获得完整观察', retryable=False)

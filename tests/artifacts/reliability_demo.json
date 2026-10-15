@@ -1,0 +1,1400 @@
+{
+  "mode": "offline_demo",
+  "notice": "真实架构代码、仿真资料；模型与审核决定为明确的演示替身，无真实支付。",
+  "reports": {
+    "knowledge": {
+      "plan_id": "plan-20261014-023",
+      "task_id": "task-9797e2bab29e",
+      "trace_id": "trace-7a1dd4716dc34692",
+      "status": "completed",
+      "steps": {
+        "s1": {
+          "step_id": "s1",
+          "capability_id": "m1.faq_chat",
+          "depends_on": [],
+          "request_id": "req-d4422ab231c0",
+          "status": "completed",
+          "inputs": {
+            "question": "商品保修政策是什么？"
+          },
+          "result": {
+            "request_id": "req-d4422ab231c0",
+            "task_id": "task-9797e2bab29e",
+            "trace_id": "trace-7a1dd4716dc34692",
+            "capability_id": "m1.faq_chat",
+            "status": "completed",
+            "data": {
+              "answer": "Mock 回答（离线演示）：{\"mode\": \"local\", \"source_kind\": \"imported_simulation\", \"answer\": \"【F019 商品保修政策是什么？】电子产品全国联保 1 年，小家电保修 2 年，具体以商品详情页说明为准。\\n【SP007 质保与售后维修】家电、数码等商品按国家三包规定提供质保：7 天包退、15 天包换、1 年保修。人为损坏、私自拆修不在保修范围内。\\n保修口径待确认：F019 小家电保修 2 年；SP007 一般家电保修 1 年，适用范围尚未统一。\", \"sources\": [{\"entry_id\": \"F019\", \"title\": \"商品保修政策是什么？\", \"source_file\": \"faq_knowledge.json\"}, {\"entry_id\": \"SP007\", \"title\": \"质保与售后维修\", \"source_file\": \"service_policy.json\", \"effective_date\": \"2025-01-01\"}], \"warnings\": [\"保修口径待确认：F019 小家电保修 2 年；SP007 一般家电保修 1 年，适用范围尚未统一。\"], \"status\": \"found\", \"retrieval_query\": \"商品保修政策是什么？\"}；{\"mode\": \"local\", \"source_kind\": \"imported_simulation\", \"answer\": \"【SP001 七天无理由退货政策】自商品签收之日起 7 天内，商品保持完好、不影响二次销售的可申请无理由退货。定制类、生鲜类、已拆封的个人护理类及虚拟商品不支持无理由退货；退货运费由买家承担，购买运费险的按保单赔付。\\n【SP006 价保政策】商品在签收后 15 天内发生官方降价（不含秒杀、直播间专享、优惠券叠加），可申请价保，差价以无门槛优惠券形式返还。\\n【SP007 质保与售后维修】家电、数码等商品按国家三包规定提供质保：7 天包退、15 天包换、1 年保修。人为损坏、私自拆修不在保修范围内。\\n【F019 商品保修政策是什么？】电子产品全国联保 1 年，小家电保修 2 年，具体以商品详情页说明为准。\\n保修口径待确认：F019 小家电保修 2 年；SP007 一般家电保修 1 年，适用范围尚未统一。\", \"sources\": [{\"entry_id\": \"SP001\", \"title\": \"七天无理由退货政策\", \"source_file\": \"service_policy.json\", \"effective_date\": \"2025-01-01\"}, {\"entry_id\": \"SP006\", \"title\": \"价保政策\", \"source_file\": \"service_policy.json\", \"effective_date\": \"2025-01-01\"}, {\"entry_id\": \"SP007\", \"title\": \"质保与售后维修\", \"source_file\": \"service_policy.json\", \"effective_date\": \"2025-01-01\"}, {\"entry_id\": \"F019\", \"title\": \"商品保修政策是什么？\", \"source_file\": \"faq_knowledge.json\"}], \"warnings\": [\"保修口径待确认：F019 小家电保修 2 年；SP007 一般家电保修 1 年，适用范围尚未统一。\"], \"status\": \"found\", \"retrieval_query\": \"商品保修政策是什么？\"}",
+              "session_id": "sess-b6d542ca8ebd"
+            },
+            "error": null,
+            "waiting_reason": null,
+            "continuation_token": null
+          },
+          "error": null,
+          "reason": "能力执行完成"
+        },
+        "s2": {
+          "step_id": "s2",
+          "capability_id": "m4.capability_gateway",
+          "depends_on": [],
+          "request_id": "req-977036b7a0d9",
+          "status": "completed",
+          "inputs": {
+            "query": "kb_qa: 商品保修政策是什么？"
+          },
+          "result": {
+            "request_id": "req-977036b7a0d9",
+            "task_id": "task-9797e2bab29e",
+            "trace_id": "trace-7a1dd4716dc34692",
+            "capability_id": "m4.capability_gateway",
+            "status": "completed",
+            "data": {
+              "skill_name": "kb_qa",
+              "result": "{\"mode\": \"local\", \"source_kind\": \"imported_simulation\", \"answer\": \"【F019 商品保修政策是什么？】电子产品全国联保 1 年，小家电保修 2 年，具体以商品详情页说明为准。\\n【SP001 七天无理由退货政策】自商品签收之日起 7 天内，商品保持完好、不影响二次销售的可申请无理由退货。定制类、生鲜类、已拆封的个人护理类及虚拟商品不支持无理由退货；退货运费由买家承担，购买运费险的按保单赔付。\\n【SP006 价保政策】商品在签收后 15 天内发生官方降价（不含秒杀、直播间专享、优惠券叠加），可申请价保，差价以无门槛优惠券形式返还。\\n【SP007 质保与售后维修】家电、数码等商品按国家三包规定提供质保：7 天包退、15 天包换、1 年保修。人为损坏、私自拆修不在保修范围内。\\n保修口径待确认：F019 小家电保修 2 年；SP007 一般家电保修 1 年，适用范围尚未统一。\", \"sources\": [{\"entry_id\": \"F019\", \"title\": \"商品保修政策是什么？\", \"source_file\": \"faq_knowledge.json\"}, {\"entry_id\": \"SP001\", \"title\": \"七天无理由退货政策\", \"source_file\": \"service_policy.json\", \"effective_date\": \"2025-01-01\"}, {\"entry_id\": \"SP006\", \"title\": \"价保政策\", \"source_file\": \"service_policy.json\", \"effective_date\": \"2025-01-01\"}, {\"entry_id\": \"SP007\", \"title\": \"质保与售后维修\", \"source_file\": \"service_policy.json\", \"effective_date\": \"2025-01-01\"}], \"warnings\": [\"保修口径待确认：F019 小家电保修 2 年；SP007 一般家电保修 1 年，适用范围尚未统一。\"]}",
+              "route_reason": "Mock route: explicitly selected by skill_name prefix; no LLM used"
+            },
+            "error": null,
+            "waiting_reason": null,
+            "continuation_token": null
+          },
+          "error": null,
+          "reason": "能力执行完成"
+        }
+      },
+      "events": [
+        {
+          "sequence": 1,
+          "ts": "2026-10-15T01:48:36.385932+00:00",
+          "level": "info",
+          "trace_id": "trace-7a1dd4716dc34692",
+          "task_id": "task-9797e2bab29e",
+          "request_id": null,
+          "step_id": "s1",
+          "capability_id": "m1.faq_chat",
+          "status": "pending",
+          "reason": "已加入执行计划",
+          "error_code": null
+        },
+        {
+          "sequence": 2,
+          "ts": "2026-10-15T01:48:36.385974+00:00",
+          "level": "info",
+          "trace_id": "trace-7a1dd4716dc34692",
+          "task_id": "task-9797e2bab29e",
+          "request_id": null,
+          "step_id": "s2",
+          "capability_id": "m4.capability_gateway",
+          "status": "pending",
+          "reason": "已加入执行计划",
+          "error_code": null
+        },
+        {
+          "sequence": 3,
+          "ts": "2026-10-15T01:48:36.385996+00:00",
+          "level": "info",
+          "trace_id": "trace-7a1dd4716dc34692",
+          "task_id": "task-9797e2bab29e",
+          "request_id": "req-d4422ab231c0",
+          "step_id": "s1",
+          "capability_id": "m1.faq_chat",
+          "status": "running",
+          "reason": "解析输入并调用能力",
+          "error_code": null
+        },
+        {
+          "sequence": 4,
+          "ts": "2026-10-15T01:48:36.388734+00:00",
+          "level": "info",
+          "trace_id": "trace-7a1dd4716dc34692",
+          "task_id": "task-9797e2bab29e",
+          "request_id": "req-d4422ab231c0",
+          "step_id": "s1",
+          "capability_id": "m1.faq_chat",
+          "status": "completed",
+          "reason": "能力执行完成",
+          "error_code": null
+        },
+        {
+          "sequence": 5,
+          "ts": "2026-10-15T01:48:36.388766+00:00",
+          "level": "info",
+          "trace_id": "trace-7a1dd4716dc34692",
+          "task_id": "task-9797e2bab29e",
+          "request_id": "req-977036b7a0d9",
+          "step_id": "s2",
+          "capability_id": "m4.capability_gateway",
+          "status": "running",
+          "reason": "解析输入并调用能力",
+          "error_code": null
+        },
+        {
+          "sequence": 6,
+          "ts": "2026-10-15T01:48:36.389791+00:00",
+          "level": "info",
+          "trace_id": "trace-7a1dd4716dc34692",
+          "task_id": "task-9797e2bab29e",
+          "request_id": "req-977036b7a0d9",
+          "step_id": "s2",
+          "capability_id": "m4.capability_gateway",
+          "status": "completed",
+          "reason": "能力执行完成",
+          "error_code": null
+        }
+      ],
+      "final_results": {
+        "s1": {
+          "answer": "Mock 回答（离线演示）：{\"mode\": \"local\", \"source_kind\": \"imported_simulation\", \"answer\": \"【F019 商品保修政策是什么？】电子产品全国联保 1 年，小家电保修 2 年，具体以商品详情页说明为准。\\n【SP007 质保与售后维修】家电、数码等商品按国家三包规定提供质保：7 天包退、15 天包换、1 年保修。人为损坏、私自拆修不在保修范围内。\\n保修口径待确认：F019 小家电保修 2 年；SP007 一般家电保修 1 年，适用范围尚未统一。\", \"sources\": [{\"entry_id\": \"F019\", \"title\": \"商品保修政策是什么？\", \"source_file\": \"faq_knowledge.json\"}, {\"entry_id\": \"SP007\", \"title\": \"质保与售后维修\", \"source_file\": \"service_policy.json\", \"effective_date\": \"2025-01-01\"}], \"warnings\": [\"保修口径待确认：F019 小家电保修 2 年；SP007 一般家电保修 1 年，适用范围尚未统一。\"], \"status\": \"found\", \"retrieval_query\": \"商品保修政策是什么？\"}；{\"mode\": \"local\", \"source_kind\": \"imported_simulation\", \"answer\": \"【SP001 七天无理由退货政策】自商品签收之日起 7 天内，商品保持完好、不影响二次销售的可申请无理由退货。定制类、生鲜类、已拆封的个人护理类及虚拟商品不支持无理由退货；退货运费由买家承担，购买运费险的按保单赔付。\\n【SP006 价保政策】商品在签收后 15 天内发生官方降价（不含秒杀、直播间专享、优惠券叠加），可申请价保，差价以无门槛优惠券形式返还。\\n【SP007 质保与售后维修】家电、数码等商品按国家三包规定提供质保：7 天包退、15 天包换、1 年保修。人为损坏、私自拆修不在保修范围内。\\n【F019 商品保修政策是什么？】电子产品全国联保 1 年，小家电保修 2 年，具体以商品详情页说明为准。\\n保修口径待确认：F019 小家电保修 2 年；SP007 一般家电保修 1 年，适用范围尚未统一。\", \"sources\": [{\"entry_id\": \"SP001\", \"title\": \"七天无理由退货政策\", \"source_file\": \"service_policy.json\", \"effective_date\": \"2025-01-01\"}, {\"entry_id\": \"SP006\", \"title\": \"价保政策\", \"source_file\": \"service_policy.json\", \"effective_date\": \"2025-01-01\"}, {\"entry_id\": \"SP007\", \"title\": \"质保与售后维修\", \"source_file\": \"service_policy.json\", \"effective_date\": \"2025-01-01\"}, {\"entry_id\": \"F019\", \"title\": \"商品保修政策是什么？\", \"source_file\": \"faq_knowledge.json\"}], \"warnings\": [\"保修口径待确认：F019 小家电保修 2 年；SP007 一般家电保修 1 年，适用范围尚未统一。\"], \"status\": \"found\", \"retrieval_query\": \"商品保修政策是什么？\"}",
+          "session_id": "sess-b6d542ca8ebd"
+        },
+        "s2": {
+          "skill_name": "kb_qa",
+          "result": "{\"mode\": \"local\", \"source_kind\": \"imported_simulation\", \"answer\": \"【F019 商品保修政策是什么？】电子产品全国联保 1 年，小家电保修 2 年，具体以商品详情页说明为准。\\n【SP001 七天无理由退货政策】自商品签收之日起 7 天内，商品保持完好、不影响二次销售的可申请无理由退货。定制类、生鲜类、已拆封的个人护理类及虚拟商品不支持无理由退货；退货运费由买家承担，购买运费险的按保单赔付。\\n【SP006 价保政策】商品在签收后 15 天内发生官方降价（不含秒杀、直播间专享、优惠券叠加），可申请价保，差价以无门槛优惠券形式返还。\\n【SP007 质保与售后维修】家电、数码等商品按国家三包规定提供质保：7 天包退、15 天包换、1 年保修。人为损坏、私自拆修不在保修范围内。\\n保修口径待确认：F019 小家电保修 2 年；SP007 一般家电保修 1 年，适用范围尚未统一。\", \"sources\": [{\"entry_id\": \"F019\", \"title\": \"商品保修政策是什么？\", \"source_file\": \"faq_knowledge.json\"}, {\"entry_id\": \"SP001\", \"title\": \"七天无理由退货政策\", \"source_file\": \"service_policy.json\", \"effective_date\": \"2025-01-01\"}, {\"entry_id\": \"SP006\", \"title\": \"价保政策\", \"source_file\": \"service_policy.json\", \"effective_date\": \"2025-01-01\"}, {\"entry_id\": \"SP007\", \"title\": \"质保与售后维修\", \"source_file\": \"service_policy.json\", \"effective_date\": \"2025-01-01\"}], \"warnings\": [\"保修口径待确认：F019 小家电保修 2 年；SP007 一般家电保修 1 年，适用范围尚未统一。\"]}",
+          "route_reason": "Mock route: explicitly selected by skill_name prefix; no LLM used"
+        }
+      }
+    },
+    "operations": {
+      "plan_id": "plan-20261014-021",
+      "task_id": "task-056094057e5c",
+      "trace_id": "trace-fcb00148eb8e4df3",
+      "status": "completed",
+      "steps": {
+        "s2": {
+          "step_id": "s2",
+          "capability_id": "m3.weekly_report",
+          "depends_on": [
+            "s1",
+            "s3"
+          ],
+          "request_id": "req-17a5b965e4f1",
+          "status": "completed",
+          "inputs": {
+            "fused_data": {
+              "week": "2025-W41",
+              "revenue_amount": 1268000000,
+              "order_count": 66200,
+              "conversion_rate": 0.1402542372881356,
+              "anomaly": "漏斗 UV/详情/加购/下单人数：472000/274000/109000/66200；下单人数/UV 转化率 14.03%。；退款率 2.10%。；同期活动：秋季新品首发、私域社群秒杀、抖音直播带货；仅为同期记录，不证明因果关系。；活动成交额/成本：秋季新品首发：2.4121、私域社群秒杀：2.7308、抖音直播带货：1.6296；不是利润 ROI。活动与周广告成本统计范围不同，不强行对账。"
+            },
+            "previous_fused_data": {
+              "week": "2025-W40",
+              "revenue_amount": 1392000000,
+              "order_count": 71400,
+              "conversion_rate": 0.14337349397590363,
+              "anomaly": "漏斗 UV/详情/加购/下单人数：498000/287000/118000/71400；下单人数/UV 转化率 14.34%。；退款率 2.30%。；同期活动：国庆返场专场、会员日双倍积分、小红书种草笔记；仅为同期记录，不证明因果关系。；活动成交额/成本：国庆返场专场：2.1905、会员日双倍积分：2.1154、小红书种草笔记：1.2571；不是利润 ROI。活动与周广告成本统计范围不同，不强行对账。"
+            }
+          },
+          "result": {
+            "request_id": "req-17a5b965e4f1",
+            "task_id": "task-056094057e5c",
+            "trace_id": "trace-fcb00148eb8e4df3",
+            "capability_id": "m3.weekly_report",
+            "status": "completed",
+            "data": {
+              "week": "2025-W41",
+              "report_markdown": "# 2025-W41 运营周报\n\n运行方式：本地标准计划与计算；数据来自调用方提供的经营视图。\n\n## 核心指标\n| 指标 | 数值 |\n|---|---:|\n| 销售额 | 1268000000 分（12680000.00 元） |\n| 订单量 | 66200 |\n| 转化率 | 14.03% |\n\n## 环比\n销售额环比：-8.91%；订单量环比：-7.28%；转化率变化：-0.31 个百分点\n\n## 异常与待核查项\n输入数据记录：漏斗 UV/详情/加购/下单人数：472000/274000/109000/66200；下单人数/UV 转化率 14.03%。；退款率 2.10%。；同期活动：秋季新品首发、私域社群秒杀、抖音直播带货；仅为同期记录，不证明因果关系。；活动成交额/成本：秋季新品首发：2.4121、私域社群秒杀：2.7308、抖音直播带货：1.6296；不是利润 ROI。活动与周广告成本统计范围不同，不强行对账。。归因仅供核查，当前未接入额外归因证据。\n\n## 上周同口径依据（2025-W40）\n销售额 1392000000 分；订单量 71400；转化率 14.34%。\n漏斗 UV/详情/加购/下单人数：498000/287000/118000/71400；下单人数/UV 转化率 14.34%。；退款率 2.30%。；同期活动：国庆返场专场、会员日双倍积分、小红书种草笔记；仅为同期记录，不证明因果关系。；活动成交额/成本：国庆返场专场：2.1905、会员日双倍积分：2.1154、小红书种草笔记：1.2571；不是利润 ROI。活动与周广告成本统计范围不同，不强行对账。\n",
+              "steps": [
+                {
+                  "step_id": "s1",
+                  "description": "读取融合经营数据",
+                  "status": "completed",
+                  "result_summary": "已读取 2025-W41 融合数据；订单 66200，销售额 1268000000 分",
+                  "duration_ms": 0
+                },
+                {
+                  "step_id": "s2",
+                  "description": "计算同口径环比",
+                  "status": "completed",
+                  "result_summary": "销售额环比：-8.91%；订单量环比：-7.28%；转化率变化：-0.31 个百分点",
+                  "duration_ms": 0
+                },
+                {
+                  "step_id": "s3",
+                  "description": "分析输入异常",
+                  "status": "completed",
+                  "result_summary": "输入数据记录：漏斗 UV/详情/加购/下单人数：472000/274000/109000/66200；下单人数/UV 转化率 14.03%。；退款率 2.10%。；同期活动：秋季新品首发、私域社群秒杀、抖音直播带货；仅为同期记录，不证明因果关系。；活动成交额/成本：秋季新品首发：2.4121、私域社群秒杀：2.7308、抖音直播带货：1.6296；不是利润 ROI。活动与周广告成本统计范围不同，不强行对账。。归因仅供核查，当前未接入额外归因证据。",
+                  "duration_ms": 0
+                },
+                {
+                  "step_id": "s4",
+                  "description": "汇总 Markdown 周报",
+                  "status": "completed",
+                  "result_summary": "已生成周报，保留数据缺口和统计口径说明",
+                  "duration_ms": 0
+                }
+              ]
+            },
+            "error": null,
+            "waiting_reason": null,
+            "continuation_token": null
+          },
+          "error": null,
+          "reason": "能力执行完成"
+        },
+        "s1": {
+          "step_id": "s1",
+          "capability_id": "m6.data_fusion",
+          "depends_on": [],
+          "request_id": "req-e46f5d588e6e",
+          "status": "completed",
+          "inputs": {
+            "week": "2025-W41"
+          },
+          "result": {
+            "request_id": "req-e46f5d588e6e",
+            "task_id": "task-056094057e5c",
+            "trace_id": "trace-fcb00148eb8e4df3",
+            "capability_id": "m6.data_fusion",
+            "status": "completed",
+            "data": {
+              "fused_data": {
+                "week": "2025-W41",
+                "revenue_amount": 1268000000,
+                "order_count": 66200,
+                "conversion_rate": 0.1402542372881356,
+                "anomaly": "漏斗 UV/详情/加购/下单人数：472000/274000/109000/66200；下单人数/UV 转化率 14.03%。；退款率 2.10%。；同期活动：秋季新品首发、私域社群秒杀、抖音直播带货；仅为同期记录，不证明因果关系。；活动成交额/成本：秋季新品首发：2.4121、私域社群秒杀：2.7308、抖音直播带货：1.6296；不是利润 ROI。活动与周广告成本统计范围不同，不强行对账。"
+              },
+              "field_definitions": [
+                "source：group_02 星潮电商仿真业务库；非生产业务系统。",
+                "week：ISO 周，使用 weekly_sales/user_behavior_weekly/marketing_campaign_weekly 的独立周样例。",
+                "revenue_amount：weekly_sales.gmv_amount，整数分；不表示会计确认收入。",
+                "order_count：周汇总订单数；不由演示订单明细推算。",
+                "conversion_rate：user_behavior_weekly.order_uv / uv，0–1 比率；不是订单数 / UV。",
+                "anomaly：来源限制、漏斗与活动成交额/成本；后者不是利润 ROI，不与日报/明细强行对账。"
+              ],
+              "update_events": [
+                "{\"ts\": \"2026-10-15T01:48:36.391028+00:00\", \"event\": \"process\", \"key\": \"orders\", \"author\": \"order_agent\"}",
+                "{\"ts\": \"2026-10-15T01:48:36.391037+00:00\", \"event\": \"write\", \"key\": \"orders\", \"author\": \"order_agent\"}",
+                "{\"ts\": \"2026-10-15T01:48:36.391057+00:00\", \"event\": \"react\", \"key\": \"orders\", \"author\": \"marketing_agent\"}",
+                "{\"ts\": \"2026-10-15T01:48:36.391070+00:00\", \"event\": \"react\", \"key\": \"orders\", \"author\": \"insight_agent\"}",
+                "{\"ts\": \"2026-10-15T01:48:36.391074+00:00\", \"event\": \"process\", \"key\": \"behavior\", \"author\": \"behavior_agent\"}",
+                "{\"ts\": \"2026-10-15T01:48:36.391079+00:00\", \"event\": \"write\", \"key\": \"behavior\", \"author\": \"behavior_agent\"}",
+                "{\"ts\": \"2026-10-15T01:48:36.391088+00:00\", \"event\": \"react\", \"key\": \"behavior\", \"author\": \"insight_agent\"}",
+                "{\"ts\": \"2026-10-15T01:48:36.391092+00:00\", \"event\": \"read\", \"key\": \"orders\", \"author\": \"marketing_agent\"}",
+                "{\"ts\": \"2026-10-15T01:48:36.391096+00:00\", \"event\": \"process\", \"key\": \"marketing\", \"author\": \"marketing_agent\"}",
+                "{\"ts\": \"2026-10-15T01:48:36.391119+00:00\", \"event\": \"write\", \"key\": \"marketing\", \"author\": \"marketing_agent\"}",
+                "{\"ts\": \"2026-10-15T01:48:36.391130+00:00\", \"event\": \"react\", \"key\": \"marketing\", \"author\": \"insight_agent\"}",
+                "{\"ts\": \"2026-10-15T01:48:36.391134+00:00\", \"event\": \"read\", \"key\": \"orders\", \"author\": \"insight_agent\"}",
+                "{\"ts\": \"2026-10-15T01:48:36.391137+00:00\", \"event\": \"read\", \"key\": \"behavior\", \"author\": \"insight_agent\"}",
+                "{\"ts\": \"2026-10-15T01:48:36.391140+00:00\", \"event\": \"read\", \"key\": \"marketing\", \"author\": \"insight_agent\"}",
+                "{\"ts\": \"2026-10-15T01:48:36.391146+00:00\", \"event\": \"process\", \"key\": \"insight\", \"author\": \"insight_agent\"}",
+                "{\"ts\": \"2026-10-15T01:48:36.391157+00:00\", \"event\": \"write\", \"key\": \"insight\", \"author\": \"insight_agent\"}"
+              ]
+            },
+            "error": null,
+            "waiting_reason": null,
+            "continuation_token": null
+          },
+          "error": null,
+          "reason": "能力执行完成"
+        },
+        "s3": {
+          "step_id": "s3",
+          "capability_id": "m6.data_fusion",
+          "depends_on": [],
+          "request_id": "req-57fbf045ec69",
+          "status": "completed",
+          "inputs": {
+            "week": "2025-W40"
+          },
+          "result": {
+            "request_id": "req-57fbf045ec69",
+            "task_id": "task-056094057e5c",
+            "trace_id": "trace-fcb00148eb8e4df3",
+            "capability_id": "m6.data_fusion",
+            "status": "completed",
+            "data": {
+              "fused_data": {
+                "week": "2025-W40",
+                "revenue_amount": 1392000000,
+                "order_count": 71400,
+                "conversion_rate": 0.14337349397590363,
+                "anomaly": "漏斗 UV/详情/加购/下单人数：498000/287000/118000/71400；下单人数/UV 转化率 14.34%。；退款率 2.30%。；同期活动：国庆返场专场、会员日双倍积分、小红书种草笔记；仅为同期记录，不证明因果关系。；活动成交额/成本：国庆返场专场：2.1905、会员日双倍积分：2.1154、小红书种草笔记：1.2571；不是利润 ROI。活动与周广告成本统计范围不同，不强行对账。"
+              },
+              "field_definitions": [
+                "source：group_02 星潮电商仿真业务库；非生产业务系统。",
+                "week：ISO 周，使用 weekly_sales/user_behavior_weekly/marketing_campaign_weekly 的独立周样例。",
+                "revenue_amount：weekly_sales.gmv_amount，整数分；不表示会计确认收入。",
+                "order_count：周汇总订单数；不由演示订单明细推算。",
+                "conversion_rate：user_behavior_weekly.order_uv / uv，0–1 比率；不是订单数 / UV。",
+                "anomaly：来源限制、漏斗与活动成交额/成本；后者不是利润 ROI，不与日报/明细强行对账。"
+              ],
+              "update_events": [
+                "{\"ts\": \"2026-10-15T01:48:36.392280+00:00\", \"event\": \"process\", \"key\": \"orders\", \"author\": \"order_agent\"}",
+                "{\"ts\": \"2026-10-15T01:48:36.392288+00:00\", \"event\": \"write\", \"key\": \"orders\", \"author\": \"order_agent\"}",
+                "{\"ts\": \"2026-10-15T01:48:36.392302+00:00\", \"event\": \"react\", \"key\": \"orders\", \"author\": \"marketing_agent\"}",
+                "{\"ts\": \"2026-10-15T01:48:36.392310+00:00\", \"event\": \"react\", \"key\": \"orders\", \"author\": \"insight_agent\"}",
+                "{\"ts\": \"2026-10-15T01:48:36.392312+00:00\", \"event\": \"process\", \"key\": \"behavior\", \"author\": \"behavior_agent\"}",
+                "{\"ts\": \"2026-10-15T01:48:36.392316+00:00\", \"event\": \"write\", \"key\": \"behavior\", \"author\": \"behavior_agent\"}",
+                "{\"ts\": \"2026-10-15T01:48:36.392322+00:00\", \"event\": \"react\", \"key\": \"behavior\", \"author\": \"insight_agent\"}",
+                "{\"ts\": \"2026-10-15T01:48:36.392325+00:00\", \"event\": \"read\", \"key\": \"orders\", \"author\": \"marketing_agent\"}",
+                "{\"ts\": \"2026-10-15T01:48:36.392329+00:00\", \"event\": \"process\", \"key\": \"marketing\", \"author\": \"marketing_agent\"}",
+                "{\"ts\": \"2026-10-15T01:48:36.392343+00:00\", \"event\": \"write\", \"key\": \"marketing\", \"author\": \"marketing_agent\"}",
+                "{\"ts\": \"2026-10-15T01:48:36.392353+00:00\", \"event\": \"react\", \"key\": \"marketing\", \"author\": \"insight_agent\"}",
+                "{\"ts\": \"2026-10-15T01:48:36.392355+00:00\", \"event\": \"read\", \"key\": \"orders\", \"author\": \"insight_agent\"}",
+                "{\"ts\": \"2026-10-15T01:48:36.392358+00:00\", \"event\": \"read\", \"key\": \"behavior\", \"author\": \"insight_agent\"}",
+                "{\"ts\": \"2026-10-15T01:48:36.392361+00:00\", \"event\": \"read\", \"key\": \"marketing\", \"author\": \"insight_agent\"}",
+                "{\"ts\": \"2026-10-15T01:48:36.392367+00:00\", \"event\": \"process\", \"key\": \"insight\", \"author\": \"insight_agent\"}",
+                "{\"ts\": \"2026-10-15T01:48:36.392376+00:00\", \"event\": \"write\", \"key\": \"insight\", \"author\": \"insight_agent\"}"
+              ]
+            },
+            "error": null,
+            "waiting_reason": null,
+            "continuation_token": null
+          },
+          "error": null,
+          "reason": "能力执行完成"
+        },
+        "s4": {
+          "step_id": "s4",
+          "capability_id": "m5.promotion_plan",
+          "depends_on": [
+            "s2"
+          ],
+          "request_id": "req-5a3547328945",
+          "status": "completed",
+          "inputs": {
+            "goal": "课堂离线演示：根据周报制定大促方案",
+            "budget_amount": 1000000,
+            "fused_data": {
+              "week": "2025-W41",
+              "revenue_amount": 1268000000,
+              "order_count": 66200,
+              "conversion_rate": 0.1402542372881356,
+              "anomaly": "漏斗 UV/详情/加购/下单人数：472000/274000/109000/66200；下单人数/UV 转化率 14.03%。；退款率 2.10%。；同期活动：秋季新品首发、私域社群秒杀、抖音直播带货；仅为同期记录，不证明因果关系。；活动成交额/成本：秋季新品首发：2.4121、私域社群秒杀：2.7308、抖音直播带货：1.6296；不是利润 ROI。活动与周广告成本统计范围不同，不强行对账。"
+            },
+            "report_markdown": "# 2025-W41 运营周报\n\n运行方式：本地标准计划与计算；数据来自调用方提供的经营视图。\n\n## 核心指标\n| 指标 | 数值 |\n|---|---:|\n| 销售额 | 1268000000 分（12680000.00 元） |\n| 订单量 | 66200 |\n| 转化率 | 14.03% |\n\n## 环比\n销售额环比：-8.91%；订单量环比：-7.28%；转化率变化：-0.31 个百分点\n\n## 异常与待核查项\n输入数据记录：漏斗 UV/详情/加购/下单人数：472000/274000/109000/66200；下单人数/UV 转化率 14.03%。；退款率 2.10%。；同期活动：秋季新品首发、私域社群秒杀、抖音直播带货；仅为同期记录，不证明因果关系。；活动成交额/成本：秋季新品首发：2.4121、私域社群秒杀：2.7308、抖音直播带货：1.6296；不是利润 ROI。活动与周广告成本统计范围不同，不强行对账。。归因仅供核查，当前未接入额外归因证据。\n\n## 上周同口径依据（2025-W40）\n销售额 1392000000 分；订单量 71400；转化率 14.34%。\n漏斗 UV/详情/加购/下单人数：498000/287000/118000/71400；下单人数/UV 转化率 14.34%。；退款率 2.30%。；同期活动：国庆返场专场、会员日双倍积分、小红书种草笔记；仅为同期记录，不证明因果关系。；活动成交额/成本：国庆返场专场：2.1905、会员日双倍积分：2.1154、小红书种草笔记：1.2571；不是利润 ROI。活动与周广告成本统计范围不同，不强行对账。\n"
+          },
+          "result": {
+            "request_id": "req-5a3547328945",
+            "task_id": "task-056094057e5c",
+            "trace_id": "trace-fcb00148eb8e4df3",
+            "capability_id": "m5.promotion_plan",
+            "status": "completed",
+            "data": {
+              "plan_markdown": "## 一、四方主张与冲突消解\n\n| 角色 | 核心主张 |\n| --- | --- |\n| 产品 | 产品侧围绕本次大促给出专属动作，聚焦产品维度的落地安排。 |\n| 运营 | 运营侧围绕本次大促给出专属动作，聚焦运营维度的落地安排。 |\n| 数据 | 数据侧围绕本次大促给出专属动作，聚焦数据维度的落地安排。 |\n| 客服 | 客服侧围绕本次大促给出专属动作，聚焦客服维度的落地安排。 |\n\n## 二、统一执行方案\n\n四方共识：以恢复转化率为核心约束，预算优先投向转化洼地。\n\n冲突消解：运营侧希望 30% 折扣，数据侧测算仅支持 20%，最终按数据侧口径执行 20% 折扣并保留 5% 弹性额度。\n\n统一时间线：预热（D-7）→ 爆发（D1）→ 返场（D2-D3）。\n",
+              "roles": [
+                {
+                  "role": "product",
+                  "contribution": "产品侧围绕本次大促给出专属动作，聚焦产品维度的落地安排。",
+                  "rationale": "基于上周环比数据与产品侧现有资源测算。"
+                },
+                {
+                  "role": "operation",
+                  "contribution": "运营侧围绕本次大促给出专属动作，聚焦运营维度的落地安排。",
+                  "rationale": "基于上周环比数据与运营侧现有资源测算。"
+                },
+                {
+                  "role": "data",
+                  "contribution": "数据侧围绕本次大促给出专属动作，聚焦数据维度的落地安排。",
+                  "rationale": "基于上周环比数据与数据侧现有资源测算。"
+                },
+                {
+                  "role": "service",
+                  "contribution": "客服侧围绕本次大促给出专属动作，聚焦客服维度的落地安排。",
+                  "rationale": "基于上周环比数据与客服侧现有资源测算。"
+                }
+              ]
+            },
+            "error": null,
+            "waiting_reason": null,
+            "continuation_token": null
+          },
+          "error": null,
+          "reason": "能力执行完成"
+        }
+      },
+      "events": [
+        {
+          "sequence": 1,
+          "ts": "2026-10-15T01:48:36.390406+00:00",
+          "level": "info",
+          "trace_id": "trace-fcb00148eb8e4df3",
+          "task_id": "task-056094057e5c",
+          "request_id": null,
+          "step_id": "s2",
+          "capability_id": "m3.weekly_report",
+          "status": "pending",
+          "reason": "已加入执行计划",
+          "error_code": null
+        },
+        {
+          "sequence": 2,
+          "ts": "2026-10-15T01:48:36.390417+00:00",
+          "level": "info",
+          "trace_id": "trace-fcb00148eb8e4df3",
+          "task_id": "task-056094057e5c",
+          "request_id": null,
+          "step_id": "s1",
+          "capability_id": "m6.data_fusion",
+          "status": "pending",
+          "reason": "已加入执行计划",
+          "error_code": null
+        },
+        {
+          "sequence": 3,
+          "ts": "2026-10-15T01:48:36.390422+00:00",
+          "level": "info",
+          "trace_id": "trace-fcb00148eb8e4df3",
+          "task_id": "task-056094057e5c",
+          "request_id": null,
+          "step_id": "s3",
+          "capability_id": "m6.data_fusion",
+          "status": "pending",
+          "reason": "已加入执行计划",
+          "error_code": null
+        },
+        {
+          "sequence": 4,
+          "ts": "2026-10-15T01:48:36.390426+00:00",
+          "level": "info",
+          "trace_id": "trace-fcb00148eb8e4df3",
+          "task_id": "task-056094057e5c",
+          "request_id": null,
+          "step_id": "s4",
+          "capability_id": "m5.promotion_plan",
+          "status": "pending",
+          "reason": "已加入执行计划",
+          "error_code": null
+        },
+        {
+          "sequence": 5,
+          "ts": "2026-10-15T01:48:36.390441+00:00",
+          "level": "info",
+          "trace_id": "trace-fcb00148eb8e4df3",
+          "task_id": "task-056094057e5c",
+          "request_id": "req-e46f5d588e6e",
+          "step_id": "s1",
+          "capability_id": "m6.data_fusion",
+          "status": "running",
+          "reason": "解析输入并调用能力",
+          "error_code": null
+        },
+        {
+          "sequence": 6,
+          "ts": "2026-10-15T01:48:36.391728+00:00",
+          "level": "info",
+          "trace_id": "trace-fcb00148eb8e4df3",
+          "task_id": "task-056094057e5c",
+          "request_id": "req-e46f5d588e6e",
+          "step_id": "s1",
+          "capability_id": "m6.data_fusion",
+          "status": "completed",
+          "reason": "能力执行完成",
+          "error_code": null
+        },
+        {
+          "sequence": 7,
+          "ts": "2026-10-15T01:48:36.391750+00:00",
+          "level": "info",
+          "trace_id": "trace-fcb00148eb8e4df3",
+          "task_id": "task-056094057e5c",
+          "request_id": "req-57fbf045ec69",
+          "step_id": "s3",
+          "capability_id": "m6.data_fusion",
+          "status": "running",
+          "reason": "解析输入并调用能力",
+          "error_code": null
+        },
+        {
+          "sequence": 8,
+          "ts": "2026-10-15T01:48:36.392830+00:00",
+          "level": "info",
+          "trace_id": "trace-fcb00148eb8e4df3",
+          "task_id": "task-056094057e5c",
+          "request_id": "req-57fbf045ec69",
+          "step_id": "s3",
+          "capability_id": "m6.data_fusion",
+          "status": "completed",
+          "reason": "能力执行完成",
+          "error_code": null
+        },
+        {
+          "sequence": 9,
+          "ts": "2026-10-15T01:48:36.392848+00:00",
+          "level": "info",
+          "trace_id": "trace-fcb00148eb8e4df3",
+          "task_id": "task-056094057e5c",
+          "request_id": "req-17a5b965e4f1",
+          "step_id": "s2",
+          "capability_id": "m3.weekly_report",
+          "status": "running",
+          "reason": "解析输入并调用能力",
+          "error_code": null
+        },
+        {
+          "sequence": 10,
+          "ts": "2026-10-15T01:48:36.393565+00:00",
+          "level": "info",
+          "trace_id": "trace-fcb00148eb8e4df3",
+          "task_id": "task-056094057e5c",
+          "request_id": "req-17a5b965e4f1",
+          "step_id": "s2",
+          "capability_id": "m3.weekly_report",
+          "status": "completed",
+          "reason": "能力执行完成",
+          "error_code": null
+        },
+        {
+          "sequence": 11,
+          "ts": "2026-10-15T01:48:36.393590+00:00",
+          "level": "info",
+          "trace_id": "trace-fcb00148eb8e4df3",
+          "task_id": "task-056094057e5c",
+          "request_id": "req-5a3547328945",
+          "step_id": "s4",
+          "capability_id": "m5.promotion_plan",
+          "status": "running",
+          "reason": "解析输入并调用能力",
+          "error_code": null
+        },
+        {
+          "sequence": 12,
+          "ts": "2026-10-15T01:48:36.394357+00:00",
+          "level": "info",
+          "trace_id": "trace-fcb00148eb8e4df3",
+          "task_id": "task-056094057e5c",
+          "request_id": "req-5a3547328945",
+          "step_id": "s4",
+          "capability_id": "m5.promotion_plan",
+          "status": "completed",
+          "reason": "能力执行完成",
+          "error_code": null
+        }
+      ],
+      "final_results": {
+        "s4": {
+          "plan_markdown": "## 一、四方主张与冲突消解\n\n| 角色 | 核心主张 |\n| --- | --- |\n| 产品 | 产品侧围绕本次大促给出专属动作，聚焦产品维度的落地安排。 |\n| 运营 | 运营侧围绕本次大促给出专属动作，聚焦运营维度的落地安排。 |\n| 数据 | 数据侧围绕本次大促给出专属动作，聚焦数据维度的落地安排。 |\n| 客服 | 客服侧围绕本次大促给出专属动作，聚焦客服维度的落地安排。 |\n\n## 二、统一执行方案\n\n四方共识：以恢复转化率为核心约束，预算优先投向转化洼地。\n\n冲突消解：运营侧希望 30% 折扣，数据侧测算仅支持 20%，最终按数据侧口径执行 20% 折扣并保留 5% 弹性额度。\n\n统一时间线：预热（D-7）→ 爆发（D1）→ 返场（D2-D3）。\n",
+          "roles": [
+            {
+              "role": "product",
+              "contribution": "产品侧围绕本次大促给出专属动作，聚焦产品维度的落地安排。",
+              "rationale": "基于上周环比数据与产品侧现有资源测算。"
+            },
+            {
+              "role": "operation",
+              "contribution": "运营侧围绕本次大促给出专属动作，聚焦运营维度的落地安排。",
+              "rationale": "基于上周环比数据与运营侧现有资源测算。"
+            },
+            {
+              "role": "data",
+              "contribution": "数据侧围绕本次大促给出专属动作，聚焦数据维度的落地安排。",
+              "rationale": "基于上周环比数据与数据侧现有资源测算。"
+            },
+            {
+              "role": "service",
+              "contribution": "客服侧围绕本次大促给出专属动作，聚焦客服维度的落地安排。",
+              "rationale": "基于上周环比数据与客服侧现有资源测算。"
+            }
+          ]
+        }
+      }
+    },
+    "approval_waiting": {
+      "plan_id": "plan-20261014-022",
+      "task_id": "task-99ab1c6f1cfb",
+      "trace_id": "trace-cf9641f6eef349c2",
+      "status": "waiting_approval",
+      "steps": {
+        "s1": {
+          "step_id": "s1",
+          "capability_id": "m2.order_tracking",
+          "depends_on": [],
+          "request_id": "req-8b28fa4fdd12",
+          "status": "completed",
+          "inputs": {
+            "order_id": "2025100004"
+          },
+          "result": {
+            "request_id": "req-8b28fa4fdd12",
+            "task_id": "task-99ab1c6f1cfb",
+            "trace_id": "trace-cf9641f6eef349c2",
+            "capability_id": "m2.order_tracking",
+            "status": "completed",
+            "data": {
+              "order_id": "2025100004",
+              "order_amount": 109900,
+              "order_status": "completed",
+              "tracking_number": "ZT6748619160793",
+              "actions": [
+                "query_order",
+                "query_logistics"
+              ],
+              "observations": [
+                "{\"round\": 1, \"action\": \"query_order\", \"decision_summary\": \"本地确定性演示：读取尚缺失的共享样例事实\", \"result\": {\"order_id\": \"2025100004\", \"order_amount\": 109900, \"order_status\": \"completed\", \"tracking_number\": \"ZT6748619160793\", \"source\": \"imported_simulation\", \"logistics_availability\": \"available\", \"warnings\": []}, \"mode\": \"local\"}",
+                "{\"round\": 2, \"action\": \"query_logistics\", \"decision_summary\": \"本地确定性演示：读取尚缺失的共享样例事实\", \"result\": {\"order_id\": \"2025100004\", \"carrier\": \"中通快递\", \"tracking_number\": \"ZT6748619160793\", \"logistics_status\": \"到达分拣中心\", \"current_location\": \"杭州西湖派送点\", \"updated_at\": \"2025-10-10T09:00+08:00\", \"tracking_history\": \"已揽收(2025-10-10 09:00) → 到达分拣中心\", \"logistics_availability\": \"available\", \"warnings\": [], \"source\": \"imported_simulation\"}, \"mode\": \"local\"}"
+              ],
+              "stop_reason": "goal_achieved",
+              "logistics_availability": "available",
+              "warnings": []
+            },
+            "error": null,
+            "waiting_reason": null,
+            "continuation_token": null
+          },
+          "error": null,
+          "reason": "能力执行完成"
+        },
+        "s2": {
+          "step_id": "s2",
+          "capability_id": "m7.refund_approval",
+          "depends_on": [
+            "s1"
+          ],
+          "request_id": "req-21821ab64ea0",
+          "status": "waiting_approval",
+          "inputs": {
+            "order_id": "2025100004",
+            "refund_amount": 109900,
+            "reason": "退货演示"
+          },
+          "result": {
+            "request_id": "req-21821ab64ea0",
+            "task_id": "task-99ab1c6f1cfb",
+            "trace_id": "trace-cf9641f6eef349c2",
+            "capability_id": "m7.refund_approval",
+            "status": "waiting_approval",
+            "data": {
+              "request_id": "refund-257672352f80",
+              "approval_status": "waiting_approval",
+              "node_trace": [
+                {
+                  "node_name": "receive"
+                }
+              ],
+              "state_view": {
+                "order_id": "2025100004",
+                "order_amount": 109900,
+                "refund_amount": 109900
+              }
+            },
+            "error": null,
+            "waiting_reason": "金额超过 50000 分，等待人工审核。",
+            "continuation_token": "cont-46abb485df244ed8"
+          },
+          "error": null,
+          "reason": "金额超过 50000 分，等待人工审核。"
+        },
+        "s3": {
+          "step_id": "s3",
+          "capability_id": "m1.faq_chat",
+          "depends_on": [
+            "s2"
+          ],
+          "request_id": null,
+          "status": "pending",
+          "inputs": {},
+          "result": null,
+          "error": null,
+          "reason": "等待依赖完成：s2"
+        }
+      },
+      "events": [
+        {
+          "sequence": 1,
+          "ts": "2026-10-15T01:48:36.394763+00:00",
+          "level": "info",
+          "trace_id": "trace-cf9641f6eef349c2",
+          "task_id": "task-99ab1c6f1cfb",
+          "request_id": null,
+          "step_id": "s1",
+          "capability_id": "m2.order_tracking",
+          "status": "pending",
+          "reason": "已加入执行计划",
+          "error_code": null
+        },
+        {
+          "sequence": 2,
+          "ts": "2026-10-15T01:48:36.394773+00:00",
+          "level": "info",
+          "trace_id": "trace-cf9641f6eef349c2",
+          "task_id": "task-99ab1c6f1cfb",
+          "request_id": null,
+          "step_id": "s2",
+          "capability_id": "m7.refund_approval",
+          "status": "pending",
+          "reason": "已加入执行计划",
+          "error_code": null
+        },
+        {
+          "sequence": 3,
+          "ts": "2026-10-15T01:48:36.394777+00:00",
+          "level": "info",
+          "trace_id": "trace-cf9641f6eef349c2",
+          "task_id": "task-99ab1c6f1cfb",
+          "request_id": null,
+          "step_id": "s3",
+          "capability_id": "m1.faq_chat",
+          "status": "pending",
+          "reason": "已加入执行计划",
+          "error_code": null
+        },
+        {
+          "sequence": 4,
+          "ts": "2026-10-15T01:48:36.394786+00:00",
+          "level": "info",
+          "trace_id": "trace-cf9641f6eef349c2",
+          "task_id": "task-99ab1c6f1cfb",
+          "request_id": "req-8b28fa4fdd12",
+          "step_id": "s1",
+          "capability_id": "m2.order_tracking",
+          "status": "running",
+          "reason": "解析输入并调用能力",
+          "error_code": null
+        },
+        {
+          "sequence": 5,
+          "ts": "2026-10-15T01:48:36.397877+00:00",
+          "level": "info",
+          "trace_id": "trace-cf9641f6eef349c2",
+          "task_id": "task-99ab1c6f1cfb",
+          "request_id": "req-8b28fa4fdd12",
+          "step_id": "s1",
+          "capability_id": "m2.order_tracking",
+          "status": "completed",
+          "reason": "能力执行完成",
+          "error_code": null
+        },
+        {
+          "sequence": 6,
+          "ts": "2026-10-15T01:48:36.397897+00:00",
+          "level": "info",
+          "trace_id": "trace-cf9641f6eef349c2",
+          "task_id": "task-99ab1c6f1cfb",
+          "request_id": "req-21821ab64ea0",
+          "step_id": "s2",
+          "capability_id": "m7.refund_approval",
+          "status": "running",
+          "reason": "解析输入并调用能力",
+          "error_code": null
+        },
+        {
+          "sequence": 7,
+          "ts": "2026-10-15T01:48:36.403849+00:00",
+          "level": "info",
+          "trace_id": "trace-cf9641f6eef349c2",
+          "task_id": "task-99ab1c6f1cfb",
+          "request_id": "req-21821ab64ea0",
+          "step_id": "s2",
+          "capability_id": "m7.refund_approval",
+          "status": "waiting_approval",
+          "reason": "金额超过 50000 分，等待人工审核。",
+          "error_code": null
+        },
+        {
+          "sequence": 8,
+          "ts": "2026-10-15T01:48:36.403865+00:00",
+          "level": "info",
+          "trace_id": "trace-cf9641f6eef349c2",
+          "task_id": "task-99ab1c6f1cfb",
+          "request_id": null,
+          "step_id": "s3",
+          "capability_id": "m1.faq_chat",
+          "status": "pending",
+          "reason": "等待依赖完成：s2",
+          "error_code": null
+        }
+      ],
+      "final_results": {}
+    },
+    "approval_reflection": {
+      "plan_id": "plan-20261014-022",
+      "task_id": "task-99ab1c6f1cfb",
+      "trace_id": "trace-cf9641f6eef349c2",
+      "status": "waiting_approval",
+      "steps": {
+        "s1": {
+          "step_id": "s1",
+          "capability_id": "m2.order_tracking",
+          "depends_on": [],
+          "request_id": "req-8b28fa4fdd12",
+          "status": "completed",
+          "inputs": {
+            "order_id": "2025100004"
+          },
+          "result": {
+            "request_id": "req-8b28fa4fdd12",
+            "task_id": "task-99ab1c6f1cfb",
+            "trace_id": "trace-cf9641f6eef349c2",
+            "capability_id": "m2.order_tracking",
+            "status": "completed",
+            "data": {
+              "order_id": "2025100004",
+              "order_amount": 109900,
+              "order_status": "completed",
+              "tracking_number": "ZT6748619160793",
+              "actions": [
+                "query_order",
+                "query_logistics"
+              ],
+              "observations": [
+                "{\"round\": 1, \"action\": \"query_order\", \"decision_summary\": \"本地确定性演示：读取尚缺失的共享样例事实\", \"result\": {\"order_id\": \"2025100004\", \"order_amount\": 109900, \"order_status\": \"completed\", \"tracking_number\": \"ZT6748619160793\", \"source\": \"imported_simulation\", \"logistics_availability\": \"available\", \"warnings\": []}, \"mode\": \"local\"}",
+                "{\"round\": 2, \"action\": \"query_logistics\", \"decision_summary\": \"本地确定性演示：读取尚缺失的共享样例事实\", \"result\": {\"order_id\": \"2025100004\", \"carrier\": \"中通快递\", \"tracking_number\": \"ZT6748619160793\", \"logistics_status\": \"到达分拣中心\", \"current_location\": \"杭州西湖派送点\", \"updated_at\": \"2025-10-10T09:00+08:00\", \"tracking_history\": \"已揽收(2025-10-10 09:00) → 到达分拣中心\", \"logistics_availability\": \"available\", \"warnings\": [], \"source\": \"imported_simulation\"}, \"mode\": \"local\"}"
+              ],
+              "stop_reason": "goal_achieved",
+              "logistics_availability": "available",
+              "warnings": []
+            },
+            "error": null,
+            "waiting_reason": null,
+            "continuation_token": null
+          },
+          "error": null,
+          "reason": "能力执行完成"
+        },
+        "s2": {
+          "step_id": "s2",
+          "capability_id": "m7.refund_approval",
+          "depends_on": [
+            "s1"
+          ],
+          "request_id": "req-21821ab64ea0",
+          "status": "waiting_approval",
+          "inputs": {
+            "order_id": "2025100004",
+            "refund_amount": 109900,
+            "reason": "退货演示"
+          },
+          "result": {
+            "request_id": "req-21821ab64ea0",
+            "task_id": "task-99ab1c6f1cfb",
+            "trace_id": "trace-cf9641f6eef349c2",
+            "capability_id": "m7.refund_approval",
+            "status": "waiting_approval",
+            "data": {
+              "request_id": "refund-257672352f80",
+              "approval_status": "waiting_approval",
+              "node_trace": [
+                {
+                  "node_name": "receive"
+                },
+                {
+                  "node_name": "manual_review"
+                },
+                {
+                  "node_name": "compliance_check"
+                },
+                {
+                  "node_name": "reflect"
+                }
+              ],
+              "state_view": {
+                "order_id": "2025100004",
+                "order_amount": 109900,
+                "refund_amount": 109900
+              }
+            },
+            "error": null,
+            "waiting_reason": "未通过规则：R4；请核对订单状态及退货材料后重新审核。",
+            "continuation_token": "cont-afc2e81253c24db0"
+          },
+          "error": null,
+          "reason": "未通过规则：R4；请核对订单状态及退货材料后重新审核。"
+        },
+        "s3": {
+          "step_id": "s3",
+          "capability_id": "m1.faq_chat",
+          "depends_on": [
+            "s2"
+          ],
+          "request_id": null,
+          "status": "pending",
+          "inputs": {},
+          "result": null,
+          "error": null,
+          "reason": "等待依赖完成：s2"
+        }
+      },
+      "events": [
+        {
+          "sequence": 1,
+          "ts": "2026-10-15T01:48:36.394763+00:00",
+          "level": "info",
+          "trace_id": "trace-cf9641f6eef349c2",
+          "task_id": "task-99ab1c6f1cfb",
+          "request_id": null,
+          "step_id": "s1",
+          "capability_id": "m2.order_tracking",
+          "status": "pending",
+          "reason": "已加入执行计划",
+          "error_code": null
+        },
+        {
+          "sequence": 2,
+          "ts": "2026-10-15T01:48:36.394773+00:00",
+          "level": "info",
+          "trace_id": "trace-cf9641f6eef349c2",
+          "task_id": "task-99ab1c6f1cfb",
+          "request_id": null,
+          "step_id": "s2",
+          "capability_id": "m7.refund_approval",
+          "status": "pending",
+          "reason": "已加入执行计划",
+          "error_code": null
+        },
+        {
+          "sequence": 3,
+          "ts": "2026-10-15T01:48:36.394777+00:00",
+          "level": "info",
+          "trace_id": "trace-cf9641f6eef349c2",
+          "task_id": "task-99ab1c6f1cfb",
+          "request_id": null,
+          "step_id": "s3",
+          "capability_id": "m1.faq_chat",
+          "status": "pending",
+          "reason": "已加入执行计划",
+          "error_code": null
+        },
+        {
+          "sequence": 4,
+          "ts": "2026-10-15T01:48:36.394786+00:00",
+          "level": "info",
+          "trace_id": "trace-cf9641f6eef349c2",
+          "task_id": "task-99ab1c6f1cfb",
+          "request_id": "req-8b28fa4fdd12",
+          "step_id": "s1",
+          "capability_id": "m2.order_tracking",
+          "status": "running",
+          "reason": "解析输入并调用能力",
+          "error_code": null
+        },
+        {
+          "sequence": 5,
+          "ts": "2026-10-15T01:48:36.397877+00:00",
+          "level": "info",
+          "trace_id": "trace-cf9641f6eef349c2",
+          "task_id": "task-99ab1c6f1cfb",
+          "request_id": "req-8b28fa4fdd12",
+          "step_id": "s1",
+          "capability_id": "m2.order_tracking",
+          "status": "completed",
+          "reason": "能力执行完成",
+          "error_code": null
+        },
+        {
+          "sequence": 6,
+          "ts": "2026-10-15T01:48:36.397897+00:00",
+          "level": "info",
+          "trace_id": "trace-cf9641f6eef349c2",
+          "task_id": "task-99ab1c6f1cfb",
+          "request_id": "req-21821ab64ea0",
+          "step_id": "s2",
+          "capability_id": "m7.refund_approval",
+          "status": "running",
+          "reason": "解析输入并调用能力",
+          "error_code": null
+        },
+        {
+          "sequence": 7,
+          "ts": "2026-10-15T01:48:36.403849+00:00",
+          "level": "info",
+          "trace_id": "trace-cf9641f6eef349c2",
+          "task_id": "task-99ab1c6f1cfb",
+          "request_id": "req-21821ab64ea0",
+          "step_id": "s2",
+          "capability_id": "m7.refund_approval",
+          "status": "waiting_approval",
+          "reason": "金额超过 50000 分，等待人工审核。",
+          "error_code": null
+        },
+        {
+          "sequence": 8,
+          "ts": "2026-10-15T01:48:36.403865+00:00",
+          "level": "info",
+          "trace_id": "trace-cf9641f6eef349c2",
+          "task_id": "task-99ab1c6f1cfb",
+          "request_id": null,
+          "step_id": "s3",
+          "capability_id": "m1.faq_chat",
+          "status": "pending",
+          "reason": "等待依赖完成：s2",
+          "error_code": null
+        },
+        {
+          "sequence": 9,
+          "ts": "2026-10-15T01:48:36.407454+00:00",
+          "level": "info",
+          "trace_id": "trace-cf9641f6eef349c2",
+          "task_id": "task-99ab1c6f1cfb",
+          "request_id": "req-21821ab64ea0",
+          "step_id": "s2",
+          "capability_id": "m7.refund_approval",
+          "status": "waiting_approval",
+          "reason": "收到审核：reviewer=课堂演示决定（模拟） approved=True material_complete=False",
+          "error_code": null
+        },
+        {
+          "sequence": 10,
+          "ts": "2026-10-15T01:48:36.407657+00:00",
+          "level": "info",
+          "trace_id": "trace-cf9641f6eef349c2",
+          "task_id": "task-99ab1c6f1cfb",
+          "request_id": "req-21821ab64ea0",
+          "step_id": "s2",
+          "capability_id": "m7.refund_approval",
+          "status": "waiting_approval",
+          "reason": "未通过规则：R4；请核对订单状态及退货材料后重新审核。",
+          "error_code": null
+        },
+        {
+          "sequence": 11,
+          "ts": "2026-10-15T01:48:36.407685+00:00",
+          "level": "info",
+          "trace_id": "trace-cf9641f6eef349c2",
+          "task_id": "task-99ab1c6f1cfb",
+          "request_id": null,
+          "step_id": "s3",
+          "capability_id": "m1.faq_chat",
+          "status": "pending",
+          "reason": "等待依赖完成：s2",
+          "error_code": null
+        }
+      ],
+      "final_results": {}
+    },
+    "approval_completed": {
+      "plan_id": "plan-20261014-022",
+      "task_id": "task-99ab1c6f1cfb",
+      "trace_id": "trace-cf9641f6eef349c2",
+      "status": "completed",
+      "steps": {
+        "s1": {
+          "step_id": "s1",
+          "capability_id": "m2.order_tracking",
+          "depends_on": [],
+          "request_id": "req-8b28fa4fdd12",
+          "status": "completed",
+          "inputs": {
+            "order_id": "2025100004"
+          },
+          "result": {
+            "request_id": "req-8b28fa4fdd12",
+            "task_id": "task-99ab1c6f1cfb",
+            "trace_id": "trace-cf9641f6eef349c2",
+            "capability_id": "m2.order_tracking",
+            "status": "completed",
+            "data": {
+              "order_id": "2025100004",
+              "order_amount": 109900,
+              "order_status": "completed",
+              "tracking_number": "ZT6748619160793",
+              "actions": [
+                "query_order",
+                "query_logistics"
+              ],
+              "observations": [
+                "{\"round\": 1, \"action\": \"query_order\", \"decision_summary\": \"本地确定性演示：读取尚缺失的共享样例事实\", \"result\": {\"order_id\": \"2025100004\", \"order_amount\": 109900, \"order_status\": \"completed\", \"tracking_number\": \"ZT6748619160793\", \"source\": \"imported_simulation\", \"logistics_availability\": \"available\", \"warnings\": []}, \"mode\": \"local\"}",
+                "{\"round\": 2, \"action\": \"query_logistics\", \"decision_summary\": \"本地确定性演示：读取尚缺失的共享样例事实\", \"result\": {\"order_id\": \"2025100004\", \"carrier\": \"中通快递\", \"tracking_number\": \"ZT6748619160793\", \"logistics_status\": \"到达分拣中心\", \"current_location\": \"杭州西湖派送点\", \"updated_at\": \"2025-10-10T09:00+08:00\", \"tracking_history\": \"已揽收(2025-10-10 09:00) → 到达分拣中心\", \"logistics_availability\": \"available\", \"warnings\": [], \"source\": \"imported_simulation\"}, \"mode\": \"local\"}"
+              ],
+              "stop_reason": "goal_achieved",
+              "logistics_availability": "available",
+              "warnings": []
+            },
+            "error": null,
+            "waiting_reason": null,
+            "continuation_token": null
+          },
+          "error": null,
+          "reason": "能力执行完成"
+        },
+        "s2": {
+          "step_id": "s2",
+          "capability_id": "m7.refund_approval",
+          "depends_on": [
+            "s1"
+          ],
+          "request_id": "req-21821ab64ea0",
+          "status": "completed",
+          "inputs": {
+            "order_id": "2025100004",
+            "refund_amount": 109900,
+            "reason": "退货演示"
+          },
+          "result": {
+            "request_id": "req-21821ab64ea0",
+            "task_id": "task-99ab1c6f1cfb",
+            "trace_id": "trace-cf9641f6eef349c2",
+            "capability_id": "m7.refund_approval",
+            "status": "completed",
+            "data": {
+              "request_id": "refund-257672352f80",
+              "approval_status": "approved",
+              "node_trace": [
+                {
+                  "node_name": "receive"
+                },
+                {
+                  "node_name": "manual_review"
+                },
+                {
+                  "node_name": "compliance_check"
+                },
+                {
+                  "node_name": "reflect"
+                },
+                {
+                  "node_name": "manual_review"
+                },
+                {
+                  "node_name": "compliance_check"
+                },
+                {
+                  "node_name": "finalize"
+                }
+              ],
+              "state_view": {
+                "order_id": "2025100004",
+                "order_amount": 109900,
+                "refund_amount": 109900
+              }
+            },
+            "error": null,
+            "waiting_reason": null,
+            "continuation_token": null
+          },
+          "error": null,
+          "reason": "能力执行完成"
+        },
+        "s3": {
+          "step_id": "s3",
+          "capability_id": "m1.faq_chat",
+          "depends_on": [
+            "s2"
+          ],
+          "request_id": "req-53cbbedde346",
+          "status": "completed",
+          "inputs": {
+            "question": "退货条件"
+          },
+          "result": {
+            "request_id": "req-53cbbedde346",
+            "task_id": "task-99ab1c6f1cfb",
+            "trace_id": "trace-cf9641f6eef349c2",
+            "capability_id": "m1.faq_chat",
+            "status": "completed",
+            "data": {
+              "answer": "Mock 回答（离线演示）：{\"mode\": \"local\", \"source_kind\": \"imported_simulation\", \"answer\": \"【F003 如何申请退款？】进入【我的订单】→ 选择对应订单 → 点击【申请退款】，填写原因后提交，我们会在 24 小时内审核。\", \"sources\": [{\"entry_id\": \"F003\", \"title\": \"如何申请退款？\", \"source_file\": \"faq_knowledge.json\"}], \"status\": \"found\", \"retrieval_query\": \"退货条件\"}；{\"mode\": \"local\", \"source_kind\": \"imported_simulation\", \"answer\": \"【SP001 七天无理由退货政策】自商品签收之日起 7 天内，商品保持完好、不影响二次销售的可申请无理由退货。定制类、生鲜类、已拆封的个人护理类及虚拟商品不支持无理由退货；退货运费由买家承担，购买运费险的按保单赔付。\\n【SP003 质量问题退换货】商品存在质量、破损、错发或漏发等问题的，签收后 15 天内可申请换货或退货，运费由平台承担；需提供受损照片或开箱视频作为凭证。\", \"sources\": [{\"entry_id\": \"SP001\", \"title\": \"七天无理由退货政策\", \"source_file\": \"service_policy.json\", \"effective_date\": \"2025-01-01\"}, {\"entry_id\": \"SP003\", \"title\": \"质量问题退换货\", \"source_file\": \"service_policy.json\", \"effective_date\": \"2025-01-01\"}], \"status\": \"found\", \"retrieval_query\": \"退货条件\"}",
+              "session_id": "sess-b14fe796f431"
+            },
+            "error": null,
+            "waiting_reason": null,
+            "continuation_token": null
+          },
+          "error": null,
+          "reason": "能力执行完成"
+        }
+      },
+      "events": [
+        {
+          "sequence": 1,
+          "ts": "2026-10-15T01:48:36.394763+00:00",
+          "level": "info",
+          "trace_id": "trace-cf9641f6eef349c2",
+          "task_id": "task-99ab1c6f1cfb",
+          "request_id": null,
+          "step_id": "s1",
+          "capability_id": "m2.order_tracking",
+          "status": "pending",
+          "reason": "已加入执行计划",
+          "error_code": null
+        },
+        {
+          "sequence": 2,
+          "ts": "2026-10-15T01:48:36.394773+00:00",
+          "level": "info",
+          "trace_id": "trace-cf9641f6eef349c2",
+          "task_id": "task-99ab1c6f1cfb",
+          "request_id": null,
+          "step_id": "s2",
+          "capability_id": "m7.refund_approval",
+          "status": "pending",
+          "reason": "已加入执行计划",
+          "error_code": null
+        },
+        {
+          "sequence": 3,
+          "ts": "2026-10-15T01:48:36.394777+00:00",
+          "level": "info",
+          "trace_id": "trace-cf9641f6eef349c2",
+          "task_id": "task-99ab1c6f1cfb",
+          "request_id": null,
+          "step_id": "s3",
+          "capability_id": "m1.faq_chat",
+          "status": "pending",
+          "reason": "已加入执行计划",
+          "error_code": null
+        },
+        {
+          "sequence": 4,
+          "ts": "2026-10-15T01:48:36.394786+00:00",
+          "level": "info",
+          "trace_id": "trace-cf9641f6eef349c2",
+          "task_id": "task-99ab1c6f1cfb",
+          "request_id": "req-8b28fa4fdd12",
+          "step_id": "s1",
+          "capability_id": "m2.order_tracking",
+          "status": "running",
+          "reason": "解析输入并调用能力",
+          "error_code": null
+        },
+        {
+          "sequence": 5,
+          "ts": "2026-10-15T01:48:36.397877+00:00",
+          "level": "info",
+          "trace_id": "trace-cf9641f6eef349c2",
+          "task_id": "task-99ab1c6f1cfb",
+          "request_id": "req-8b28fa4fdd12",
+          "step_id": "s1",
+          "capability_id": "m2.order_tracking",
+          "status": "completed",
+          "reason": "能力执行完成",
+          "error_code": null
+        },
+        {
+          "sequence": 6,
+          "ts": "2026-10-15T01:48:36.397897+00:00",
+          "level": "info",
+          "trace_id": "trace-cf9641f6eef349c2",
+          "task_id": "task-99ab1c6f1cfb",
+          "request_id": "req-21821ab64ea0",
+          "step_id": "s2",
+          "capability_id": "m7.refund_approval",
+          "status": "running",
+          "reason": "解析输入并调用能力",
+          "error_code": null
+        },
+        {
+          "sequence": 7,
+          "ts": "2026-10-15T01:48:36.403849+00:00",
+          "level": "info",
+          "trace_id": "trace-cf9641f6eef349c2",
+          "task_id": "task-99ab1c6f1cfb",
+          "request_id": "req-21821ab64ea0",
+          "step_id": "s2",
+          "capability_id": "m7.refund_approval",
+          "status": "waiting_approval",
+          "reason": "金额超过 50000 分，等待人工审核。",
+          "error_code": null
+        },
+        {
+          "sequence": 8,
+          "ts": "2026-10-15T01:48:36.403865+00:00",
+          "level": "info",
+          "trace_id": "trace-cf9641f6eef349c2",
+          "task_id": "task-99ab1c6f1cfb",
+          "request_id": null,
+          "step_id": "s3",
+          "capability_id": "m1.faq_chat",
+          "status": "pending",
+          "reason": "等待依赖完成：s2",
+          "error_code": null
+        },
+        {
+          "sequence": 9,
+          "ts": "2026-10-15T01:48:36.407454+00:00",
+          "level": "info",
+          "trace_id": "trace-cf9641f6eef349c2",
+          "task_id": "task-99ab1c6f1cfb",
+          "request_id": "req-21821ab64ea0",
+          "step_id": "s2",
+          "capability_id": "m7.refund_approval",
+          "status": "waiting_approval",
+          "reason": "收到审核：reviewer=课堂演示决定（模拟） approved=True material_complete=False",
+          "error_code": null
+        },
+        {
+          "sequence": 10,
+          "ts": "2026-10-15T01:48:36.407657+00:00",
+          "level": "info",
+          "trace_id": "trace-cf9641f6eef349c2",
+          "task_id": "task-99ab1c6f1cfb",
+          "request_id": "req-21821ab64ea0",
+          "step_id": "s2",
+          "capability_id": "m7.refund_approval",
+          "status": "waiting_approval",
+          "reason": "未通过规则：R4；请核对订单状态及退货材料后重新审核。",
+          "error_code": null
+        },
+        {
+          "sequence": 11,
+          "ts": "2026-10-15T01:48:36.407685+00:00",
+          "level": "info",
+          "trace_id": "trace-cf9641f6eef349c2",
+          "task_id": "task-99ab1c6f1cfb",
+          "request_id": null,
+          "step_id": "s3",
+          "capability_id": "m1.faq_chat",
+          "status": "pending",
+          "reason": "等待依赖完成：s2",
+          "error_code": null
+        },
+        {
+          "sequence": 12,
+          "ts": "2026-10-15T01:48:36.410854+00:00",
+          "level": "info",
+          "trace_id": "trace-cf9641f6eef349c2",
+          "task_id": "task-99ab1c6f1cfb",
+          "request_id": "req-21821ab64ea0",
+          "step_id": "s2",
+          "capability_id": "m7.refund_approval",
+          "status": "waiting_approval",
+          "reason": "收到审核：reviewer=课堂演示决定（模拟） approved=True material_complete=True",
+          "error_code": null
+        },
+        {
+          "sequence": 13,
+          "ts": "2026-10-15T01:48:36.411016+00:00",
+          "level": "info",
+          "trace_id": "trace-cf9641f6eef349c2",
+          "task_id": "task-99ab1c6f1cfb",
+          "request_id": "req-21821ab64ea0",
+          "step_id": "s2",
+          "capability_id": "m7.refund_approval",
+          "status": "completed",
+          "reason": "能力执行完成",
+          "error_code": null
+        },
+        {
+          "sequence": 14,
+          "ts": "2026-10-15T01:48:36.411035+00:00",
+          "level": "info",
+          "trace_id": "trace-cf9641f6eef349c2",
+          "task_id": "task-99ab1c6f1cfb",
+          "request_id": "req-53cbbedde346",
+          "step_id": "s3",
+          "capability_id": "m1.faq_chat",
+          "status": "running",
+          "reason": "解析输入并调用能力",
+          "error_code": null
+        },
+        {
+          "sequence": 15,
+          "ts": "2026-10-15T01:48:36.412545+00:00",
+          "level": "info",
+          "trace_id": "trace-cf9641f6eef349c2",
+          "task_id": "task-99ab1c6f1cfb",
+          "request_id": "req-53cbbedde346",
+          "step_id": "s3",
+          "capability_id": "m1.faq_chat",
+          "status": "completed",
+          "reason": "能力执行完成",
+          "error_code": null
+        }
+      ],
+      "final_results": {
+        "s3": {
+          "answer": "Mock 回答（离线演示）：{\"mode\": \"local\", \"source_kind\": \"imported_simulation\", \"answer\": \"【F003 如何申请退款？】进入【我的订单】→ 选择对应订单 → 点击【申请退款】，填写原因后提交，我们会在 24 小时内审核。\", \"sources\": [{\"entry_id\": \"F003\", \"title\": \"如何申请退款？\", \"source_file\": \"faq_knowledge.json\"}], \"status\": \"found\", \"retrieval_query\": \"退货条件\"}；{\"mode\": \"local\", \"source_kind\": \"imported_simulation\", \"answer\": \"【SP001 七天无理由退货政策】自商品签收之日起 7 天内，商品保持完好、不影响二次销售的可申请无理由退货。定制类、生鲜类、已拆封的个人护理类及虚拟商品不支持无理由退货；退货运费由买家承担，购买运费险的按保单赔付。\\n【SP003 质量问题退换货】商品存在质量、破损、错发或漏发等问题的，签收后 15 天内可申请换货或退货，运费由平台承担；需提供受损照片或开箱视频作为凭证。\", \"sources\": [{\"entry_id\": \"SP001\", \"title\": \"七天无理由退货政策\", \"source_file\": \"service_policy.json\", \"effective_date\": \"2025-01-01\"}, {\"entry_id\": \"SP003\", \"title\": \"质量问题退换货\", \"source_file\": \"service_policy.json\", \"effective_date\": \"2025-01-01\"}], \"status\": \"found\", \"retrieval_query\": \"退货条件\"}",
+          "session_id": "sess-b14fe796f431"
+        }
+      }
+    }
+  },
+  "rollback": {
+    "checkpoints_before": 6,
+    "rollback_log": [
+      "回滚至 1f1c83a8-9681-6766-8003-59c63e363756"
+    ],
+    "final_status": "approved"
+  }
+}

@@ -1,22 +1,27 @@
 """M3 v2: current M6 view in, auditable Plan/Execute steps out."""
 from copy import deepcopy
-from datetime import date, timedelta
+from datetime import timedelta
 from common.contracts import CapabilityManifest
+from common.iso_week import week_start
 from common.promotion_contract import promotion_manifest
 
 
 def previous_week(week: str) -> str:
-    year, number = week.split('-W')
-    previous = date.fromisocalendar(int(year), int(number), 1) - timedelta(days=7)
+    try:
+        previous = week_start(week) - timedelta(days=7)
+    except OverflowError as exc:
+        raise ValueError('上一 ISO 周超出支持的日历范围') from exc
     iso = previous.isocalendar()
-    return f'{iso.year}-W{iso.week:02d}'
+    return f'{iso.year:04d}-W{iso.week:02d}'
 
 
 def validate_periods(payload: dict) -> None:
-    expected = previous_week(payload['fused_data']['week'])
+    week_start(payload['fused_data']['week'])
     previous = payload.get('previous_fused_data')
-    if previous is not None and previous['week'] != expected:
-        raise ValueError('previous_fused_data 必须是相邻上一 ISO 周')
+    if previous is not None:
+        week_start(previous['week'])
+        if previous['week'] != previous_week(payload['fused_data']['week']):
+            raise ValueError('previous_fused_data 必须是相邻上一 ISO 周')
 
 
 def weekly_manifest() -> CapabilityManifest:

@@ -9,7 +9,7 @@
 
 `ApprovalDecision` 只接受 `approved`（严格布尔）、`reviewer`（非空白字符串）、`material_complete`（严格布尔），禁止额外字段和字符串/数字转布尔。审核决定必须由明确接口提交，Planner 和自然语言“同意”均不能替代人工决定。
 
-模块返回原 request_id/task_id/trace_id/capability_id。等待结果仍满足 may_wait、supports_resume 与 token 规则；M7 每次成功提交轮换 token。模块拒绝调用时抛 ServiceError 并保留 token；平台不更新已保存等待报告。未知异常或返回结果违反契约会使该步骤失败并阻断下游，不自动重试。
+模块返回原 request_id/task_id/trace_id/capability_id。等待结果仍满足 may_wait、supports_resume 与 token 规则；M7 每次成功返回结果消费旧 token，仍待审核则发放新 token。已提交决定后的响应失败可用原决定重试，不重跑图。模块拒绝调用时抛 ServiceError 并保留 token；平台不更新已保存等待报告，并透传 retryable；M7 明确允许恢复的临时响应失败也采用此路径。其他失败结果仍终止步骤。未知异常或返回结果违反契约会使该步骤失败并阻断下游，不自动重试。
 
 `Executor.resume(task_id, step_id, decision)` 使用该实例保存的原计划、输入、上下文和步骤记录；不接受从外部导入的报告作为可执行状态。只恢复指定 waiting_approval 步骤，随后拓扑执行 pending 步骤；已完成、已失败及其他等待步骤不重跑。返回报告是深复制快照，保留原关联 ID 和连续事件序号，事件记录审核人、决定与材料标志。业务审核拒绝仍属于 completed + approval_status=rejected，下游可消费拒绝结果；这不等于审批通过。
 
@@ -56,22 +56,21 @@ class AgentModule(Protocol):
 失败可保留部分 data；只对 completed 和 waiting_approval 的 data 校验 Manifest 输出 Schema。
 违反输出契约时，步骤记为 failed，能合法解析的原始 AgentResult 仍保存在 StepRecord，最终结果不包含该步骤。
 
-`continuation_token` 仅在 waiting_approval 且 supports_resume=true 时必填；不支持恢复时必须为空。所有 Mock supports_resume=false，不生成伪 token。此项是命名草案 §7.2 的明确修订，等待语义不变。Protocol 和 Executor 均无 resume。
-即使未来适配器声明支持恢复，当前 Executor 也不会调用恢复入口。
+`continuation_token` 仅在 waiting_approval 且 supports_resume=true 时必填；不支持恢复时必须为空。所有 Mock supports_resume=false，不生成伪 token。此项是命名草案 §7.2 的明确修订，等待语义不变。基础 invoke 协议不变；Executor 可通过本文件顶部的可选审批扩展继续原计划。
 
 ## Manifest 与 Schema 范围
 
 side_effects：read_only / writes_mock_state / requires_approval。execution_mode：immediate / may_wait。
 `preconditions` 是给开发者和未来 Planner 的业务描述，不是可执行谓词；实际字段条件用 Schema 表达。
 副作用字段是描述，不是本轮的权限系统。M7 表达审批业务语义，但 Mock 没有真实退款副作用。
-`owner` 已按 naming_convention §3 填写真实负责人；`version` 使用两段版本号，M3/M5/M7 本地业务接口为 2.0，其他模块目前为 1.0。Registry 仅允许每个 capability_id 注册一次，不做多版本协商；公共 envelope 仍为 v1.0 候选。
+`owner` 已按 naming_convention §3 填写真实负责人；`version` 使用两段版本号，M3/M5/M7 本地业务接口为 2.0，M1 为 1.1、M2 为 1.2、M4/M6 为 1.0。Registry 仅允许每个 capability_id 注册一次，不做多版本协商；公共 envelope 仍为 v1.0 候选。
 
 支持 JSON Schema Draft 2020-12 的显式子集：
 
 - 每个节点必须有单一 `type`：object / array / string / number / integer / boolean / null。
 - 对象支持 properties、required，必须 additionalProperties=false；输入输出根必须 object。
 - 数组必须声明 items，可声明 minItems/maxItems。
-- 标量支持 enum、minimum/maximum、minLength/maxLength/pattern；元数据支持 title、description、$schema。
+- 标量支持 enum、minimum/maximum、minLength/maxLength/pattern；字符串额外支持 format=iso-week（真实 ISO 日历周），其他 format 不支持。所有 number 只接受有限值。元数据支持 title、description、$schema。
 - 不支持 $ref、$defs、oneOf、anyOf、allOf、类型联合、动态属性、布尔 Schema 或远程引用。
 
 不支持的 Schema 在注册时明确拒绝，绝不静默降级。真实模块若由 Pydantic 自动生成嵌套 `$defs` Schema，需先转换为内联支持子集，或经团队评审扩展 Schema 处理器。
@@ -131,10 +130,10 @@ Executor 只在适配器 `invoke` 边界捕获未知 Exception，其余错误按
 命名基线来自 PR #1 的 docs/unify-naming-convention-v1（e4c8b87），无需合并该 PR。最新命名与必要修订集中在 naming_convention.md；历史 PRD 的候选命名由其覆盖，业务职责不变。
 
 - m1.faq_chat 替代旧 ID，不保留别名；StepState 替代 StepStatus，状态字面量不变。
-- task_id=task-12hex、request_id=req-12hex、trace_id=trace-16hex；小写。plan_id=plan-YYYYMMDD-NNN，step_id=sN，输入引用同步迁移。
-- 金额全部为 JSON/Python 整数分，拒绝浮点数（包括 50000.0）与布尔值；M6 revenue_amount/order_count 替代 revenue/orders。
-- M2/M7 共用 data/fixtures/order_basic.json；Mock 仅模拟整单退款，refund_amount 与订单金额不同即 INVALID_INPUT，不能由 Planner 降低金额绕过审核。
-- M7.data.request_id 是 refund- 前缀业务申请号，外层 request_id 是模块调用号。Mock 等待时无恢复能力、无 token；真实 M7 supports_resume=true，等待时返回 token，由同一模块实例接收审批。顶层无 resume，下游阻塞但独立分支继续。
+- task_id=task-12hex、request_id=req-12hex、trace_id=trace-16hex；小写。plan_id=plan-YYYYMMDD-NNN（序号最少三位，超过 999 自然扩展），step_id=sN，输入引用同步迁移。
+- 所有数值必须有限，拒绝 NaN/±Infinity 和 JSON 指数溢出；金额全部为 JSON/Python 整数分，拒绝浮点数（包括 50000.0）与布尔值；M6 revenue_amount/order_count 替代 revenue/orders。
+- M2/M7 共用安装包 common/fixtures/order_basic.json（data/fixtures/order_basic.json 为同内容源码示例）；Mock 仅模拟整单退款，refund_amount 与订单金额不同即 INVALID_INPUT，不能由 Planner 降低金额绕过审核。
+- M7.data.request_id 是 refund- 前缀业务申请号，外层 request_id 是模块调用号。Mock 等待时无恢复能力、无 token；真实 M7 supports_resume=true，等待时返回 token，由同一模块实例接收审批。顶层提供同进程显式 resume；等待期间下游阻塞但独立分支继续。
 - 公共 data 保持对象；各模块核心输出字段和类型见 naming_convention §10.3。M4 result 为字符串，与 Skill.run 返回类型一致。
 - TraceEvent 的 sequence/reason 是必要扩展；旧 timestamp/message 改为 ts/reason。事件 request_id 与实际步骤调用关联。
 - Registry 不硬编码七能力名单，允许新增测试能力及后续经评审的能力；七模块自身必须采用规定 ID。
@@ -153,7 +152,7 @@ read_only 在此指不修改平台或订单业务状态；外部生成服务仍�
 
 M5 真实模块与 Mock 共用 `common/promotion_contract.py` 的 2.0 Manifest，capability_id 保持 `m5.promotion_plan`。本次仅本地统一，未在 Gitee 发布或宣称团队已冻结。
 
-- 输入必填 `goal`（非空白字符串）；可选 `week`、`budget_amount`（非负整数分）、`report_markdown`（非空白字符串）、`fused_data`。可选字段不提供时省略，不能填 null。
+- 输入必填 `goal`（非空白字符串）；可选 `week`、`budget_amount`（非负整数分）、`report_markdown`（非空白字符串）、`fused_data`。可选字段不提供时省略，不能填 null。顶层 week 与 fused_data.week 必须是实际存在的 ISO 周，前者表示目标活动周、后者表示历史经营数据期间，二者可以不同并分别传入最终聚合。
 - `fused_data` 使用当前 M6 的完整经营视图：week、revenue_amount、order_count、conversion_rate、anomaly。所有对象禁止额外字段，不接受任意无 Schema 数据。
 - 输出为 `plan_markdown`、`roles`；roles 是四项数组，每项包含 role、contribution、rationale。角色固定为 product / operation / data / service。contribution 非空；上游格式解析兜底时 rationale 可为空，保留原实现语义。
 - 请求和返回的 request_id/task_id/trace_id/capability_id 完整透传；trace_id 只取请求顶层，不从 context 覆盖或在模块内重建。
@@ -171,18 +170,18 @@ M5 真实模块与 Mock 共用 `common/promotion_contract.py` 的 2.0 Manifest�
 - PlanningResult：校验后的 decision、可执行 ExecutionPlan 或 null、planning_attempts。
 - TurnResult：session_id/task_id/trace_id、状态、message、plan、report、error、planning_attempts。状态还包括 completed/failed/waiting_approval。
 - SessionContext：内存 session_id、当前 TaskContext 和历史任务；TaskContext 保存原始消息、计划、执行报告。需要澄清时保留任务关联 ID；业务模块 context 仅接收 session_id。
-- plan_id 由平台生成，日期为 UTC，三位序号为 Planner 实例内编号；task_id/trace_id 是运行关联标识。历史任务输出若需复用，由新计划显式作为 literal 绑定；跨任务 step_id 不构成有效 ref。
-- 无效计划只修正模型输出，不调用业务模块；默认修正一次。业务失败与等待状态继续沿用原执行器语义。
+- plan_id 由平台生成，日期为 UTC，序号最少三位、超过 999 自然扩展；Planner 实例内单调递增，不按日期重置或取模，唯一性范围为实例；task_id/trace_id 是运行关联标识。历史任务输出若需复用，由新计划显式作为 literal 绑定；跨任务 step_id 不构成有效 ref。
+- 无效计划只修正模型输出，不调用业务模块；默认修正一次。业务失败与等待状态继续沿用原执行器语义。即使总体为 failed，只要任一步骤仍 waiting_approval，会话后续消息也不得重新规划或重放任务；原报告和各步骤错误全部保留。/new 与 /reset 仍是显式离开当前任务的方式。
 
-源码与 CLI、验收题集和使用边界见 `top_level_planner.md`。会话为进程内状态，不是持久化检查点，也不提供 M7 恢复能力。
+源码与 CLI、验收题集和使用边界见 `top_level_planner.md`。会话为进程内状态，不是持久化检查点，支持显式 M7 同进程恢复。
 
 ## M3 / M7 清洁导入与业务契约 2.0
 
 - M3 共享 `common/weekly_contract.py`。必填 `fused_data`，保持当前 M6 的扁平视图；可选 `previous_fused_data` 必须为相邻上一 ISO 周的同口径视图。由数据中的 week 确定周次，拒绝上游旧式 `{week: ...}` 和嵌套 order_data/behavior_data。独立 CLI 的 --week 是本地样例加载入口，不是另一套平台契约。
 - M3 输出仍为 week/report_markdown/steps；steps 从 list[str] 迁移为对象数组，每项含 step_id、description、status=completed、result_summary、duration_ms。现有经营链没有引用 steps，输入计划无需修改。缺上一周数据时明确标缺失，不混用本地历史样例、不补零。
 - M7 共享 `common/refund_contract.py`。输入 order_id/refund_amount/reason 不变；输出 request_id/approval_status/node_trace/state_view 不变，approval_status 增加 rejected。审批驳回属于已完成的业务结果，AgentResult.status=completed；调用、金额校验错误才是 failed。
-- 真实 M7 和 Mock 的 input/output schema 相同，仅 supports_resume 不同。真实 M7 的模块私有 submit_decision(token, approved=bool, reviewer=str, material_complete=bool) 在同一进程恢复，返回原始关联 ID 的 AgentResult；每次成功提交消费旧 token，再次等待产生新 token。无效输入保留 token；未知/已消费 token 抛出 ServiceError(NOT_FOUND)，因为无法恢复关联 ID。
-- M7 保留原 LangGraph 拓扑、节点轨迹、检查点历史和回滚。静态断点在 manual_review 之前；缺材料时原合规规则触发 reflect，再次等待。自动模拟审核人和打款承诺已删除。默认策略为本地示例：50000 分阈值、最多三次不通过后驳回。
+- 真实 M7 和 Mock 的 input/output schema 相同，仅 supports_resume 不同。真实 M7 的模块私有 submit_decision(token, approved=bool, reviewer=str, material_complete=bool) 在同一进程恢复，返回原始关联 ID 的 AgentResult；每次成功返回审批结果后消费旧 token，再次等待产生新 token。无效输入保留 token；未知/已消费 token 抛出 ServiceError(NOT_FOUND)，因为无法恢复关联 ID。已提交决定后的读取或构造结果失败保留原 token；同一决定重试只读取已提交状态，不再次执行审核。成功返回后仍消费旧 token；若流程再次等待则发放新 token。
+- M7 保留原 LangGraph 拓扑、节点轨迹、检查点历史和回滚。静态断点在 manual_review 之前；缺材料时原合规规则触发 reflect，再次等待。自动模拟审核人和打款承诺已删除。默认策略为本地示例：50000 分阈值、最多三次不通过后驳回。低额高风险订单同样等待人工审核；自动审批不得声称材料齐全。只有 paid/shipped/delivered/completed 状态可退款，未知订单状态按数据契约错误拒绝。
 - common/order_data.py 是 M2 真实模块/Mock 与 M7 的同一订单来源。M3/M6 的同名周汇总 order_basic.json 隔离在 data/fixtures/m3/，不覆盖订单事实表。
 
 详细文件取舍、能力边界和复现步骤见 `m3_m7_integration.md`。
@@ -197,8 +196,17 @@ M6 的 group_02 转化率为 `order_uv / uv`；活动成交额/成本不称为�
 
 - 三个模块保持 `invoke(request: AgentRequest) -> AgentResult`，顶层关联 ID 原样透传。真实模块和 Mock 共用 `common/customer_contract.py`（M1/M2）及 `common/fusion_contract.py`（M6）；M3/M5 的 fused_data 使用同一个融合 Schema。
 - M1 Manifest 1.1：仍必填 question，新增可选 session_id；输出仍 answer/session_id。session_id 按 payload → context → 新建顺序取值，格式 sess-12hex。记忆限于同一模块实例的最近六条消息，成功后才写入；不持久化。FAQ/服务政策工具为明确的本地样例，不查实时订单。read_only 不代表模块没有内部会话内存。
-- M2 Manifest 1.1：仍必填 order_id，新增可选 query 自然语言意图，不能覆盖绑定的订单 ID；输出 Schema 不变。实时决策路径使用 TextModel，每轮返回 action/decision_summary，程序固定 order_id 并执行工具、校验 Observation、判断终止。live 代表模型决策，不代表订单数据来自实时系统；目前工具统一读取订单 Fixture。local 是显式确定性演示，不是模型语义验收。
-- M2 的 actions/observations 均为 list[str]；真实 observations 项是 JSON 文本，含轮次、公开动作选择依据、工具观察和模式。错误返回 failed，保留已发生的动作/观察及 error；未知订单不是 completed，轮次耗尽为 EXECUTION_LIMIT。当前所有订单事实均带非空 tracking_number；未来接入无运单订单需统一调整 Schema，不能填造运单。
+- M2 Manifest 1.2：仍必填 order_id，新增可选 query 自然语言意图，不能覆盖绑定的订单 ID；输出增加可选 logistics_availability/warnings。实时决策路径使用 TextModel，每轮返回 action/decision_summary，程序固定 order_id 并执行工具、校验 Observation、判断终止。live 代表模型决策，不代表订单数据来自实时系统；目前工具统一读取订单 Fixture。local 是显式确定性演示，不是模型语义验收。
+- M2 的 actions/observations 均为 list[str]；真实 observations 项是 JSON 文本，含轮次、公开动作选择依据、工具观察和模式。错误返回 failed，保留已发生的动作/观察及 error；未知订单不是 completed，轮次耗尽为 EXECUTION_LIMIT。物流查询缺失或记录时间/状态冲突时，订单事实仍可完成返回；tracking_number 为空，logistics_availability 为 unavailable/inconsistent，warnings 必须说明原因。available 必须有非空运单。新资料正常记录返回 available 和空 warnings；旧 Fixture/Mock 可省略这两个可选字段。源文件损坏或未知订单仍失败。
 - M6 Manifest 1.0：输入仍必填 week，输出仍平面 fused_data 与两个 list[str]。真实 update_events 项为 JSON 文本，包含 ts/event/key/author，记录 read/process/write/react，时间带时区。缺周次为 NOT_FOUND；非法 ISO 周为 INVALID_INPUT；未完成融合为 EXECUTION_LIMIT，不返回部分成功。每次 invoke 使用私有黑板。
-- M6 样例源默认位于 data/fixtures/m3，M6_DATA_DIR 可显式更换同结构目录。revenue_amount 沿用成交金额口径，取周汇总 gmv_amount 整数分；conversion_rate 直接使用行为源 0–1 比率。营销预算不能替代实际支出；缺失的 ROI、加购漏斗等不补造，数据缺口写入 anomaly/field_definitions。
+- M6 样例源默认使用安装包 common/fixtures/m3 资源（data/fixtures/m3 保留同内容的源码示例），M6_DATA_DIR 可显式更换同结构目录。revenue_amount 沿用成交金额口径，取周汇总 gmv_amount 整数分；conversion_rate 直接使用行为源 0–1 比率。营销预算不能替代实际支出；缺失的 ROI、加购漏斗等不补造，数据缺口写入 anomaly/field_definitions。
 - --real-m1/2/6 仅扩充 CLI 组装入口，无核心调度模块特例。来源差异与验收证据见 `m1_m2_m6_integration.md`；本节是契约定义，集成报告不另立规范。
+
+
+## 2026-10-15 规划金额与结构化输出
+
+配置创建的 Planner 模型启用 JSON object 输出格式；仍须通过 PlannerDecision、PlanValidator 和业务值校验，不能把有效 JSON 当作有效计划。普通客服/报告/营销文本调用保持自由文本。
+
+平台对用户明确写出的单一预算（阿拉伯数字与元/分/万元等人民币单位）用 Decimal 换算并作为 monetary_facts 传给模型。只有计划中恰好一个接受 budget_amount 的消费步骤时，验证该 literal 与明确预算一致；遗漏、错误单位或改写金额进入既有的有界 repair，业务尚不执行。多预算分配、中文数字及无法明确解释的补充不强行猜测或覆盖；仍由语义规划及必要澄清处理。没有模块名称分支，也没有用关键词替代能力选择。
+
+模型依据：[百炼 JSON 输出](https://help.aliyun.com/en/model-studio/qwen-structured-output)、[DeepSeek JSON 输出](https://api-docs.deepseek.com/guides/json_mode/)。

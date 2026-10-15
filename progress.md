@@ -114,3 +114,25 @@
 - 真实首轮5 passed（206.42秒）：DeepSeek问候/记忆/政策、M2正常与源冲突、M4知识路由、真实动态双周→报告→M5链。人工核查发现问候泄露检索术语、报告模型未获得完整上周漏斗，针对性修正后M1/M3限定复验2 passed（36.08秒）。未重复生图/搜索，无密钥输出。
 - 最终460 passed /30 skipped（20.32秒），原有测试保留。七模块离线脚本重放成功：等待→reflect→补齐→下游完成，另演示检查点回滚。完整产物在tests/artifacts/prd_*。
 - 已补七架构图、PRD映射、7分30秒演示提纲、数据待确认清单；更新规范/ICD/README/进度。模型建议仍需业务评审；数据口径、录屏和团队冻结不是代码可代签的事项。本轮未提交、未推送。
+
+## 2026-10-15 可靠性整合进行中
+- 已保存 d56ccdc 并合入审计 dc33ccf；保留 group02 和平台恢复。统一 completed/watch/pending_payment/refunding 处理。
+- 首轮联合回归 1140 passed、1 failed、33 skipped：唯一失败为新旧 Fixture 行尾不同；新增 .gitattributes 固定 LF，原始导入资料保留字节。
+- M2 区分订单存在与物流可用性，不伪造运单；M7 已提交审批的响应失败可从平台保留 token 重试。新增全79订单查询和全79退款场景验收。
+- 两次多文件补丁因错误上下文整体未应用，已拆分为准确补丁。
+
+- 联合全量1303 passed、1 failed、30 skipped：M2版本号测试需从1.1同步1.2，已修正。全34知识条目与79订单/79退款专项均通过。
+- DeepSeek真实文本请求超时；停止批量验收后单独复现30秒超时。只读models在直连/代理均可用，极短文本对比DeepSeek仍超时/不可用，而百炼qwen-plus成功。按既有授权显式将本地.env的LLM_PROVIDER设为bailian，无密钥复制、不引入运行时自动降级。
+- 一次定向测试误引用不存在的tests/unit/test_executor.py，改为实际文件集合后220 passed。
+
+- 千问首批真实11 passed、2 failed（235.08秒）：10万元预算被Planner换算为1000000分；另一双周计划JSON缺逗号。没有放松断言。添加显式预算Decimal换算、单预算消费节点校验（错误进入现有repair），Planner采用官方JSON输出模式；64项定向测试通过。
+- JSON模式依据：https://help.aliyun.com/en/model-studio/qwen-structured-output 和 https://api-docs.deepseek.com/guides/json_mode/。格式模式不代替Schema/业务金额校验。
+- 此前最终离线1339 passed/30 skipped、wheel 7项通过；增加金额修复和新退款live验收后需再次全量。
+
+## 2026-10-15 最终验收
+- 预算/JSON修复后真实20 passed（288.10秒），覆盖四Skill、语义Planner、双周经营及审批后继续。加首次已成功11项，共31个不同live场景都有通过记录。
+- 人工检查仍发现M5自算客单价十倍错误、周日期错位；新增程序计算的客单价与ISO日历，传递至四角色和汇总，并在输出顶部显示。168项定向回归通过；真实双周链再测1 passed（118.67秒），日期/客单价在正文也正确。
+- 最终完整离线1368 passed/31 skipped（38.03秒），wheel外部安装7项通过，compileall/pip check通过。默认跳过只限显式live测试。
+- M5自由文本仍有UV估算等错误；作为草稿展示，已在验收报告明确，不将接口成功当成所有内容可信。搜索实际来源、图片真实服务URL、金额/日期及审批状态均已检查。
+- 重建曾因使用--no-build-isolation而缺setuptools失败；改用项目标准隔离构建后成功。一次rg在Windows使用文件通配符失败，改按实际路径读取。文档补丁一次上下文不完整未应用，重新准确定位后成功。
+- 已补可靠性验收和前端接入说明；准备保存合并提交，不推送。最后文件清单可通过与d47e297比较获取。

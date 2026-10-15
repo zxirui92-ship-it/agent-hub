@@ -1,9 +1,12 @@
 from copy import deepcopy
+from datetime import datetime, timezone
+from itertools import count
 import json
 
 import pytest
 
 from common.errors import ErrorCode, ServiceError
+import hub_platform.planner as planner_module
 from hub_platform.planner import DynamicPlanner, PlanningError
 from hub_platform.registry import CapabilityRegistry
 from tests.mocks.agents import manifest, obj, result
@@ -130,3 +133,23 @@ def test_caller_context_is_not_mutated(registry):
     before = deepcopy(context)
     DynamicPlanner(registry, ScriptedModel(ready(order_steps()))).plan('订单', context=context)
     assert context == before
+
+
+def test_plan_sequence_does_not_reset_when_utc_date_changes(registry, monkeypatch):
+    dates = iter([datetime(2026, 10, 15, tzinfo=timezone.utc),
+                  datetime(2026, 10, 16, tzinfo=timezone.utc),
+                  datetime(2026, 10, 15, tzinfo=timezone.utc)])
+
+    class Clock:
+        @staticmethod
+        def now(tz):
+            assert tz is timezone.utc
+            return next(dates)
+
+    monkeypatch.setattr(planner_module, 'datetime', Clock)
+    model = ScriptedModel(*(ready(order_steps()) for _ in range(3)))
+    planner = DynamicPlanner(registry, model)
+    planner._sequence = count(999)
+    ids = [planner.plan('查订单').plan.plan_id for _ in range(3)]
+    assert ids == ['plan-20261015-999', 'plan-20261016-1000', 'plan-20261015-1001']
+    assert len(set(ids)) == 3 and len(model.calls) == 3

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="1" time="30.609" timestamp="2026-10-15T10:45:59.795460+09:00" hostname="张"><testcase classname="tests.live.test_business_live" name="test_m1_live_policy_and_memory" file="tests\live\test_business_live.py" line="49" time="30.147"><properties><property name="m1.faq_chat" value="{&quot;request_id&quot;:&quot;req-000000000001&quot;,&quot;task_id&quot;:&quot;task-000000000001&quot;,&quot;trace_id&quot;:&quot;trace-0000000000000001&quot;,&quot;capability_id&quot;:&quot;m1.faq_chat&quot;,&quot;status&quot;:&quot;failed&quot;,&quot;data&quot;:{},&quot;error&quot;:{&quot;code&quot;:&quot;TOOL_UNAVAILABLE&quot;,&quot;message&quot;:&quot;External service connection failed (TimeoutError)&quot;,&quot;retryable&quot;:true,&quot;trace_id&quot;:&quot;trace-0000000000000001&quot;,&quot;task_id&quot;:&quot;task-000000000001&quot;,&quot;request_id&quot;:&quot;req-000000000001&quot;,&quot;step_id&quot;:null},&quot;waiting_reason&quot;:null,&quot;continuation_token&quot;:null}" /></properties><failure message="model = &lt;common.llm.ChatModel object at 0x0000020E6CA074D0&gt;&#10;record_property = &lt;function record_property.&lt;locals&gt;.append_property at 0x0000020E6CBF4670&gt;&#10;&#10;    def test_m1_live_policy_and_memory(model, record_property):&#10;        agent = SingleAgent(model, mode='live')&#10;&gt;       first = completed(agent, {'question': '我的昵称是海风，请记住。七天退货有什么条件？'}, record_property)&#10;                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^&#10;&#10;tests\live\test_business_live.py:52: &#10;_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _&#10;&#10;agent = &lt;agents.single_agent.SingleAgent object at 0x0000020E6CA07620&gt;&#10;payload = {'question': '我的昵称是海风，请记住。七天退货有什么条件？'}&#10;record_property = &lt;function record_property.&lt;locals&gt;.append_property at 0x0000020E6CBF4670&gt;&#10;&#10;    def completed(agent, payload, record_property):&#10;        result = agent.invoke(request_for(agent.manifest.capability_id, payload))&#10;        record_property(agent.manifest.capability_id, result.model_dump_json())&#10;&gt;       assert result.status == 'completed', result.model_dump_json()&#10;E       AssertionError: {&quot;request_id&quot;:&quot;req-000000000001&quot;,&quot;task_id&quot;:&quot;task-000000000001&quot;,&quot;trace_id&quot;:&quot;trace-0000000000000001&quot;,&quot;capability_id&quot;:&quot;m1.faq_chat&quot;,&quot;status&quot;:&quot;failed&quot;,&quot;data&quot;:{},&quot;error&quot;:{&quot;code&quot;:&quot;TOOL_UNAVAILABLE&quot;,&quot;message&quot;:&quot;External service connection failed (TimeoutError)&quot;,&quot;retryable&quot;:true,&quot;trace_id&quot;:&quot;trace-0000000000000001&quot;,&quot;task_id&quot;:&quot;task-000000000001&quot;,&quot;request_id&quot;:&quot;req-000000000001&quot;,&quot;step_id&quot;:null},&quot;waiting_reason&quot;:null,&quot;continuation_token&quot;:null}&#10;E       assert 'failed' == 'completed'&#10;E         &#10;E         - completed&#10;E         + failed&#10;&#10;tests\live\test_business_live.py:45: AssertionError">model = &lt;common.llm.ChatModel object at 0x0000020E6CA074D0&gt;
+record_property = &lt;function record_property.&lt;locals&gt;.append_property at 0x0000020E6CBF4670&gt;
+
+    def test_m1_live_policy_and_memory(model, record_property):
+        agent = SingleAgent(model, mode='live')
+&gt;       first = completed(agent, {'question': '我的昵称是海风，请记住。七天退货有什么条件？'}, record_property)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\live\test_business_live.py:52:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+agent = &lt;agents.single_agent.SingleAgent object at 0x0000020E6CA07620&gt;
+payload = {'question': '我的昵称是海风，请记住。七天退货有什么条件？'}
+record_property = &lt;function record_property.&lt;locals&gt;.append_property at 0x0000020E6CBF4670&gt;
+
+    def completed(agent, payload, record_property):
+        result = agent.invoke(request_for(agent.manifest.capability_id, payload))
+        record_property(agent.manifest.capability_id, result.model_dump_json())
+&gt;       assert result.status == 'completed', result.model_dump_json()
+E       AssertionError: {"request_id":"req-000000000001","task_id":"task-000000000001","trace_id":"trace-0000000000000001","capability_id":"m1.faq_chat","status":"failed","data":{},"error":{"code":"TOOL_UNAVAILABLE","message":"External service connection failed (TimeoutError)","retryable":true,"trace_id":"trace-0000000000000001","task_id":"task-000000000001","request_id":"req-000000000001","step_id":null},"waiting_reason":null,"continuation_token":null}
+E       assert 'failed' == 'completed'
+E
+E         - completed
+E         + failed
+
+tests\live\test_business_live.py:45: AssertionError</failure></testcase></testsuite></testsuites>

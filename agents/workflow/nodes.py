@@ -5,20 +5,22 @@ from agents.workflow.state import NODE_AUTO_APPROVE, NODE_COMPLIANCE_CHECK, NODE
 import logging
 from agents.workflow.formatting import ORDER_STATUS_LABELS, format_amount, label
 logger = logging.getLogger('agents.workflow.nodes')
-NON_REFUNDABLE_ORDER_STATUS = {'canceled', 'refunded', 'not_found', 'pending_payment', 'refunding'}
+from common.order_policy import NON_REFUNDABLE_ORDER_STATUS, REFUNDABLE_ORDER_STATUS
 BRANCH_AUTO = 'auto'
 BRANCH_MANUAL = 'manual'
 BRANCH_REJECT = 'reject'
 
 def route_by_amount(state: RefundState) -> str:
-    if state.get('order_status') in NON_REFUNDABLE_ORDER_STATUS:
+    status = state.get('order_status')
+    if not isinstance(status, str) or status not in REFUNDABLE_ORDER_STATUS:
         return BRANCH_REJECT
     refund_amount = int(state.get('refund_amount', 0))
     threshold = int(state.get('auto_approve_amount') or 50000)
     return BRANCH_MANUAL if refund_amount > threshold or state.get('risk_level') == 'high_risk' else BRANCH_AUTO
 
 def auto_approve_node(state: RefundState) -> Dict[str, Any]:
-    return {'approval_status': 'approved', 'approval_mode': 'auto', 'reviewer': '智能客服自动审批', 'material_complete': True, 'history': [f"[自动审批] 金额 {format_amount(state.get('refund_amount', 0))} ≤ 阈值，命中「小额快速退款」策略，免人工直接放行"], 'node_trace': [{'node_name': NODE_AUTO_APPROVE}]}
+    # Approval is not evidence that return documents were supplied.
+    return {'approval_status': 'approved', 'approval_mode': 'auto', 'reviewer': '智能客服自动审批', 'history': [f"[自动审批] 金额 {format_amount(state.get('refund_amount', 0))} ≤ 阈值，命中「小额快速退款」策略，免人工直接放行"], 'node_trace': [{'node_name': NODE_AUTO_APPROVE}]}
 
 def route_after_review(state: RefundState) -> str:
     return 'rejected' if state.get('approval_status') == 'rejected' else 'continue'
@@ -33,14 +35,14 @@ def compliance_check_node(state: RefundState) -> Dict[str, Any]:
     failed = []
     notes = []
     if refund_amount <= threshold:
-        notes.append(f'R1 金额阈值：✅ 通过（{format_amount(refund_amount, digits=0)} ≤ 阈值 {format_amount(threshold, digits=0)}，小额免人工）')
+        notes.append(f'R1 金额阈值：✅ 通过（{format_amount(refund_amount, digits=0)} ≤ 阈值 {format_amount(threshold, digits=0)}）')
     elif approved and state.get('approval_mode') == 'manual':
         notes.append(f'R1 金额阈值：✅ 通过（{format_amount(refund_amount, digits=0)} > 阈值 {format_amount(threshold, digits=0)}，已取得人工审核通过结论）')
     else:
         failed.append('R1')
         notes.append(f'R1 金额阈值：❌ 超过阈值 {format_amount(threshold, digits=0)} 且未取得有效人工审核结论')
     order_status = str(state.get('order_status', ''))
-    if order_status not in NON_REFUNDABLE_ORDER_STATUS:
+    if order_status in REFUNDABLE_ORDER_STATUS:
         notes.append(f'R2 订单状态：✅ 通过（{label(ORDER_STATUS_LABELS, order_status)}）')
     else:
         failed.append('R2')

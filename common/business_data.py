@@ -13,11 +13,20 @@ import re
 
 from dotenv import load_dotenv
 from common.errors import ErrorCode, ServiceError
+from common.json_data import strict_json_loads
+from common.order_policy import ORDER_STATUSES, RISK_LEVELS
 
 ROOT = Path(__file__).resolve().parents[1]
 SOURCE = 'imported_simulation'
 STATUS_MAP = {'已签收': 'delivered'}
-STATUSES = {'pending_payment', 'paid', 'shipped', 'delivered', 'completed', 'refunding', 'refunded', 'canceled'}
+STATUSES = ORDER_STATUSES
+
+
+class LogisticsIssue(ServiceError):
+    """Expected absence/conflicting business evidence, not a malformed source."""
+    def __init__(self, availability, code, message):
+        super().__init__(code, message, retryable=False)
+        self.availability = availability
 
 
 def require(condition, message):
@@ -62,7 +71,7 @@ class BusinessData:
 
     def read(self, name):
         try:
-            return json.loads((self.path / f'{name}.json').read_text(encoding='utf-8-sig'))
+            return strict_json_loads((self.path / f'{name}.json').read_text(encoding='utf-8-sig'))
         except OSError as exc:
             raise ServiceError(ErrorCode.TOOL_UNAVAILABLE, f'业务资料不可读取：{name}', retryable=False) from exc
         except (ValueError, UnicodeError) as exc:
@@ -96,14 +105,22 @@ class BusinessData:
         order = self.order(order_id)
         row = self.rows('logistics_status', 'order_id').get(order_id)
         if row is None:
-            raise ServiceError(ErrorCode.NOT_FOUND, f'订单 {order_id} 缺少物流记录，不能生成运单', retryable=False)
+            raise LogisticsIssue('unavailable', ErrorCode.NOT_FOUND, f'订单 {order_id} 暂无物流记录')
         for field in ('tracking_number', 'logistics_status', 'carrier', 'current_location', 'tracking_history'):
             require(isinstance(row.get(field), str) and bool(row[field].strip()), f'物流缺少 {field}')
-        require(timestamp(row.get('updated_at'), 'updated_at') >= timestamp(order['created_at'], 'created_at'),
-                f'订单 {order_id} 的物流更新时间早于下单时间')
-        require(order['order_status'] not in ('pending_payment', 'paid', 'canceled'),
-                f'订单 {order_id} 的状态与已存在物流记录冲突')
+        if timestamp(row.get('updated_at'), 'updated_at') < timestamp(order['created_at'], 'created_at'):
+            raise LogisticsIssue('inconsistent', ErrorCode.CONTRACT_MISMATCH, f'订单 {order_id} 的物流更新时间早于下单时间，待核对')
+        if order['order_status'] in ('pending_payment', 'paid', 'canceled'):
+            raise LogisticsIssue('inconsistent', ErrorCode.CONTRACT_MISMATCH, f'订单 {order_id} 的状态与已存在物流记录冲突，待核对')
         return deepcopy(row)
+
+    def logistics_summary(self, order_id):
+        """A query may report unavailable logistics without hiding order facts."""
+        try:
+            return {**self.logistics(order_id), 'logistics_availability': 'available', 'warnings': []}
+        except LogisticsIssue as exc:
+            return {'order_id': order_id, 'tracking_number': '',
+                    'logistics_availability': exc.availability, 'warnings': [str(exc)]}
 
     def refund_policy(self):
         policy = self.read('refund_compliance_policy')
@@ -116,7 +133,7 @@ class BusinessData:
         require(isinstance(risks, dict), 'risk_users 必须为对象')
         for customer, risk in risks.items():
             require(isinstance(customer, str) and isinstance(risk, dict) and
-                    risk.get('risk_level') in ('normal', 'watch', 'high_risk'), '风险记录无效')
+                    isinstance(risk.get('risk_level'), str) and risk['risk_level'] in RISK_LEVELS, '风险记录无效')
         return policy
 
     def refund_order(self, order_id):

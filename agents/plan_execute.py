@@ -9,7 +9,7 @@ from __future__ import annotations
 import argparse
 from copy import deepcopy
 from dataclasses import dataclass, asdict
-import json
+from importlib.resources import files
 import os
 from pathlib import Path
 import time
@@ -21,13 +21,16 @@ from common.errors import ErrorCode, ServiceError
 from common.model_config import text_config
 from common.llm import ChatModel, TextModel, json_object
 from common.module_boundary import result_for, failure
+from common.iso_week import week_start
+from common.json_data import strict_json_loads
+from common.money import format_cents
 from common.weekly_contract import weekly_manifest, validate_periods, previous_week as _previous_week
 from hub_platform.errors import HubError
 from hub_platform.schema import validate_data
 
 CAPABILITY_ID = 'm3.weekly_report'
 MANIFEST = weekly_manifest()
-FIXTURES = Path(__file__).resolve().parents[1] / 'data/fixtures/m3'
+FIXTURES = files('common').joinpath('fixtures', 'm3')
 ACTIONS = {'fetch': '读取融合经营数据', 'compare': '计算同口径环比',
            'anomaly': '分析输入异常', 'report': '汇总 Markdown 周报'}
 
@@ -119,7 +122,7 @@ class WeeklyReportExecutor:
         self.report = (
             f"# {data['week']} 运营周报\n\n运行方式：{mode}；数据来自调用方提供的经营视图。\n\n"
             f"## 核心指标\n| 指标 | 数值 |\n|---|---:|\n"
-            f"| 销售额 | {data['revenue_amount']} 分（{data['revenue_amount'] / 100:.2f} 元） |\n"
+            f"| 销售额 | {data['revenue_amount']} 分（{format_cents(data['revenue_amount'])} 元） |\n"
             f"| 订单量 | {data['order_count']} |\n| 转化率 | {data['conversion_rate']:.2%} |\n\n"
             f"## 环比\n{self.comparison}\n\n## 异常与待核查项\n{self.anomaly}\n")
         if self.previous is not None:
@@ -181,15 +184,17 @@ def invoke(request: AgentRequest) -> AgentResult:
 
 def load_sample_view(week: str) -> dict:
     """Explicit standalone fixture adapter. Upstream gmv is a sample sales proxy."""
-    _previous_week(week)
+    week_start(week)
     from common.business_data import configured_data
     from common.weekly_data import load_business_view
     source = configured_data()
     if source is not None:
         return load_business_view(source, week)
     try:
-        orders = json.loads((FIXTURES / 'order_basic.json').read_text(encoding='utf-8'))['weeks'][week]
-        behavior = json.loads((FIXTURES / 'user_behavior.json').read_text(encoding='utf-8'))['weeks'][week]
+        orders = strict_json_loads((FIXTURES / 'order_basic.json').read_text(encoding='utf-8'))['weeks'][week]
+        behavior = strict_json_loads((FIXTURES / 'user_behavior.json').read_text(encoding='utf-8'))['weeks'][week]
+    except ValueError as exc:
+        raise ServiceError(ErrorCode.CONTRACT_MISMATCH, 'M3 数据源不是有效 JSON', retryable=False) from exc
     except KeyError as exc:
         raise ServiceError(ErrorCode.NOT_FOUND, f'M3 样例缺少 {week}', retryable=False) from exc
     anomalies = '；'.join(f"{a['date']} {a['metric']} {a['deviation']}：{a['reason']}" for a in orders.get('anomalies', []))

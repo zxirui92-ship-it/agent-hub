@@ -151,7 +151,7 @@ $env:M4_MODE='mock'
 ## 契约要点
 
 - 七个规定 ID 从 `m1.faq_chat` 到 `m7.refund_approval`，无旧 ID 映射。
-- 金额用整数分；M2/M7 共用订单 Fixture，整单退款必须与订单金额一致，50000 分自动审批边界。
+- 金额用整数分；M2/M7 共用订单 Fixture，整单退款必须与订单金额一致，50000 分为普通风险订单自动审批边界；高风险订单一律人工审核。
 - task/request/trace ID 使用规定前缀与小写 hex；step_id=s1 等。Fixture 的经营链仍故意打乱数组顺序。
 - waiting_approval 不是完成或失败。无恢复能力时 token 必须为空；相关下游等待，无关分支继续。
 - M4 data 为 `skill_name`、`result`、`route_reason` 三个字符串；result 内 JSON 文本表示 Skill 业务结果。
@@ -207,3 +207,25 @@ $env:M2_MODE='local'
 最后一条经营演示使用 M5 Mock；测试中已用注入模型响应的真实 M5 验证三模块经营链。三个独立入口均输出 AgentResult JSON，退出码 0=完成、1=模块失败。M1 的 mock 是标记明确的固定回答；M2 的 local 是确定性动作选择；M6 是真实融合计算但数据来自样例。M1/M2 的 live 使用公共模型解析器（显式 LLM_* 或所选本机服务变量），无配置则失败。M1 多轮记忆需要复用同一 SingleAgent 实例和 session_id；独立 CLI 每次启动是新进程。
 
 `--real-m1` 至 `--real-m7` 可组合使用；`--list-capabilities` 加全部开关只查看 Manifest，不调用模型。无需修改 Executor、Validator 或 Planner。
+
+## 审计加固与安装包验收（2026-10-15）
+
+已修复离线审计的 F01–F10、D01–D02、H01–H04。变更与验证范围见 [审计修复说明](docs/audit_hardening.md)。新增回归位于 tests/audit；保留异常断言，不通过跳过或弱化用例隐藏缺陷。
+
+运行时 Mock 已迁至 hub_platform.demo_agents，订单和周汇总数据通过 importlib.resources 从 common/fixtures 读取；安装 wheel 后不依赖源码 tests/ 或 data/ 目录。data/fixtures 保留为文档示例，测试检查它与分发资源一致。
+
+```bash
+python -m pip install -r requirements.txt
+python -m pip wheel . --no-deps --wheel-dir dist
+AUDIT_WHEEL="$(find "$PWD/dist" -name '*.whl' -print -quit)" python -m pytest -q
+python scripts/check_wheel.py dist/*.whl
+```
+
+check_wheel.py 会在源码目录外安装 wheel，测试平台能力清单和 M2/M3/M6/M7 离线入口，禁用网络且不读取 API Key。GitHub Actions 配置在 Python 3.10/3.12 上运行相同回归、wheel smoke、编译与依赖一致性检查。真实 API 测试需专门开关；审计阶段未启用，后续可靠性整合已实测，见下方记录。
+
+
+## 2026-10-15 可靠性整合与前端准备
+
+本地开发分支整合 group02 数据接入、平台审批续跑和 Dots 审计修复。M2 1.2 可返回已知订单及明确的物流缺失/冲突提示；M7 统一 completed/watch 等来源枚举，审批响应失败可用原决定恢复；Planner 对明确预算增加整数分换算校验并启用 JSON 输出。
+
+本机文本配置现使用百炼 qwen-plus（DeepSeek 本轮文本请求超时），不是运行时自动 fallback；密钥仍在本机环境。实际测试记录见 [可靠性验收](docs/reliability_acceptance.md)，下一步的会话/状态/审核接入方式见 [前端接入说明](docs/frontend_handoff.md)。本轮尚未建立 HTTP API 或前端页面。

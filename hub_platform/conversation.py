@@ -8,7 +8,7 @@ from uuid import uuid4
 
 from pydantic import Field
 
-from common.contracts import Contract, ErrorDetail, ExecutionPlan, ExecutionReport, ApprovalDecision
+from common.contracts import Contract, ErrorDetail, ExecutionPlan, ExecutionReport, StepState, ApprovalDecision
 from common.errors import ErrorCode
 from hub_platform.errors import HubError
 from hub_platform.executor import Executor
@@ -96,11 +96,16 @@ class Conversation:
 
     def submit(self, text: str, *, execute: bool = True) -> TurnResult:
         task = self._context.active_task
-        if task and task.report and any(s.status == 'waiting_approval' for s in task.report.steps.values()):
-            # Natural-language consent never substitutes for an explicit decision.
+        if task and task.report and any(
+            step.status == StepState.WAITING_APPROVAL for step in task.report.steps.values()
+        ):
+            # Aggregate failure must not hide a pending approval in another branch.
+            # Preserve the report; only explicit review may resume it.
+            message = ('此任务包含失败步骤，仍有步骤等待审批；' if task.report.status == 'failed'
+                       else '此任务仍在等待审批；')
             return TurnResult(session_id=self._context.session_id, task_id=task.task_id,
-                              trace_id=task.trace_id, status='waiting_approval',
-                              message='此任务仍在等待审批；用 /review 提交明确决定，或 /new 开始另一项任务。',
+                              trace_id=task.trace_id, status=task.report.status,
+                              message=message + '用 /review 提交明确决定，或 /new 开始另一项任务。',
                               plan=task.plan.model_copy(deep=True), report=task.report.model_copy(deep=True))
         if task and task.status in ('completed', 'unsupported', 'execution_failed'):
             self.new_task()

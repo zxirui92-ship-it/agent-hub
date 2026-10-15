@@ -9,7 +9,8 @@ Identifier = Annotated[str, Field(pattern=r"^s[1-9][0-9]*$")]
 TaskId = Annotated[str, Field(pattern=r"^task-[0-9a-f]{12}$")]
 RequestId = Annotated[str, Field(pattern=r"^req-[0-9a-f]{12}$")]
 TraceId = Annotated[str, Field(pattern=r"^trace-[0-9a-f]{16}$")]
-PlanId = Annotated[str, Field(pattern=r"^plan-[0-9]{8}-[0-9]{3}$")]
+# Three digits is a minimum display width, not a cap on a planner's sequence.
+PlanId = Annotated[str, Field(pattern=r"^plan-[0-9]{8}-[0-9]{3,}$")]
 NonEmpty = Annotated[str, Field(min_length=1)]
 
 

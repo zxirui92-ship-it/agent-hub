@@ -95,3 +95,22 @@
 - Excel/JSON已按主键核对8张对应业务表、2593字段值，单位及状态翻译后无差异；业务记录自身的问题仍保留并单独报告。
 - 周汇总使用2025-W40～W43；新数据订单2025101234金额239700分，不能回退到旧Fixture的69900分。演示可用2025100003（12900分）或2025100004（109900分）。
 - 资料详细口径、已知问题、启动方式和文件清单见 docs/group02_data_integration.md；源仍是仿真资料，未进行新资料上的真实模型内容验收。
+
+## 2026-10-15 可靠性整合进行中
+- 已保存 d56ccdc 并合入审计 dc33ccf；保留 group02 和平台恢复。统一 completed/watch/pending_payment/refunding 处理。
+- 首轮联合回归 1140 passed、1 failed、33 skipped：唯一失败为新旧 Fixture 行尾不同；新增 .gitattributes 固定 LF，原始导入资料保留字节。
+- M2 区分订单存在与物流可用性，不伪造运单；M7 已提交审批的响应失败可从平台保留 token 重试。新增全79订单查询和全79退款场景验收。
+- 两次多文件补丁因错误上下文整体未应用，已拆分为准确补丁。
+
+- 联合全量1303 passed、1 failed、30 skipped：M2版本号测试需从1.1同步1.2，已修正。全34知识条目与79订单/79退款专项均通过。
+- DeepSeek真实文本请求超时；停止批量验收后单独复现30秒超时。只读models在直连/代理均可用，极短文本对比DeepSeek仍超时/不可用，而百炼qwen-plus成功。按既有授权显式将本地.env的LLM_PROVIDER设为bailian，无密钥复制、不引入运行时自动降级。
+- 一次定向测试误引用不存在的tests/unit/test_executor.py，改为实际文件集合后220 passed。
+
+- 千问首批真实11 passed、2 failed（235.08秒）：10万元预算被Planner换算为1000000分；另一双周计划JSON缺逗号。没有放松断言。添加显式预算Decimal换算、单预算消费节点校验（错误进入现有repair），Planner采用官方JSON输出模式；64项定向测试通过。
+- JSON模式依据：https://help.aliyun.com/en/model-studio/qwen-structured-output 和 https://api-docs.deepseek.com/guides/json_mode/。格式模式不代替Schema/业务金额校验。
+- 此前最终离线1339 passed/30 skipped、wheel 7项通过；增加金额修复和新退款live验收后需再次全量。
+
+## 2026-10-15 最终结论
+- 1368离线通过、31live默认跳过、7项wheel检查通过；实际31个不同live场景分批均有成功记录，修复后的M5双周链额外复验通过。
+- 程序精确提供M5客单价191.54元和2025-W42日期10月13日至19日，解决此前十倍金额和周日历错误；模型自由文本的其他推演不能认定全部正确（仍有UV估算偏差），已如实记录。
+- 可进入前端集成；当前提供Python会话/审批入口，尚无HTTP服务。会话/审批保存在内存，经营链约100秒。详见docs/reliability_acceptance.md与docs/frontend_handoff.md。

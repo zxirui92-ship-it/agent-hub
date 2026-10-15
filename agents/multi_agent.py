@@ -8,7 +8,7 @@ Local migration and contract differences: docs/m5_interface_alignment.md.
 from __future__ import annotations
 
 import argparse
-from datetime import datetime, timezone
+from datetime import date, datetime, timezone
 import json
 import logging
 import math
@@ -23,14 +23,16 @@ if __package__ in (None, ''):
     sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from dotenv import load_dotenv
-from jsonschema import Draft202012Validator, ValidationError
-from jsonschema.validators import extend
+from jsonschema import ValidationError
 
 from common.contracts import AgentRequest, AgentResult, ErrorDetail
 from common.errors import ErrorCode, ServiceError
 from common.llm import ChatModel
 from common.model_config import text_config
+from common.money import format_cents
+from common.iso_week import week_start
 from common.promotion_contract import promotion_manifest
+from hub_platform.schema import DataValidator
 
 M5_MODULE = "m5"
 M5_CAPABILITY_ID = "m5.promotion_plan"
@@ -43,8 +45,7 @@ ROLE_ORDER = (ROLE_PRODUCT, ROLE_OPERATION, ROLE_DATA, ROLE_SERVICE)
 STEP_AGGREGATE, ROLE_AGGREGATOR = "agg", "aggregator"
 LlmFn = Callable[..., str]
 LOGGER = logging.getLogger('agent_hub.m5')
-StrictValidator = extend(Draft202012Validator, type_checker=Draft202012Validator.TYPE_CHECKER.redefine(
-    'integer', lambda checker, value: type(value) is int))
+StrictValidator = DataValidator
 
 
 def _public_message(message: str) -> str:
@@ -105,16 +106,47 @@ def _parse_suggestion(raw: str) -> tuple[str, str]:
     return contribution, rationale
 
 
+def calculated_facts(context: dict[str, Any]) -> list[str]:
+    """Calendar and per-order money are computed, never delegated to a model."""
+    lines = []
+    if context.get('week'):
+        start = week_start(context['week'])
+        days = [f"{date.fromordinal(start.toordinal() + i).isoformat()}（周{label}）"
+                for i, label in enumerate('一二三四五六日')
+                if start.toordinal() + i <= date.max.toordinal()]
+        lines.append(f"活动周 {context['week']} 日历：" + '、'.join(days) + '。')
+    if 'budget_amount' in context:
+        amount = context['budget_amount']
+        lines.append(f'总预算：{amount} 分 = {format_cents(amount)} 元。')
+    fused = context.get('fused_data')
+    if fused:
+        amount, count = fused['revenue_amount'], fused['order_count']
+        lines.append(f"历史统计周 {fused['week']}：成交金额 {amount} 分 = {format_cents(amount)} 元；订单数 {count}。")
+        if count:
+            # Exact half-up rounding to integer cents without float/Decimal limits.
+            average = (2 * amount + count) // (2 * count)
+            lines.append(f'客单价（成交金额÷订单数，四舍五入到分）：{average} 分 = {format_cents(average)} 元。')
+        else:
+            lines.append('客单价：无订单，不可计算，不能填零或推测。')
+    return lines
+
+
 def facts_for_prompt(context: dict[str, Any]) -> str:
     lines = ['金额口径：所有 _amount 原始字段单位都是分，100 分=1 元；禁止把分数值直接当元。',
              '只把下列输入当作事实；角色建议不是事实。未知库存、人力、峰值、成本和 ROI 须标记待确认，建议目标须标记假设。']
+    lines.extend(calculated_facts(context))
+    lines.append('日历、预算、客单价使用上述程序计算值，不得自行重算或采用角色建议中的矛盾值。'
+                 '不要把周订单量当作日订单量；缺少咨询比例不能推算真实咨询峰值。')
+    if context.get('week'):
+        lines.append(f"目标活动周（以此安排方案时间线）：{context['week']}。")
     if 'budget_amount' in context:
         amount = context['budget_amount']
-        lines.append(f'预算：{amount} 分 = {amount // 100}.{amount % 100:02d} 元。')
+        lines.append(f'预算：{amount} 分 = {format_cents(amount)} 元。')
     fused = context.get('fused_data')
     if fused:
         amount = fused['revenue_amount']
-        lines.append(f"成交金额：{amount} 分 = {amount // 100}.{amount % 100:02d} 元（不是会计收入）。")
+        lines.append(f"融合数据统计周：{fused['week']}（历史依据，不替代目标活动周）。")
+        lines.append(f"成交金额：{amount} 分 = {format_cents(amount)} 元（不是会计收入）。")
         lines.append('完整融合事实：' + json.dumps(fused, ensure_ascii=False))
     if context.get('report_markdown'):
         lines.append('输入周报：' + context['report_markdown'])
@@ -149,7 +181,7 @@ class BaseRoleAgent:
             background.append(f"周期：{context['week']}")
         if context.get("budget_amount") is not None:
             # 入参单位是「分」，展示时换算成元，避免四个人各写各的单位
-            background.append(f"预算：{int(context['budget_amount']) / 100:.2f} 元")
+            background.append(f"预算：{format_cents(context['budget_amount'])} 元")
         if context.get("report_markdown"):
             background.append(f"运营周报摘要：{_clip(str(context['report_markdown']), 200)}")
         if context.get("fused_data"):
@@ -405,7 +437,12 @@ class Aggregator:
             duration_ms=duration_ms,
         )
 
-        return f"{skeleton}\n{str(body).strip()}\n"
+        facts = calculated_facts(context or {})
+        verified = ('## 已核对的基础数据\n\n' + '\n'.join('- ' + item for item in facts)
+                    + '\n\n') if facts else ''
+        return (verified + f"{skeleton}\n"
+                '> 以下为模型协作建议；新增目标、投放效果、库存与排班需确认，不代表已执行。\n\n'
+                + f"{body.strip()}\n")
 
 
 # Platform boundary: local AgentRequest / AgentResult, no upstream common copy.

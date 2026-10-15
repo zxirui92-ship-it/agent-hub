@@ -4,6 +4,10 @@ from common.contracts import CapabilityManifest
 TEXT = {'type': 'string', 'minLength': 1, 'pattern': r'\S'}
 SESSION = {'type': 'string', 'pattern': '^sess-[0-9a-f]{12}$'}
 STRINGS = {'type': 'array', 'items': {'type': 'string', 'minLength': 1}}
+LOGISTICS_FIELDS = {
+    'logistics_availability': {'type': 'string', 'enum': ['available', 'unavailable', 'inconsistent']},
+    'warnings': STRINGS,
+}
 
 
 def obj(**properties):
@@ -24,10 +28,12 @@ def faq_manifest():
 def order_manifest():
     inputs = obj(order_id=TEXT, query=TEXT)
     inputs['required'] = ['order_id']
-    return CapabilityManifest(capability_id='m2.order_tracking', version='1.1', name='订单物流查询',
-        description='通过有界 ReAct 查询订单和物流。订单金额来自与退款模块一致的本地订单事实，整数分。',
-        input_schema=inputs, output_schema=obj(order_id=TEXT,
+    outputs = obj(order_id=TEXT,
             order_amount={'type': 'integer', 'minimum': 0}, order_status=TEXT,
-            tracking_number=TEXT, actions=STRINGS, observations=STRINGS, stop_reason=TEXT),
+            tracking_number={'type': 'string'}, actions=STRINGS, observations=STRINGS, stop_reason=TEXT)
+    outputs['properties'].update(LOGISTICS_FIELDS)
+    return CapabilityManifest(capability_id='m2.order_tracking', version='1.2', name='订单物流查询',
+        description='通过有界 ReAct 查询订单和物流，金额为整数分；物流缺失或冲突时仍返回已核实订单事实，运单为空并明确给出物流状态与提示。',
+        input_schema=inputs, output_schema=outputs,
         preconditions=['order_id 必填；query 可补充查询意图，不能覆盖 order_id'],
         side_effects='read_only', execution_mode='immediate', owner='董超')

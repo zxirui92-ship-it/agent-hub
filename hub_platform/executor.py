@@ -73,7 +73,7 @@ class Executor:
         try:
             returned = resume(record.result.continuation_token, decision.model_copy(deep=True))
         except ServiceError as exc:
-            raise HubError(exc.code, str(exc), step_id) from exc
+            raise HubError(exc.code, str(exc), step_id, retryable=exc.retryable) from exc
         except Exception as exc:
             # Unknown partial side effects cannot safely be retried automatically.
             self._fail(run, record, HubError(ErrorCode.INTERNAL_ERROR, f'恢复调用失败：{type(exc).__name__}', step_id))
