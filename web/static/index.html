@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Agent Hub 控制台</title>
+  <link rel="stylesheet" href="/static/styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <span class="logo">AH</span>
+      <div>
+        <h1>Agent Hub 控制台</h1>
+        <p class="subtitle">顶层语义规划 · 七模块编排 · 会话式控制台</p>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <span id="modeBadge" class="badge badge-neutral" title="规划与执行模式">模式</span>
+      <div class="session-info">
+        <span class="label">会话</span>
+        <code id="sessionId">—</code>
+      </div>
+      <button id="btnNew" class="btn btn-ghost" title="结束当前任务并保留历史">新任务</button>
+      <button id="btnReset" class="btn btn-ghost" title="清空整个会话">重置会话</button>
+    </div>
+  </header>
+
+  <nav class="nav">
+    <label class="nav-label" for="navSelect">调用入口</label>
+    <select id="navSelect" class="nav-select">
+      <option value="orchestrate">对话编排（统一调用）</option>
+      <optgroup label="模块直调" id="moduleOptGroup"></optgroup>
+    </select>
+  </nav>
+
+  <!-- 视图一：对话编排 -->
+  <main class="layout" id="viewOrchestrate">
+    <section class="transcript-pane">
+      <div id="transcript" class="transcript">
+        <div class="empty-state" id="emptyState">
+          <h2>开始一个任务</h2>
+          <p>输入自然语言目标，顶层规划器会选择能力并生成执行计划。右侧列出了可直接套用的演示场景。</p>
+          <ul class="hints">
+            <li><b>客服：</b>小家电保修几年？请说明不同条目差异。</li>
+            <li><b>订单：</b>查询订单 2025101234 的物流。</li>
+            <li><b>经营：</b>分别融合 2025-W41 和 2025-W40 数据，生成 W41 环比周报，再制定下周预算 10000 元的大促方案。</li>
+            <li><b>退款：</b>查询订单 2025101234 并申请整单退款。</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="composer">
+        <textarea id="goalInput" rows="2" placeholder="输入任务目标，例如：查询订单 2025101234 的物流"></textarea>
+        <div class="composer-actions">
+          <button id="btnRun" class="btn btn-primary">执行</button>
+          <button id="btnPlan" class="btn btn-secondary">仅预览计划</button>
+        </div>
+      </div>
+    </section>
+
+    <aside class="side-pane">
+      <div class="card">
+        <h3>演示场景</h3>
+        <p class="muted">点击填入输入框，再点“执行”。</p>
+        <div id="scenarioList" class="scenario-list"></div>
+      </div>
+      <div class="card collapsible collapsed" data-collapsible>
+        <h3 class="card-title">能力清单 <span class="caret">▸</span></h3>
+        <p class="muted">当前注册的能力（Manifest）。点击标题展开/收起。顶部下拉选择某一模块即可单独调用。</p>
+        <div id="capabilityList" class="capability-list"></div>
+      </div>
+    </aside>
+  </main>
+
+  <!-- 视图二：模块单独调用（下拉选择后跳转） -->
+  <main class="layout module-view" id="viewModule" hidden>
+    <section class="module-detail-pane">
+      <div id="moduleDetail"></div>
+    </section>
+
+    <aside class="side-pane">
+      <div class="card">
+        <h3>演示场景</h3>
+        <p class="muted">点击切换到对应模块并带入示例输入。</p>
+        <div id="scenarioList2" class="scenario-list"></div>
+      </div>
+      <div class="card collapsible collapsed" data-collapsible>
+        <h3 class="card-title">能力清单 <span class="caret">▸</span></h3>
+        <p class="muted">当前注册的能力（Manifest）。点击标题展开/收起。</p>
+        <div id="capabilityList2" class="capability-list"></div>
+      </div>
+    </aside>
+  </main>
+
+  <div id="toast" class="toast" hidden></div>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>

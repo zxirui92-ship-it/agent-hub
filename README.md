@@ -230,4 +230,21 @@ check_wheel.py 会在源码目录外安装 wheel，测试平台能力清单和 M
 
 本地开发分支整合 group02 数据接入、平台审批续跑和 Dots 审计修复。M2 1.2 可返回已知订单及明确的物流缺失/冲突提示；M7 统一 completed/watch 等来源枚举，审批响应失败可用原决定恢复；Planner 对明确预算增加整数分换算校验并启用 JSON 输出。
 
-本机文本配置现使用百炼 qwen-plus（DeepSeek 本轮文本请求超时），不是运行时自动 fallback；密钥仍在本机环境。实际测试记录见 [可靠性验收](docs/reliability_acceptance.md)，下一步的会话/状态/审核接入方式见 [前端接入说明](docs/frontend_handoff.md)。本轮尚未建立 HTTP API 或前端页面。
+本机文本配置现使用百炼 qwen-plus（DeepSeek 本轮文本请求超时），不是运行时自动 fallback；密钥仍在本机环境。实际测试记录见 [可靠性验收](docs/reliability_acceptance.md)，会话/状态/审核接入方式见 [前端接入说明](docs/frontend_handoff.md)。
+
+## 前端控制台（web 包）
+
+新增 `web/` 薄层把现有 `Conversation` 暴露为浏览器可访问的 HTTP 服务与单页界面，不重写 Planner / Executor / 七个 Agent。仅做组装与映射，错误体与报告原样透传。详见 [前端接入说明](docs/frontend_handoff.md) 与 `web/server.py` 顶部注释。
+
+```powershell
+# 离线演示（无需 LLM 配置；确定性 Planner + 七个 Mock，覆盖文档中的演示场景）
+.\.venv\Scripts\python.exe -m web --offline
+# 真实模式：配置 LLM 后直接启动，顶层规划改用真实模型
+.\.venv\Scripts\python.exe -m web
+# 也可逐个替换真实模块，例如退款审批走真实 M7（支持审批恢复）
+.\.venv\Scripts\python.exe -m web --real-m7
+```
+
+启动后访问 http://127.0.0.1:8000/ 。每个浏览器会话保留一个 `Conversation` 实例，同一会话请求串行；界面严格区分 `needs_clarification / ready / unsupported / completed / waiting_approval / failed` 六种状态，金额按整数分展示并换算为元，M4 结果按 JSON 或纯文本回退渲染，M7 读取 `data.approval_status`（而非仅 `AgentResult.status`）并内嵌审批表单。
+
+界面顶部有两个标签：**对话编排**（自然语言目标经顶层 Planner 生成并执行计划）与**模块直调**（绕过 Planner，按 Manifest 输入契约直接调用单个能力）。模块直调页根据 `/api/capabilities` 返回的每个能力 `input_schema` 自动生成表单（含嵌套 `fused_data`、枚举、金额/比例数字等），并预填演示默认值，点“调用此模块”即经 `/api/invoke` 走真实 Executor 单步执行；`waiting_approval` 的步骤内嵌审批表单，提交经 `/api/invoke/review` 续跑（真实 M7 支持恢复，Mock M7 会如实提示不支持）。

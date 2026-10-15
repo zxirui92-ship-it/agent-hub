@@ -76,7 +76,9 @@ class FAQMock(ValidatedMock):
     manifest = faq_manifest()
 
     def _invoke(self, request):
-        return result(request, {"answer": "Mock 政策：符合条件的商品支持七天无理由退货。",
+        question = request.payload.get("question", "")
+        answer = f"Mock 回答（离线演示）：针对您的问题「{question}」，符合条件的商品支持七天无理由退货。"
+        return result(request, {"answer": answer,
                                 "session_id": request.payload.get('session_id', 'sess-000000000001')})
 
 
