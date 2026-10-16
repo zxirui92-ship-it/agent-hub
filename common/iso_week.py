@@ -19,3 +19,16 @@ def week_start(week: str) -> date:
 
 def week_schema() -> dict:
     return {'type': 'string', 'pattern': ISO_WEEK_PATTERN, 'format': 'iso-week'}
+
+
+def shared_weeks(*indexes) -> list[str]:
+    """Valid ISO week keys present in every required source index."""
+    common = set.intersection(*(set(index) for index in indexes))
+    result = []
+    for week in common:
+        try:
+            week_start(week)
+        except ValueError:
+            continue
+        result.append(week)
+    return sorted(result)

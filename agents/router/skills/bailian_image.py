@@ -18,7 +18,7 @@ def generation_url(base_url):
 
 
 class BailianImageSkill:
-    def __init__(self, base_url='', api_key='', model='qwen-image-2.0', timeout=180, *, mock=False, transport=post_json):
+    def __init__(self, base_url='', api_key='', model='qwen-image-2.1-pro', timeout=600, *, mock=False, transport=post_json):
         self.base_url, self.api_key, self.model = base_url, api_key, model
         self.timeout, self.mock, self.transport = timeout, mock, transport
 

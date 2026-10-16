@@ -49,7 +49,7 @@ def test_bailian_mapping_drives_text_search_image_and_planner(monkeypatch):
     settings = Settings.from_env()
     assert settings.llm_api_key == settings.search_api_key == settings.image_api_key == env['DASHSCOPE_API_KEY']
     assert settings.search_provider == settings.image_provider == 'bailian'
-    assert settings.image_model == 'qwen-image-2.0'
+    assert settings.image_model == 'qwen-image-2.1-pro'
     planner = configured_model()
     assert planner.api_key == settings.llm_api_key and planner.model == 'routing-model'
     status = check_config(env)

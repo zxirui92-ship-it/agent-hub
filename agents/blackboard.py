@@ -23,7 +23,7 @@ from common.business_data import configured_data
 from common.weekly_data import campaign_summary, insight_summary, fused_view
 from common.errors import ErrorCode, ServiceError
 from common.fusion_contract import fusion_manifest
-from common.iso_week import week_start
+from common.iso_week import week_start, shared_weeks
 from common.json_data import strict_json_loads
 from common.module_boundary import result_for, failure, correlation
 from hub_platform.errors import HubError
@@ -42,6 +42,18 @@ FIELD_DEFINITIONS = [
 class WeeklySource:
     def __init__(self, path=None):
         self.path = FIXTURES if path is None else Path(path)
+
+    def available_weeks(self):
+        try:
+            indexes = [strict_json_loads((self.path / f'{name}.json').read_text(encoding='utf-8-sig'))['weeks']
+                       for name in ('order_basic', 'user_behavior')]
+            if not all(isinstance(index, dict) for index in indexes):
+                raise ValueError('Invalid week indexes')
+            return shared_weeks(*indexes)
+        except OSError as exc:
+            raise ServiceError(ErrorCode.TOOL_UNAVAILABLE, 'M6 无法读取周汇总样例') from exc
+        except (KeyError, TypeError, ValueError) as exc:
+            raise ServiceError(ErrorCode.CONTRACT_MISMATCH, 'M6 周汇总源结构不完整', retryable=False) from exc
 
     def load(self, week):
         try:
@@ -62,7 +74,9 @@ class WeeklySource:
             if not isinstance(orders, dict) or not isinstance(behavior, dict) or not isinstance(campaigns, list):
                 raise TypeError('Invalid source collections')
             if week not in orders or week not in behavior:
-                raise ServiceError(ErrorCode.NOT_FOUND, f'M6 周次 {week} 缺少订单或行为样例', retryable=False)
+                available = '、'.join(shared_weeks(orders, behavior)) or '无'
+                raise ServiceError(ErrorCode.NOT_FOUND,
+                    f'M6 周次 {week} 缺少订单或行为样例；当前数据源可用周次：{available}。请核对年份。', retryable=False)
             order, funnel = orders[week], behavior[week]
             money = yuan_schema()
             validate_data(order, {'type': 'object', 'required': ['gmv_amount', 'order_count', 'refund_rate'],
@@ -218,6 +232,20 @@ class DataFusionModule:
         load_dotenv(Path(__file__).resolve().parents[1] / '.env', override=False)
         self.source = source if source is not None else (WeeklySource(os.getenv('M6_DATA_DIR')) if os.getenv('M6_DATA_DIR') else configured_data() or WeeklySource())
         self.max_rounds = max_rounds
+
+        # Advertise this instance's source through the existing registry catalog.
+        # Source failures still surface at invoke(), rather than breaking startup.
+        self.manifest = type(self).manifest.model_copy(deep=True)
+        if callable(getattr(self.source, 'available_weeks', None)):
+            try:
+                weeks = self.source.available_weeks()
+            except ServiceError:
+                weeks = None
+            if weeks is not None:
+                field = self.manifest.input_schema['properties']['week']
+                field['description'] = ('当前数据源可用周次：' + ('、'.join(weeks) or '无') +
+                    '。必须核对年份；仅给周号时可匹配唯一可用周次，有歧义则澄清。'
+                    '明确指定的年份或相对日期不得替换成其他年份。')
 
     def invoke(self, request: AgentRequest) -> AgentResult:
         try:

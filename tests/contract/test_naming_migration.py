@@ -20,7 +20,7 @@ def test_catalog_fields_owners_and_old_id_removed(registry):
         spec = registry.get_manifest(cls.manifest.capability_id)
         assert expected <= set(spec.output_schema['required'])
         versions = {'m1.faq_chat': '1.1', 'm2.order_tracking': '2.0', 'm3.weekly_report': '3.0',
-                    'm4.capability_gateway': '1.0', 'm5.promotion_plan': '3.0', 'm6.data_fusion': '2.0',
+                    'm4.capability_gateway': '1.1', 'm5.promotion_plan': '3.0', 'm6.data_fusion': '2.0',
                     'm7.refund_approval': '3.0'}
         assert spec.version == versions[spec.capability_id]
         assert 'pending' not in spec.owner

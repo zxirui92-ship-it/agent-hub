@@ -17,6 +17,7 @@ from common.errors import ErrorCode, ServiceError
 from common.json_data import strict_json_loads
 from common.order_policy import ORDER_STATUSES, RISK_LEVELS
 from common.money import cents_to_yuan, is_yuan
+from common.iso_week import shared_weeks
 
 ROOT = Path(__file__).resolve().parents[1]
 SOURCE = 'imported_simulation'
@@ -194,6 +195,14 @@ class BusinessData:
                             'keywords': keywords, 'source_file': 'service_policy.json', 'effective_date': row['effective_date']})
         return entries
 
+    def _weekly_datasets(self):
+        datasets = [self.read(name) for name in ('weekly_sales', 'user_behavior_weekly', 'marketing_campaign_weekly')]
+        require(all(isinstance(d, dict) for d in datasets), '周数据必须按 ISO 周索引')
+        return datasets
+
+    def available_weeks(self):
+        return shared_weeks(*self._weekly_datasets())
+
     def load(self, week):
         """M6 source boundary, keeping the independent weekly dataset explicit."""
         try:
@@ -202,10 +211,11 @@ class BusinessData:
             date.fromisocalendar(int(week[:4]), int(week[-2:]), 1)
         except (TypeError, ValueError) as exc:
             raise ServiceError(ErrorCode.INVALID_INPUT, 'week 不是有效 ISO 周', retryable=False) from exc
-        datasets = [self.read(name) for name in ('weekly_sales', 'user_behavior_weekly', 'marketing_campaign_weekly')]
-        require(all(isinstance(d, dict) for d in datasets), '周数据必须按 ISO 周索引')
+        datasets = self._weekly_datasets()
         if any(week not in d for d in datasets):
-            raise ServiceError(ErrorCode.NOT_FOUND, f'仿真业务库缺少完整周次：{week}', retryable=False)
+            available = '、'.join(shared_weeks(*datasets)) or '无'
+            raise ServiceError(ErrorCode.NOT_FOUND,
+                f'仿真业务库缺少完整周次：{week}；当前数据源可用周次：{available}。请核对年份。', retryable=False)
         sales, behavior, campaigns = [d[week] for d in datasets]
         require(isinstance(sales, dict) and isinstance(behavior, dict) and isinstance(campaigns, list), '周数据结构错误')
         require(sales.get('week') == behavior.get('week') == week, '周索引与记录 week 不一致')

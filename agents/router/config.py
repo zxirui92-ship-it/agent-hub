@@ -35,7 +35,7 @@ class Settings:
     image_api_key: str = field(default='', repr=False)
     image_model: str = ''
     image_provider: str = 'openai'
-    image_timeout: float = 180
+    image_timeout: float = 600
     service_timeout: float = 60
     kb_path: Path | None = None
 
@@ -73,7 +73,7 @@ class Settings:
             search_model=env.get('BAILIAN_SEARCH_MODEL' if search_bailian else 'M4_SEARCH_MODEL', '').strip() or 'qwen-plus',
             image_base_url=env.get('BAILIAN_BASE_URL', '') if use_bailian else env.get('M4_IMAGE_BASE_URL', ''),
             image_api_key=env.get('BAILIAN_API_KEY', '') if use_bailian else env.get('M4_IMAGE_API_KEY', ''),
-            image_model=(env.get('BAILIAN_IMAGE_MODEL') or 'qwen-image-2.0') if use_bailian else env.get('M4_IMAGE_MODEL', ''),
-            image_provider=provider, image_timeout=float(env.get('M4_IMAGE_TIMEOUT_SECONDS') or '180'),
+            image_model=(env.get('BAILIAN_IMAGE_MODEL') or 'qwen-image-2.1-pro') if use_bailian else env.get('M4_IMAGE_MODEL', ''),
+            image_provider=provider, image_timeout=float(env.get('M4_IMAGE_TIMEOUT_SECONDS') or '600'),
             service_timeout=float(env.get('M4_SERVICE_TIMEOUT_SECONDS', '60')),
             kb_path=Path(env['M4_KB_PATH']) if env.get('M4_KB_PATH') else None)

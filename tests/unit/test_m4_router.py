@@ -147,3 +147,11 @@ def test_invalid_injected_router_and_empty_catalog():
     agent=RouterAgent(SkillRegistry(),LlmRouter(model))
     assert agent.invoke(request()).error.code==ErrorCode.UNKNOWN_CAPABILITY
     assert model.calls==[]
+
+
+def test_string_null_abstention_never_selects_a_tool():
+    agent = create_agent(Settings(mode='mock'))
+    model = FakeModel('{"skill_name":"null","route_reason":"只要文案，没有匹配的已注册工具"}')
+    decision = LlmRouter(model).select('只写海报文案，暂时不要出图，也不要源代码。', agent.skills.list_skills())
+    assert decision.skill_name is None
+    assert len(model.calls) == 1

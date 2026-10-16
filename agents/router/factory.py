@@ -10,6 +10,7 @@ from agents.router.skills.image_gen import ImageGenSkill
 from agents.router.skills.bailian_image import BailianImageSkill
 from agents.router.skills.bailian_search import BailianSearchSkill
 from common.llm import ChatModel
+from agents.router.image_brief import ImagePromptWriter, PromptedImageSkill
 
 
 def create_agent(settings: Settings | None = None) -> RouterAgent:
@@ -22,7 +23,9 @@ def create_agent(settings: Settings | None = None) -> RouterAgent:
               WebSearchSkill(settings.search_api_key, settings.search_url, settings.service_timeout, mock=mock))
     registry.register('web_search', 'Search the public web for current facts, news and external sources. 联网搜索最新信息。', search)
     registry.register('kb_qa', 'Answer company policy questions using local knowledge entries. 企业知识库、优惠政策、退款规则。', KbQaSkill(settings.kb_path))
-    registry.register('code_gen', 'Generate source code from natural language requirements; never execute code. 按需求生成代码。', CodeGenSkill(model, mock=mock))
+    registry.register('code_gen', 'Generate requested source code; never execute it. 按明确要求生成源代码；海报成图和营销文案不是代码任务。', CodeGenSkill(model, mock=mock))
     image_type = BailianImageSkill if settings.image_provider == 'bailian' else ImageGenSkill
-    registry.register('image_gen', 'Generate images, illustrations or visual designs from text descriptions. 根据描述生成图片。', image_type(settings.image_base_url, settings.image_api_key, settings.image_model, settings.image_timeout, mock=mock))
+    provider = image_type(settings.image_base_url, settings.image_api_key, settings.image_model, settings.image_timeout, mock=mock)
+    registry.register('image_gen', 'Generate images, posters, illustrations or visual designs from text descriptions. 先撰写视觉提示词，再生成真实图片。',
+                      PromptedImageSkill(ImagePromptWriter(model, mock=mock), provider))
     return RouterAgent(registry, ExplicitMockRouter() if mock else LlmRouter(model))

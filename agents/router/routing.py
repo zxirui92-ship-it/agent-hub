@@ -27,12 +27,17 @@ class LlmRouter:
         if not skills:
             return RouteDecision(None, 'No Skills registered')
         prompt = ('Select exactly one registered Skill using its description and the user intent. '
+                  'A poster or visual deliverable requires image_gen. Markdown is not an image. '
+                  'Use code_gen only when the requested deliverable is source code, not a poster or marketing copy. '
                   'If none fits, or multiple unrelated requests require different Skills, use null. '
-                  'Return only JSON with exactly skill_name (string or null) and route_reason '
+                  'Return only JSON with exactly skill_name (registered string or JSON null, never the string "null") and route_reason '
                   '(short public explanation, no hidden reasoning). Never invent a Skill. Catalog:\n'
                   + json.dumps([asdict(skill) for skill in skills], ensure_ascii=False))
         def validate(value):
             name, reason = value.get('skill_name'), value.get('route_reason')
+            # A quoted JSON-null sentinel is an abstention, never an invented tool.
+            if name == 'null' and name not in {skill.name for skill in skills}:
+                value['skill_name'] = name = None
             if set(value) != {'skill_name', 'route_reason'} or (name is not None and not isinstance(name, str)) or not isinstance(reason, str) or not reason.strip():
                 raise ServiceError(ErrorCode.CONTRACT_MISMATCH,
                     'Expected exactly skill_name (registered string or null) and route_reason (nonempty string)')

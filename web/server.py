@@ -12,6 +12,7 @@
 import argparse
 from dataclasses import replace
 import json
+import logging
 import secrets
 import threading
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
@@ -375,6 +376,9 @@ class HubServer(ThreadingHTTPServer):
 
 
 def main(argv=None):
+    # Persist successful M4 routing evidence as well as failures in stderr logs.
+    logging.basicConfig(level=logging.WARNING, format='%(message)s')
+    logging.getLogger('agent_hub.m4').setLevel(logging.INFO)
     load_dotenv(ROOT_DIR / '.env', override=False)
     parser = argparse.ArgumentParser(description="Agent Hub 前端接入服务")
     parser.add_argument("--host", default="127.0.0.1")

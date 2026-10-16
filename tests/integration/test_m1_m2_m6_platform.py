@@ -38,7 +38,11 @@ def all_real_registry():
     (ReActAgent(mode='local'), OrderTrackingMock, SAMPLES[1]),
     (DataFusionModule(), DataFusionMock, SAMPLES[5])])
 def test_shared_manifests_outputs_and_correlations(module, mock, payload, caplog):
-    assert module.manifest == mock.manifest
+    contract = module.manifest.model_copy(deep=True)
+    if contract.capability_id == 'm6.data_fusion':
+        # Real sources advertise their week indexes; validation stays shared.
+        assert '2026-W40、2026-W41' in contract.input_schema['properties']['week'].pop('description')
+    assert contract == mock.manifest
     req = request_for(module.manifest.capability_id, payload)
     req.context['trace_id'] = 'do-not-use-context-trace'
     caplog.set_level('INFO')

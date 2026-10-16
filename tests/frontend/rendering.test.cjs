@@ -43,6 +43,29 @@ test('real image arrays render images and reject executable URLs', () => {
   assert.doesNotMatch(html, /(?:src|href)="javascript:/);
 });
 
+test('poster shows the real image alongside the supplied business facts', () => {
+  const html = ui().renderGateway({skill_name:'image_gen', result:JSON.stringify({
+    images:[{image_url:'https://example.com/poster.png'}],
+    verified_facts:{week:'2025-W43',revenue_amount:15120000,order_count:75300,conversion_rate:0.14261363636363636}
+  })});
+  assert.match(html, /<img src="https:\/\/example.com\/poster.png"/);
+  assert.match(html, /2025-W43/);
+  assert.match(html, /75300/);
+  assert.match(html, /14\.26%/);
+  assert.match(html, /本次图片使用的经营数据/);
+});
+
+test('image prompt details escape model content and expose actual prompt', () => {
+  const html = ui().renderGateway({skill_name:'image_gen', result:JSON.stringify({prompt_writing:{
+    model:'qwen-plus', art_direction:'<script>alert(1)</script>', visible_text:['1512万元'], final_prompt:'<img onerror=bad>'
+  }})});
+  assert.match(html, /<details class="image-prompt">/);
+  assert.match(html, /实际出图提示词/);
+  assert.match(html, /qwen-plus/);
+  assert.match(html, /1512万元/);
+  assert.doesNotMatch(html, /<script>|<img onerror/);
+});
+
 test('only program facts are labelled verified, not the model draft', () => {
   const app = ui();
   const html = app.renderPromotion({plan_markdown:'## 已核对的基础数据\n\n- 金额100分\n\n## 一、四方主张\n\nMODEL_DRAFT'});

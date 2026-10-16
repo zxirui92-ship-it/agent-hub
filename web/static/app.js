@@ -766,9 +766,22 @@
           });
         } else if (k === 'images' && Array.isArray(v)) {
           v.forEach(img => {
-            const url = safeUrl(img.image_url) || rasterDataUrl(img.b64_json);
+            const url = safeUrl(img.image_url) || rasterDataUrl(img.b64_json || img.image_base64);
             if (url) html += `<img src="${escapeHtml(url)}" alt="生成图片" style="max-width:100%;max-height:480px;border-radius:8px" />`;
           });
+        } else if (k === 'prompt_writing' && v && typeof v === 'object') {
+          html += '<details class="image-prompt"><summary>提示词撰写 · 查看设计与画面文案</summary>';
+          html += kvRow('撰写模型', escapeHtml(v.model));
+          html += kvRow('视觉设计', escapeHtml(v.art_direction));
+          html += kvRow('画面文案', (Array.isArray(v.visible_text) ? v.visible_text : []).map(escapeHtml).join('<br>'));
+          html += '<h4>实际出图提示词</h4><pre class="code" style="white-space:pre-wrap">' + escapeHtml(v.final_prompt) + '</pre></details>';
+        } else if (k === 'verified_facts' && v && typeof v === 'object') {
+          html += '<div class="verified-facts"><h4>本次图片使用的经营数据</h4>';
+          html += kvRow('统计周次', escapeHtml(v.week));
+          html += kvRow('成交金额', moneyYuan(v.revenue_amount));
+          html += kvRow('订单量', escapeHtml(v.order_count));
+          html += kvRow('转化率', typeof v.conversion_rate === 'number' ? (v.conversion_rate * 100).toFixed(2) + '%' : '—');
+          html += '</div>';
         } else if (k === "image" || k === "image_url" || k === "url") {
           const url = safeUrl(v);
           if (url) html += kvRow(k, `<img src="${escapeHtml(url)}" alt="生成图片" style="max-width:240px;border-radius:8px" />`);

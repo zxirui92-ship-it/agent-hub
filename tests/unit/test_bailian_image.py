@@ -16,6 +16,8 @@ def test_sync_image_native_request_and_actual_resource():
     assert calls[0][0].endswith('/api/v1/services/aigc/multimodal-generation/generation')
     assert calls[0][1]['input']['messages'][0]['content'] == [{'text': 'blue bird'}]
     assert calls[0][1]['parameters']['n'] == 1 and result['mode'] == 'live'
+    assert calls[0][1]['model'] == result['model'] == 'qwen-image-2.1-pro'
+    assert calls[0][1]['parameters']['prompt_extend'] is False
 
 
 @pytest.mark.parametrize('response', [{}, {'output': {'choices': []}},
@@ -49,7 +51,7 @@ def test_env_selects_bailian_and_explicit_image_group_stays_isolated(monkeypatch
     monkeypatch.setenv('BAILIAN_API_KEY', 'private-test-key')
     monkeypatch.setenv('BAILIAN_BASE_URL', 'https://example.test/compatible-mode/v1')
     settings = Settings.from_env()
-    assert settings.image_provider == 'bailian' and settings.image_model == 'qwen-image-2.0'
+    assert settings.image_provider == 'bailian' and settings.image_model == 'qwen-image-2.1-pro'
     monkeypatch.setenv('M4_IMAGE_BASE_URL', 'https://other.test/v1')
     settings = Settings.from_env()
     assert settings.image_provider == 'openai' and settings.image_api_key == ''
